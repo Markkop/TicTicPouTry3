@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class _Manager : MonoBehaviour {
 
@@ -14,125 +15,143 @@ public class _Manager : MonoBehaviour {
 	public GameObject alvosPanel;
 
 	void Start () {
-		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 		alvosPanel.gameObject.SetActive (false);
 	}
 	
 	void Update () {
 
-		listaPlayers();
-				//Ordem de execucao
-		//Verifica se todos estao ready
-		Debug.Log(gameObjectArray[0]);
-		if(gameObjectArray[0].GetComponent<Atributos>().ready == false)
+		listaPlayers(); //Lista os players atuais
+
+		if(!CheckReady()) // Verifica se todos estao prontos
 		{
-			Debug.Log("O primeiro player nao esta ready");
-			return;
+			return; //Se retornar falso, nao faz nada
 		}
-		//Phase 1: ve quem defende, carrega
-		ResolvePhase1();
-		ResolvePhase2();
-		ResolvePhase3();
-		ResolvePhase4();
-		gameObjectArray[0].GetComponent<Atributos>().ready = false;
-		//Phase 2: ve quem atira e escolhe alvo
-		//Phase 3: resolve acoes
-		//Phase 4: verifica vidas e remove players e desfaz ready
 
-
-		
+		ResolvePhase1(); //Resolve defesa e recarregamento
+		ResolvePhase2(); //Verifica se ha municao para atirar
+		ResolvePhase3(); //Resolve ataque x defesa
+		ResolvePhase4(); //Verifica vida e remove player		
 	}
 
 	void listaPlayers()
 	{
-		//Popula o array com GameObjects de players
-		//gameObjectList = gameObjectArray.ToList(); // Transforma o array em list
+		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
+		// foreach (GameObject go in gameObjectArray) // Para cada objeto no array
+		// {
+		// 	//Exibe os jogadores na lista de players
+		// 	if(gameObjectArray[0] != null)
+		// 	{
+		// 		player1Text.GetComponent<Text>().text = gameObjectArray[0].ToString();
+		// 	}
+		// 	else
+		// 	{
+		// 		player1Text.GetComponent<Text>().text = "morto";
+		// 	}
+		// 	player2Text.GetComponent<Text>().text = gameObjectArray[1].ToString();
+		// 	player3Text.GetComponent<Text>().text = gameObjectArray[2].ToString();
 
-		foreach (GameObject go in gameObjectArray) // Para cada objeto no array
-		{
-			Debug.Log("Tamanho do array gameObjectArray: "+gameObjectArray.Length);
-			for(int i = 0; i < gameObjectArray.Length; i++)
-	        {
-        		go.GetComponent<Atributos>().playerId = i; // assigna o playerId
-        		if(!playersList.Contains(i))
-        		{
-        			playersList.Add(i); //Bota na playerList	
-        		}
+			// for(int i = 0; i < gameObjectArray.Length; i++)
+	  //       {
+   //      		go.GetComponent<Atributos>().playerId = i; // assigna o playerId (nao utilizado)
+   //      		if(!playersList.Contains(i))
+   //      		{
+   //      			playersList.Add(i); //Bota na playerList	
+   //      		}
         		
-    		}
+   //  		}
 		}	
+	
+
+	bool CheckReady() // Verifica se todos estao prontos
+	{
+		for(int i = 0; i < gameObjectArray.Length; i++) //Para cada jogador i
+		{
+			if(gameObjectArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
+			{
+				return false; //retorna falso e sai da funcao
+			}
+		}
+		return true; //mas se nao sair, retorna true
 	}
 
-	void ResolvePhase1() // Verifica defesas e carregamentos
+	void ResolvePhase1() // Resolve defesas e carregamentos
 	{
 		Debug.Log("Resolvendo Phase 1");
-		foreach (GameObject go in gameObjectArray)
+		foreach (GameObject go in gameObjectArray) //Para cada jogador declarado
 		{
-			if(go.GetComponent<Atributos>().vaiDefender == true)
+			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
 				{
-					go.GetComponent<Atributos>().estaDefendendo = true;
+					go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
 				}
-			if(go.GetComponent<Atributos>().vaiRecarregar == true)
+			if(go.GetComponent<Atributos>().vaiRecarregar == true) //Se optou por recarregar
 				{
-					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas) 
+					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 					{
-						go.GetComponent<Atributos>().balas += 1;
+						go.GetComponent<Atributos>().balas += 1; // ganha uma bala
 					}
 					else
 					{
-			
+						//caso contrario, nao ganha bala.
+						//Obs: o player vai gastar a propria acao
 					}		
 				}
 		}
 	}
 
-	void ResolvePhase2() //Verifica balas
+	void ResolvePhase2() //Verifica se ha balas
 	{
 		Debug.Log("Resolvendo Phase 2");
-		foreach (GameObject go in gameObjectArray)
+		foreach (GameObject go in gameObjectArray) //Para cada jogador
 		{
-			if(go.GetComponent<Atributos>().vaiAtirar == true && go.GetComponent<Atributos>().balas > 0)
+			if(go.GetComponent<Atributos>().vaiAtirar == true && go.GetComponent<Atributos>().balas > 0) //Se for atirar & tiver bala
 			{
-				//Se for atirar e tiver balas
-				//ok
+				//segue o baile
 			}
 			else
 			{
-				//Senao cancela o tiro
+				//caso contrario, cancela a acao
 				go.GetComponent<Atributos>().vaiAtirar = false;
 			}
 		}
 
 	}
 
-	void ResolvePhase3() //Verifica tiros e defesas e resolve
+	void ResolvePhase3() //Resolve ataque e defesa
 	{
 		Debug.Log("Resolvendo Phase 3");
-		foreach (GameObject go in gameObjectArray)
+		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
-			if(go.GetComponent<Atributos>().vaiAtirar == true) // Atira no player0
+			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
 				{
-					GameObject alvo1 = go.GetComponent<Atributos>().alvo;
-					if(alvo1.GetComponent<Atributos>().estaDefendendo == false)
+					GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
+					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
 					{
-						//Se o alvo nao estiver defendendo, perde uma vida
-						alvo1.GetComponent<Atributos>().vidas -= 1;
+						alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
 					}
-				//Perde 1 bala
-				go.GetComponent<Atributos>().balas -= 1;
+				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)
+				go.GetComponent<Atributos>().alvo = null; // remove alvo
 				}
 		}
 	}
 
 	void ResolvePhase4() //Verifica vidas
 	{
-		foreach (GameObject go in gameObjectArray)
+		Debug.Log("Resolvendo Phase 4");
+
+		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
-			if(go.GetComponent<Atributos>().vidas == 0)
+			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go+"] morreu");
-				Destroy(go);
+				Destroy(go); //destroy o gameObject do jogador
 			}
+		//Reseta as acoes
+		go.GetComponent<Atributos>().ready = false;
+		go.GetComponent<Atributos>().vaiAtirar = false;
+		go.GetComponent<Atributos>().vaiRecarregar = false;
+		go.GetComponent<Atributos>().vaiDefender = false;
+		go.GetComponent<Atributos>().estaDefendendo = false;
+
 		}
 
 	}

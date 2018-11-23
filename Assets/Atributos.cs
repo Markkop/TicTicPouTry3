@@ -13,8 +13,8 @@ public class Atributos : MonoBehaviour {
 	public bool vaiRecarregar = false;
 	public GameObject alvo;
 
-	public int vidas = 2;
-	public int balas = 0;
+	public int vidas = 1;
+	public int balas = 1;
 
 	public bool ready = false;
 
