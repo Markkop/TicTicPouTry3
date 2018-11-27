@@ -39,12 +39,12 @@ public class Atributos : MonoBehaviour {
 			vaiDefender = true;
 			vaiRecarregar = false;
 			vaiAtirar = false;
-			Debug.Log("Player ["+playerId+"] vai defender? ["+vaiDefender+"]");
+			//Debug.Log("Player ["+playerId+"] vai defender? ["+vaiDefender+"]");
 		}
 		else
 		{
 			vaiDefender = false;
-			Debug.Log("Player ["+playerId+"] vai defender? ["+vaiDefender+"]");
+			//Debug.Log("Player ["+playerId+"] vai defender? ["+vaiDefender+"]");
 		}
 	}
 
@@ -55,12 +55,12 @@ public class Atributos : MonoBehaviour {
 			vaiRecarregar = true;
 			vaiDefender = false;
 			vaiAtirar = false;
-			Debug.Log("Player ["+playerId+"] vai recarregar? ["+vaiRecarregar+"]");
+			//Debug.Log("Player ["+playerId+"] vai recarregar? ["+vaiRecarregar+"]");
 		}
 		else
 		{
 			vaiRecarregar = false;
-			Debug.Log("Player ["+playerId+"] vai recarregar? ["+vaiRecarregar+"]");
+			//Debug.Log("Player ["+playerId+"] vai recarregar? ["+vaiRecarregar+"]");
 		}
 	}
 
@@ -71,13 +71,14 @@ public class Atributos : MonoBehaviour {
 			vaiAtirar = true;
 			vaiRecarregar = false;
 			vaiDefender = false;
-			Debug.Log("Player ["+playerId+"] vai atirar? ["+vaiAtirar+"]");
+			//Debug.Log("Player ["+playerId+"] vai atirar? ["+vaiAtirar+"]");
 			alvosPanel.gameObject.SetActive (true);
+
 		}
 		else
 		{
 			vaiAtirar = false;
-			Debug.Log("Player ["+playerId+"] vai atirar? ["+vaiAtirar+"]");
+			//Debug.Log("Player ["+playerId+"] vai atirar? ["+vaiAtirar+"]");
 		}
 	}
 
@@ -85,13 +86,14 @@ public class Atributos : MonoBehaviour {
 	{
 		if(ready == false)
 		{
+			alvosPanel.gameObject.SetActive (false);
 			ready = true;
-			Debug.Log("Player ["+playerId+"] esta Ready");
+			//Debug.Log("Player ["+playerId+"] esta Ready");
 		}
 		else
 		{
 			ready = false;
-			Debug.Log("Player ["+playerId+"] nao esta Ready");
+			//Debug.Log("Player ["+playerId+"] nao esta Ready");
 		}
 	}
 

@@ -14,8 +14,11 @@ public class _Manager : MonoBehaviour {
 	public GameObject player3Text;
 	public GameObject alvosPanel;
 
+	public bool allReady = false;
+
 	void Start () {
 		alvosPanel.gameObject.SetActive (false);
+		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	void Update () {
@@ -71,12 +74,13 @@ public class _Manager : MonoBehaviour {
 				return false; //retorna falso e sai da funcao
 			}
 		}
+		allReady = true; //anuncia todos prontos
 		return true; //mas se nao sair, retorna true
 	}
 
 	void ResolvePhase1() // Resolve defesas e carregamentos
 	{
-		Debug.Log("Resolvendo Phase 1");
+		//Debug.Log("Resolvendo Phase 1");
 		foreach (GameObject go in gameObjectArray) //Para cada jogador declarado
 		{
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
@@ -87,6 +91,7 @@ public class _Manager : MonoBehaviour {
 				{
 					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 					{
+						Debug.Log(go.name+" carrega uma bala.");
 						go.GetComponent<Atributos>().balas += 1; // ganha uma bala
 					}
 					else
@@ -100,17 +105,20 @@ public class _Manager : MonoBehaviour {
 
 	void ResolvePhase2() //Verifica se ha balas
 	{
-		Debug.Log("Resolvendo Phase 2");
+		//Debug.Log("Resolvendo Phase 2");
 		foreach (GameObject go in gameObjectArray) //Para cada jogador
 		{
-			if(go.GetComponent<Atributos>().vaiAtirar == true && go.GetComponent<Atributos>().balas > 0) //Se for atirar & tiver bala
+			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar & tiver bala
 			{
-				//segue o baile
-			}
-			else
-			{
-				//caso contrario, cancela a acao
-				go.GetComponent<Atributos>().vaiAtirar = false;
+				if(go.GetComponent<Atributos>().balas > 0)
+				{
+					//segue o baile
+				}
+				else
+				{
+					Debug.Log(go.name+" tentou atirar, mas esta sem bala");
+					go.GetComponent<Atributos>().vaiAtirar = false;
+				}
 			}
 		}
 
@@ -118,7 +126,7 @@ public class _Manager : MonoBehaviour {
 
 	void ResolvePhase3() //Resolve ataque e defesa
 	{
-		Debug.Log("Resolvendo Phase 3");
+		//Debug.Log("Resolvendo Phase 3");
 		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
@@ -127,22 +135,26 @@ public class _Manager : MonoBehaviour {
 					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
 					{
 						alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida");
 					}
-				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)
-				go.GetComponent<Atributos>().alvo = null; // remove alvo
+					else
+					{
+						Debug.Log(go.name+" atira em "+alvo1.name+" que se defende");
+					}
+				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
 				}
-		}
+		}	
 	}
 
 	void ResolvePhase4() //Verifica vidas
 	{
-		Debug.Log("Resolvendo Phase 4");
+		//Debug.Log("Resolvendo Phase 4");
 
 		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
 			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
-				Debug.Log("O ["+go+"] morreu");
+				Debug.Log("O ["+go.name+"] morreu");
 				Destroy(go); //destroy o gameObject do jogador
 			}
 		//Reseta as acoes
@@ -151,6 +163,13 @@ public class _Manager : MonoBehaviour {
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
+		go.GetComponent<Atributos>().alvo = null;
+
+		if (gameObjectArray.Length == 1)
+		{
+			//NetworkManager.StopClient
+			Debug.Log("FIM DE JOGO");
+		}
 
 		}
 
