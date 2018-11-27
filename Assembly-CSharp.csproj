@@ -53,10 +53,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-     <Compile Include="Assets\_Manager.cs" />
-     <Compile Include="Assets\Atributos.cs" />
-     <Compile Include="Assets\botIA.cs" />
-     <Compile Include="Assets\ButtonCreator.cs" />
+     <Compile Include="Assets\playerInfo.cs" />
+     <Compile Include="Assets\Scripts\_Manager.cs" />
+     <Compile Include="Assets\Scripts\Atributos.cs" />
+     <Compile Include="Assets\Scripts\botIA.cs" />
+     <Compile Include="Assets\Scripts\ButtonCreator.cs" />
  <Reference Include="UnityEditor.StandardEvents">
  <HintPath>/home/cirogomes/game1/Library/ScriptAssemblies/UnityEditor.StandardEvents.dll</HintPath>
  </Reference>

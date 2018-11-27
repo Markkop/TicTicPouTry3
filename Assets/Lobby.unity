@@ -310,7 +310,7 @@ MonoBehaviour:
   m_LogLevel: 2
   m_PlayerPrefab: {fileID: 0}
   m_AutoCreatePlayer: 1
-  m_PlayerSpawnMethod: 0
+  m_PlayerSpawnMethod: 1
   m_OfflineScene: Lobby
   m_OnlineScene: 
   m_SpawnPrefabs: []
@@ -356,7 +356,7 @@ MonoBehaviour:
     m_MaxTimerTimeout: 12000
     m_MinNetSimulatorTimeout: 1
     m_MaxNetSimulatorTimeout: 12000
-  m_Channels: 
+  m_Channels: 0500000000000000
   m_UseWebSockets: 0
   m_UseSimulator: 0
   m_SimulatedLatency: 1
@@ -375,7 +375,7 @@ MonoBehaviour:
   m_MinPlayers: 0
   m_LobbyPlayerPrefab: {fileID: 114085603735257192, guid: 5c2a1b414b80d4d1ca347d79ebdb7150,
     type: 2}
-  m_GamePlayerPrefab: {fileID: 1908872584699048, guid: c334cbb8c8cb24b3fbacdb4226166932,
+  m_GamePlayerPrefab: {fileID: 1584995146469428, guid: d5138c16859e64323b200506a4de0f57,
     type: 2}
   m_LobbyScene: Lobby
   m_PlayScene: Game
