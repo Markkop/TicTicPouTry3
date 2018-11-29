@@ -3033,13 +3033,13 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1280009719880330}
-  m_LocalRotation: {x: 0.13311988, y: -0, z: -0, w: 0.9911}
-  m_LocalPosition: {x: 0, y: 2.4100006, z: -7.4000006}
+  m_LocalRotation: {x: 0.15865459, y: -0, z: -0, w: 0.9873342}
+  m_LocalPosition: {x: 0, y: 2.89, z: -7.24}
   m_LocalScale: {x: 0.33333334, y: 0.33333334, z: 0.33333334}
   m_Children: []
   m_Father: {fileID: 4777026374569722}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 15.300001, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 18.258001, y: 0, z: 0}
 --- !u!4 &4021484697491082
 Transform:
   m_ObjectHideFlags: 1
@@ -6549,7 +6549,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114258198482548744}
-        m_MethodName: CallCmdSpawnBot
+        m_MethodName: CmdSpawnBot
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -8733,8 +8733,8 @@ RectTransform:
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
-  m_AnchoredPosition: {x: 0, y: 1.8}
-  m_SizeDelta: {x: 100, y: 100}
+  m_AnchoredPosition: {x: -0.56, y: 0.64}
+  m_SizeDelta: {x: 58.7212, y: 42.4829}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224860752953789476
 RectTransform:

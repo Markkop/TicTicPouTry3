@@ -13,6 +13,7 @@ public class Atributos : NetworkBehaviour {
 	[SyncVar] public bool estaDefendendo;
 	[SyncVar] public bool vaiRecarregar = false;
 	[SyncVar] public bool ready = false;
+	[SyncVar] public bool levouTiro = false;
 
 	[SyncVar] public int vidas = 2;
 	[SyncVar] public int balas = 0;
@@ -49,8 +50,11 @@ public class Atributos : NetworkBehaviour {
 		}
 		else
 		{
-			//playerCamera.SetActive(false);
-			playerCanvas.SetActive(false);
+			if(this.GetComponent<botIA>() == null) //Se nao for um bot (for um player)
+			{
+				//playerCamera.SetActive(false);
+				playerCanvas.SetActive(false);
+			}
 		}
 
 	}

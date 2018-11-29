@@ -41,8 +41,11 @@ public class _Manager : NetworkBehaviour {
 
 	void listaPlayers()
 	{
+
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
-		
+		//fazer um outro array para nomes quando for implementar
+
+
 		// Muda nome
 		// for(int i = 0; i < gameObjectArray.Length; i++) 
 		// 	{
@@ -130,7 +133,12 @@ public class _Manager : NetworkBehaviour {
 					GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
 					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
 					{
-						alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+						if(!alvo1.GetComponent<Atributos>().levouTiro) // Para levar apenas um tiro no max
+						{
+							alvo1.GetComponent<Atributos>().levouTiro = true;
+							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+						}
+
 						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
 					}
 					else
@@ -148,6 +156,7 @@ public class _Manager : NetworkBehaviour {
 
 		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
+			go.GetComponent<Atributos>().levouTiro = false;
 			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
@@ -155,31 +164,31 @@ public class _Manager : NetworkBehaviour {
 				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
 				go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -400);
 				go.name = "Morto";
-				
-				//Destroy(go); //destroy o gameObject do jogador
+				go.tag = "Untagged";
 			}
+
+		toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
+		foreach (GameObject tog in toggles)
+		{
+			tog.GetComponent<Toggle>().isOn = false;
+		}
+
 		//Reseta as acoes
 		go.GetComponent<Atributos>().ready = false;
 		go.GetComponent<Atributos>().vaiAtirar = false;
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
-		go.GetComponent<ButtonCreator>().Destroi();
+
+		if(go.GetComponent<botIA>() == null) //Se nao for um bot
+			go.GetComponent<ButtonCreator>().Destroi();
 
 		if(isLocalPlayer)
-		go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
+			go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
 
 		//Debug.Log("Fim do Resolve4");
 
 		}
-
-		// Desmarca todos os botoes/toggles do menu
-		toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
-		foreach (GameObject go in toggles)
-		{
-			go.GetComponent<Toggle>().isOn = false;
-		}
-
 
 		if (gameObjectArray.Length == 1)
 		{

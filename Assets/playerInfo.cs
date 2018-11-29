@@ -17,9 +17,9 @@ public class playerInfo : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		vidasText.GetComponent<Text>().text = "Vidas: "+this.GetComponent<Atributos>().vidas.ToString()
-											+"\nBalas: "+this.GetComponent<Atributos>().balas.ToString()
-											+"\nNome: "+this.name;
+		vidasText.GetComponent<Text>().text =""+this.GetComponent<Atributos>().vidas.ToString()
+											+" // "+this.GetComponent<Atributos>().balas.ToString()
+											+"\n"+this.name;
 		
 	}
 }

@@ -39,6 +39,10 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 
 	void BotIA()
 	{
+		if(this.GetComponent<Atributos>().vidas == 0)
+		{
+			return;
+		}
 
 		if (botDefensor == true)
 		{
@@ -61,6 +65,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 				else
 				{
 					bot.vaiAtirar = true;
+					bot.vaiRecarregar = false;
 
 					playersArray = GameObject.FindGameObjectsWithTag("Player");
 
