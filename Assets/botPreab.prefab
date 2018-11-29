@@ -23,6 +23,7 @@ GameObject:
   - component: {fileID: 114498614511161412}
   - component: {fileID: 114560860035080080}
   - component: {fileID: 114662975773478784}
+  - component: {fileID: 114265707333156382}
   m_Layer: 0
   m_Name: playerInfoCanvas
   m_TagString: Untagged
@@ -169,6 +170,17 @@ MonoBehaviour:
   botDefensor: 0
   botSanguinario: 1
   botOraculo: 0
+--- !u!114 &114265707333156382
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1172956605626044}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2ded37da68c724f0eb15f158d337dfba, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114385481143073306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -364,18 +376,18 @@ RectTransform:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1390348089182030}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224604350045859338}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
-  m_Pivot: {x: 0, y: 0.5}
+  m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224604350045859338
 RectTransform:
   m_ObjectHideFlags: 1

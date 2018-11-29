@@ -42,38 +42,19 @@ public class _Manager : NetworkBehaviour {
 	{
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 		
-		for(int i = 0; i < gameObjectArray.Length; i++) //Para cada objeto
-			{
-				if(gameObjectArray[i].name != "Jogador "+i)
-				{
-					gameObjectArray[i].name = "Jogador "+i;	
-				}
-				
-			}
+		// Muda nome
+		// for(int i = 0; i < gameObjectArray.Length; i++) 
+		// 	{
+		// 		if(gameObjectArray[i].name != "Jogador "+i)
+		// 		{
+		// 			gameObjectArray[i].name = "Jogador "+i;	
+		// 		}
+		// 	}
+
+		// Lista player na UI
+		// a implementar
 		 
-
-		// 	//Exibe os jogadores na lista de players
-		// 	if(gameObjectArray[0] != null)
-		// 	{
-		// 		player1Text.GetComponent<Text>().text = gameObjectArray[0].ToString();
-		// 	}
-		// 	else
-		// 	{
-		// 		player1Text.GetComponent<Text>().text = "morto";
-		// 	}
-		// 	player2Text.GetComponent<Text>().text = gameObjectArray[1].ToString();
-		// 	player3Text.GetComponent<Text>().text = gameObjectArray[2].ToString();
-
-			// for(int i = 0; i < gameObjectArray.Length; i++)
-	  //       {
-   //      		go.GetComponent<Atributos>().playerId = i; // assigna o playerId (nao utilizado)
-   //      		if(!playersList.Contains(i))
-   //      		{
-   //      			playersList.Add(i); //Bota na playerList	
-   //      		}
-        		
-   //  		}
-		}	
+	}	
 	
 
 	void CheckReady() // Verifica se todos estao prontos
@@ -82,11 +63,12 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(gameObjectArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
 			{
-				Debug.Log("allReady = "+allReady);
+				Debug.Log("Aguardando todos prontos...");
 				allReady = false; //retorna falso e sai da funcao
 				return;
 			}
 		}
+		Debug.Log("Todos prontos, iniciando resolucoes...");
 		allReady = true; //anuncia todos prontos
 		return; //mas se nao sair, retorna true
 	}
@@ -104,7 +86,7 @@ public class _Manager : NetworkBehaviour {
 				{
 					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 					{
-						Debug.Log(go.name+" carrega uma bala.");
+						Debug.Log(go.name+" carrega uma bala...");
 						go.GetComponent<Atributos>().balas += 1; // ganha uma bala
 					}
 					else
@@ -148,11 +130,11 @@ public class _Manager : NetworkBehaviour {
 					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
 					{
 						alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
-						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida");
+						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
 					}
 					else
 					{
-						Debug.Log(go.name+" atira em "+alvo1.name+" que se defende");
+						Debug.Log(go.name+" atira em "+alvo1.name+" que se defende...");
 					}
 				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
 				}
@@ -185,7 +167,7 @@ public class _Manager : NetworkBehaviour {
 		if(isLocalPlayer)
 		go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
 
-		Debug.Log("Fim do Resolve4");
+		//Debug.Log("Fim do Resolve4");
 
 		}
 

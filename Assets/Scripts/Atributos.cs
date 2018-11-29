@@ -30,37 +30,26 @@ public class Atributos : NetworkBehaviour {
 	// Use this for initialization
 	void Start () {
 		
-		//alvosPanel.gameObject.SetActive (false);
-		this.GetComponent<Transform>().LookAt(new Vector3(0f,4f,-20f));
+		//Olha para o centro da arena (hardcoded)
+		this.GetComponent<Transform>().LookAt(new Vector3(0f,0f,0f));
+
+		//Muda o nome
+		CmdChangeName();
+
+		//Caso o objeto seja spawnado sem autoridade
 		if(!hasAuthority)
 		{
 			CmdAttachAuthority();
 		}
 
-		//Soh mostra a camera e o Canvas para o jogagor local
-		//(botar em outro script se pa qql hora)
-		// if (isLocalPlayer)
-		// {
-		// 	if(hasAuthority)
-		// 	{	
-		// 		playerCamera.SetActive(true);
-		// 		playerCanvas.SetActive(true);
-		// 	}
-		// 	else
-		// 	{
-		// 		playerCamera.SetActive(false);
-		// 		playerCanvas.SetActive(false);
-		// 	}
-		// }
-
 		if (isLocalPlayer)
 		{
-			playerCamera.SetActive(true);
+			//playerCamera.SetActive(true);
 			playerCanvas.SetActive(true);
 		}
 		else
 		{
-			playerCamera.SetActive(false);
+			//playerCamera.SetActive(false);
 			playerCanvas.SetActive(false);
 		}
 
@@ -70,10 +59,8 @@ public class Atributos : NetworkBehaviour {
 	void Update () { }
 
 	[Command]
-    void CmdAttachAuthority()
-    {
-    	//Troca de nome para ficar mais legivel e diferenciado
-    	//Bug: nao anuncia mudanca nos outros clients (ainda)
+	void CmdChangeName()
+	{
 		GameObject[] playersArray = GameObject.FindGameObjectsWithTag("Player");
 		int i = 0;
 		foreach (GameObject go in playersArray)
@@ -90,17 +77,20 @@ public class Atributos : NetworkBehaviour {
 				i++;
 			}
 		}
+	}
 
-		//Da a autoridade sob o objeto para quem conectou com este client
-		this.GetComponent<NetworkIdentity>().AssignClientAuthority ( connectionToClient );
-		Debug.Log(this.name+" recebeu autoridade de "+connectionToClient);
-    }
-
-    
-    [ClientRpc]
+	[ClientRpc]
     void RpcChangePlayerName(string n)
     {
         this.name = n;
+    }
+
+	[Command]
+    void CmdAttachAuthority()
+    {
+		//Da a autoridade sob o objeto para quem conectou com este client
+		this.GetComponent<NetworkIdentity>().AssignClientAuthority ( connectionToClient );
+		Debug.Log(this.name+" recebeu autoridade de "+connectionToClient);
     }
 
 
