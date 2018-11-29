@@ -108,7 +108,7 @@ public class Atributos : NetworkBehaviour {
 			vaiDefender = false;
 		}
 		
-		Debug.Log(this.name +" defende?: "+boleano);
+		//Debug.Log(this.name +" defende?: "+boleano);
 	}
 
 	[Command]
@@ -125,7 +125,7 @@ public class Atributos : NetworkBehaviour {
 		{
 			vaiAtirar = false;
 		}
-		Debug.Log(this.name +" atira?: "+boleano);
+		//Debug.Log(this.name +" atira?: "+boleano);
 	}
 
     [Command]
@@ -141,7 +141,7 @@ public class Atributos : NetworkBehaviour {
 		{
 			vaiRecarregar = false;
 		}
-		Debug.Log(this.name +" recarrega?: "+boleano);
+		//Debug.Log(this.name +" recarrega?: "+boleano);
 	}
 
 

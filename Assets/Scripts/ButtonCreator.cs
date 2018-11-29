@@ -43,9 +43,6 @@ public class ButtonCreator : NetworkBehaviour
 
                 //NetworkServer.SpawnWithClientAuthority(button, connectionToClient);
 
-
-
-
 		        button.transform.SetParent(panelToAttachButtonsTo.transform);//Setting button parent
 		        button.GetComponent<Button>().onClick.AddListener(() => CmdOnClick(alvo));//Setting what button does when clicked
 
@@ -54,10 +51,6 @@ public class ButtonCreator : NetworkBehaviour
 		        hasStuff = true;
     	    }
     	}
-        else
-        {
-            Destroi();
-        }
     	
     }
 

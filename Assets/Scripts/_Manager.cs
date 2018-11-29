@@ -12,6 +12,7 @@ public class _Manager : NetworkBehaviour {
 	public List<int> playersList = new List<int>();
 
 	[SyncVar] public bool allReady = false;
+	public GameObject[] toggles;
 
 	void Start () {
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
@@ -163,6 +164,7 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
+		go.GetComponent<ButtonCreator>().Destroi();
 
 		if(isLocalPlayer)
 		go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
@@ -171,11 +173,21 @@ public class _Manager : NetworkBehaviour {
 
 		}
 
+		// Desmarca todos os botoes/toggles do menu
+		toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
+		foreach (GameObject go in toggles)
+		{
+			go.GetComponent<Toggle>().isOn = false;
+		}
+
+
 		if (gameObjectArray.Length == 1)
 		{
 			//NetworkManager.StopClient
 			Debug.Log("FIM DE JOGO");
 		}
+
+
 
 	}
 }
