@@ -168,7 +168,12 @@ public class _Manager : NetworkBehaviour {
 			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
-				Destroy(go); //destroy o gameObject do jogador
+				//go.GetComponent<BoxCollider>().enabled = true;
+				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
+				go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -400);
+				go.name = "Morto";
+				
+				//Destroy(go); //destroy o gameObject do jogador
 			}
 		//Reseta as acoes
 		go.GetComponent<Atributos>().ready = false;
@@ -176,6 +181,8 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
+
+		if(isLocalPlayer)
 		go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
 
 		Debug.Log("Fim do Resolve4");

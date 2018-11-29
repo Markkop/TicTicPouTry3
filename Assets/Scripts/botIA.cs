@@ -1,14 +1,16 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class botIA : MonoBehaviour {
+public class botIA : NetworkBehaviour {
 
 public GameObject _Manager;
 public Atributos bot;
 
 private bool allReady;
 private GameObject[] playersArray;
+
 public bool botDefensor; //Sempre defende
 public bool botSanguinario; //Sempre ataca o player
 public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
@@ -16,11 +18,27 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 	// Use this for initialization
 	void Start () {
 		
-		allReady = _Manager.GetComponent<_Manager>().allReady;
+		//allReady = _Manager.GetComponent<_Manager>().allReady;
+		allReady = false;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if (isLocalPlayer)
+		{
+			return;
+		}
+		else
+		{
+			BotIA();
+		}
+
+	}
+
+
+	void BotIA()
+	{
 
 		if (botDefensor == true)
 		{
@@ -44,7 +62,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 				{
 					bot.vaiAtirar = true;
 
-					playersArray = _Manager.GetComponent<_Manager>().gameObjectArray;
+					playersArray = GameObject.FindGameObjectsWithTag("Player");
 
 					bot.alvo = PegaPlayer(); //Foca no player
 					//bot.alvo = RandomMenosSiMesmo(); //Random
@@ -65,7 +83,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 				}
 				else
 				{
-					playersArray = _Manager.GetComponent<_Manager>().gameObjectArray;
+					playersArray = GameObject.FindGameObjectsWithTag("Player");
 					List<GameObject> list = new List<GameObject>();
 
 					foreach (GameObject go in playersArray) //para cada player em jogo
@@ -94,9 +112,11 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 		}
 	}
 
+
+
 	GameObject RandomMenosSiMesmo()
 	{
-		playersArray = _Manager.GetComponent<_Manager>().gameObjectArray;
+		playersArray = GameObject.FindGameObjectsWithTag("Player");
 		GameObject alvo0 = playersArray[Random.Range(0,playersArray.Length)];
 
 		if(alvo0 == gameObject) //Se o alvo for ele mesmo (inteligente hein)
@@ -111,7 +131,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 
 	GameObject PegaPlayer()
 	{
-		playersArray = _Manager.GetComponent<_Manager>().gameObjectArray;
+		playersArray = GameObject.FindGameObjectsWithTag("Player");
 		foreach (GameObject go in playersArray) //para cada player em jogo
 		{
 			if(go.name.ToString() == "Jogador 0")

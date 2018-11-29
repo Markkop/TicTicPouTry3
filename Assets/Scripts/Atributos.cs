@@ -25,14 +25,34 @@ public class Atributos : NetworkBehaviour {
 	public GameObject playerCanvas;
 	public GameObject toggleGroup;
 
+
+
 	// Use this for initialization
 	void Start () {
 		
 		//alvosPanel.gameObject.SetActive (false);
-		CmdAttachAuthority();
+		this.GetComponent<Transform>().LookAt(new Vector3(0f,4f,-20f));
+		if(!hasAuthority)
+		{
+			CmdAttachAuthority();
+		}
 
 		//Soh mostra a camera e o Canvas para o jogagor local
 		//(botar em outro script se pa qql hora)
+		// if (isLocalPlayer)
+		// {
+		// 	if(hasAuthority)
+		// 	{	
+		// 		playerCamera.SetActive(true);
+		// 		playerCanvas.SetActive(true);
+		// 	}
+		// 	else
+		// 	{
+		// 		playerCamera.SetActive(false);
+		// 		playerCanvas.SetActive(false);
+		// 	}
+		// }
+
 		if (isLocalPlayer)
 		{
 			playerCamera.SetActive(true);
@@ -43,6 +63,7 @@ public class Atributos : NetworkBehaviour {
 			playerCamera.SetActive(false);
 			playerCanvas.SetActive(false);
 		}
+
 	}
 	
 	// Update is called once per frame
@@ -60,7 +81,8 @@ public class Atributos : NetworkBehaviour {
 			if (go.name == this.name)
 			{
 				newName = "Jogador "+i;
-				this.name = "Jogador "+i;
+				Debug.Log(go.name+" muda nome para "+newName);
+				this.name = newName;
 				RpcChangePlayerName(newName);
 			}
 			else
