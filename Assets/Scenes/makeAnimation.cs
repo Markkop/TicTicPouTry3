@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class makeAnimation : MonoBehaviour {
 
-	Animator anim;
+	public Animator anim;
 
 	// Use this for initialization
 	void Start () {
 
-		anim = GetComponent<Animator>();
+		//anim = GetComponent<Animator>();
 		
 	}
 	
@@ -17,10 +17,10 @@ public class makeAnimation : MonoBehaviour {
 	void Update () {
 		
         //Press the space key to play the "Jump" state
-        if (Input.GetKey(KeyCode.Space))
+        if (Input.GetKey(KeyCode.Q))
         {
         	Debug.Log("AAA");
-            anim.Play("POSE01");
+            anim.Play("WIN00");
         }
 
 	}

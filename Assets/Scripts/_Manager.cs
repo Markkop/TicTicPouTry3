@@ -10,8 +10,9 @@ public class _Manager : NetworkBehaviour {
 	public GameObject[] gameObjectArray;
 	public List<GameObject> gameObjectList = new List<GameObject>();
 	public List<int> playersList = new List<int>();
+	public GameObject[] goMorto;
 
-	[SyncVar] public bool allReady = false;
+	public bool allReadyManager = false;
 	public GameObject[] toggles;
 
 	void Start () {
@@ -25,10 +26,11 @@ public class _Manager : NetworkBehaviour {
 			return;
 		}
 
-		listaPlayers(); //Lista os players atuais
+		listaPlayers();
+
 		CheckReady();
 
-		if(!allReady) // Verifica se todos estao prontos
+		if(!allReadyManager) // Verifica se todos estao prontos
 		{
 			return; //Se retornar falso, nao faz nada
 		}
@@ -45,20 +47,11 @@ public class _Manager : NetworkBehaviour {
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 		//fazer um outro array para nomes quando for implementar
 
+		
+	}
 
-		// Muda nome
-		// for(int i = 0; i < gameObjectArray.Length; i++) 
-		// 	{
-		// 		if(gameObjectArray[i].name != "Jogador "+i)
-		// 		{
-		// 			gameObjectArray[i].name = "Jogador "+i;	
-		// 		}
-		// 	}
 
-		// Lista player na UI
-		// a implementar
-		 
-	}	
+		 	
 	
 
 	void CheckReady() // Verifica se todos estao prontos
@@ -68,12 +61,12 @@ public class _Manager : NetworkBehaviour {
 			if(gameObjectArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
 			{
 				Debug.Log("Aguardando todos prontos...");
-				allReady = false; //retorna falso e sai da funcao
+				allReadyManager = false; //retorna falso e sai da funcao
 				return;
 			}
 		}
 		Debug.Log("Todos prontos, iniciando resolucoes...");
-		allReady = true; //anuncia todos prontos
+		allReadyManager = true; //anuncia todos prontos
 		return; //mas se nao sair, retorna true
 	}
 
@@ -81,7 +74,8 @@ public class _Manager : NetworkBehaviour {
 	{
 		//Debug.Log("Resolvendo Phase 1");
 		foreach (GameObject go in gameObjectArray) //Para cada jogador declarado
-		{
+		{	
+			go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
 				{
 					go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
@@ -153,7 +147,6 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase4() //Verifica vidas
 	{
 		//Debug.Log("Resolvendo Phase 4");
-
 		foreach (GameObject go in gameObjectArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
@@ -162,16 +155,17 @@ public class _Manager : NetworkBehaviour {
 				Debug.Log("O ["+go.name+"] morreu");
 				//go.GetComponent<BoxCollider>().enabled = true;
 				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
-				go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -400);
+				go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
 				go.name = "Morto";
-				go.tag = "Untagged";
+				//go.tag = "Untagged"; //Esta crashando quando remove a tag
 			}
 
-		toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
-		foreach (GameObject tog in toggles)
-		{
-			tog.GetComponent<Toggle>().isOn = false;
-		}
+
+		// toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
+		// foreach (GameObject tog in toggles)
+		// {
+		// 	tog.GetComponent<Toggle>().isOn = false;
+		// }
 
 		//Reseta as acoes
 		go.GetComponent<Atributos>().ready = false;
