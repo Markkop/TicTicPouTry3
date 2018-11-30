@@ -5,7 +5,7 @@ using UnityEngine.Networking;
 
 public class botIA : NetworkBehaviour {
 
-public GameObject _Manager;
+//public GameObject _Manager;
 public Atributos bot;
 
 private bool allReady;

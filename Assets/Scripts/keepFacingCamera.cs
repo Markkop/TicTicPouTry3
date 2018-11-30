@@ -1,8 +1,12 @@
-﻿using System.Collections;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Networking;
 
-public class keepFacingCamera : MonoBehaviour {
+public class keepFacingCamera : NetworkBehaviour {
+
+	public GameObject[] players;
+	public GameObject[] cameras;
 
 	// Use this for initialization
 	void Start () {
@@ -12,7 +16,21 @@ public class keepFacingCamera : MonoBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		transform.LookAt(Camera.main.transform);
+		// players = GameObject.FindGameObjectsWithTag("Player");
+		// foreach(GameObject go in players)
+		// {
+		// 	if (go == isLocalPlayer)
+		// 	{
+		// 		transform.LookAt(go.transform);		
+		// 	}
+		// }
+		
+		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
+		//players = GameObject.FindGameObjectsWithTag("Player");
+		transform.LookAt(cameras[1].transform);		
+
 		
 	}
+
+
 }

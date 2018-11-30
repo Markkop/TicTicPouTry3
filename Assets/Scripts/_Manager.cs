@@ -15,18 +15,37 @@ public class _Manager : NetworkBehaviour {
 	public bool allReadyManager = false;
 	public GameObject[] toggles;
 
+	static public bool haveSpawnedManager = false;
+
+	public GameObject ManagerPrefab;
+
+	int nomesIndex = 0;
+
 	void Start () {
+
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	void Update () {
 
+		//Soh roda no servidor
 		if(!isServer)
 		{
 			return;
 		}
 
-		listaPlayers();
+		//Debug de coisas
+		if( Input.GetKeyDown("2") )
+		{
+			foreach(GameObject go in gameObjectArray)
+			{
+				go.GetComponent<Atributos>().newName = "trxao";
+				//go.name = "troxa";
+			}
+		}
+		
+
+		CmdMudaNome2();
 
 		CheckReady();
 
@@ -41,14 +60,106 @@ public class _Manager : NetworkBehaviour {
 		ResolvePhase4(); //Verifica vida e remove player		
 	}
 
-	void listaPlayers()
+
+	//O unico comando era de manter o gameObjectArray atualizado com os players para caso 
+	//entre novos players ou bots durante a partida (pelo menos para debug), mas houve um
+	//problema que os Clients nao tinham seu nome atualizado (mas newName sim), possivelmente
+	//por conta de alguma ordem de execuçao, tipo entra o host+client, seu nome eh atualizado
+	//e avisado aos outros clients (nenhum) pelo Hook, entao um segundo player (client) se conecta,
+	//mas ele nao foi avisado da mudanca de nome do primeiro player.
+	[Command]
+	void CmdlistaPlayers()
 	{
-
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
-		//fazer um outro array para nomes quando for implementar
 
-		
+		//Verifica se cada jogador ativo ainda esta sem nome
+		foreach(GameObject go in gameObjectArray)
+		{
+			string oldGoName = go.name;
+			string newGoName = "Jogador "+nomesIndex;
+
+			if(go.GetComponent<Atributos>().newName == "")
+			{
+				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" [NOVO]");
+
+				go.GetComponent<Atributos>().newName = newGoName;
+				go.name = go.GetComponent<Atributos>().newName;
+
+				//Verifica se algum jogador ativo tem o mesmo nome escolhido e se tal jogador
+				//nao eh ele mesmo.
+				foreach (GameObject go2 in gameObjectArray)
+				{
+					if(go.name == go2.name && go2 != go) 
+					{
+						nomesIndex++; 
+						newGoName = "Jogador "+nomesIndex;
+
+						Debug.Log(oldGoName+" na verdade muda nome para "+newGoName);
+						go.GetComponent<Atributos>().newName = newGoName; 
+						go.name = go.GetComponent<Atributos>().newName;
+
+						RpcChangePlayerName(go, go.GetComponent<Atributos>().newName);
+					}
+				}
+			}
+
+
+		}
 	}
+
+
+	//Esta eh uma versao levemente modificada da de cima que ao invez de renomear quem tentou pegar
+	//um nome repetido, renomeia quem ja tinha o nome definido. Assim o hook de newName em Atributos
+	//eh acionado toda vez que alguem muda de nome (pois todos mudam). (baita workaround)
+	[Command]
+	void CmdMudaNome2()
+	{
+		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
+
+		//Verifica se cada jogador ativo ainda esta sem nome
+		foreach(GameObject go in gameObjectArray)
+		{
+			string oldGoName = go.name;
+			string newGoName = "Jogador "+nomesIndex;
+
+			if(go.GetComponent<Atributos>().newName == "")
+			{
+				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" [NOVO]");
+
+				go.GetComponent<Atributos>().newName = newGoName;
+				go.name = go.GetComponent<Atributos>().newName;
+
+				//Verifica se algum jogador ativo tem o mesmo nome escolhido e se tal jogador
+				//nao eh ele mesmo.
+				foreach (GameObject go2 in gameObjectArray)
+				{
+					if(go.name == go2.name && go2 != go) 
+					{
+						nomesIndex++; 
+						newGoName = "Jogador "+nomesIndex;
+
+						Debug.Log(oldGoName+" na verdade muda nome para "+newGoName);
+						go2.GetComponent<Atributos>().newName = newGoName; 
+						go2.name = go2.GetComponent<Atributos>().newName;
+
+						//RpcChangePlayerName(go, go.GetComponent<Atributos>().newName);
+					}
+				}
+			}
+
+
+		}
+	}
+
+	//Por algum motivo esse (e outros) ClientRpc nao estao funcionando corretamente.
+	//No lugar de chamar essa funcao, utilizei hook em newName de Atributos.
+	[ClientRpc]
+    void RpcChangePlayerName(GameObject go, string n)
+    {
+		Debug.Log("Avisando todos os clientes da mudanca de nome do "+go.name+" para "+n);
+		go.GetComponent<Atributos>().newName = n;
+		go.name = n;
+    }
 
 
 		 	
@@ -155,17 +266,10 @@ public class _Manager : NetworkBehaviour {
 				Debug.Log("O ["+go.name+"] morreu");
 				//go.GetComponent<BoxCollider>().enabled = true;
 				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
-				go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
+				//go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
 				go.name = "Morto";
 				//go.tag = "Untagged"; //Esta crashando quando remove a tag
 			}
-
-
-		// toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
-		// foreach (GameObject tog in toggles)
-		// {
-		// 	tog.GetComponent<Toggle>().isOn = false;
-		// }
 
 		//Reseta as acoes
 		go.GetComponent<Atributos>().ready = false;

@@ -14,10 +14,6 @@ public class addBot : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		if( Input.GetKeyDown(KeyCode.Space) )
-		{
-			Debug.Log(NetworkManager.singleton.GetStartPosition());
-		}
 	}
 
 
@@ -25,9 +21,27 @@ public class addBot : NetworkBehaviour {
 	[Command]
 	public void CmdSpawnBot()
 	{
+		if(!isServer)
+		{
+			Debug.Log(this.name+" tentou invocar um bot, mas nao eh server");
+			return;
+		}
+
 		GameObject go = (GameObject)Instantiate(botPrefab);
 		var spawn = NetworkManager.singleton.GetStartPosition();
-		go.GetComponent<Transform>().position = spawn.position;
+	
+		//Arruma a altura do spawn para que o objeto seja transportado para a base
+		//do spawn point e nao ao centro.
+		float altura = go.GetComponent<Collider>().bounds.max[1];
+		altura = altura/2;
+		go.GetComponent<Transform>().position = spawn.position + new Vector3(0,altura,0);
 		NetworkServer.Spawn(go);
 	}
+
+	[ClientRpc]
+	public void RpcSpawnBot()
+	{
+
+	}
 }
+

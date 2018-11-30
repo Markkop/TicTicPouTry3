@@ -78,7 +78,7 @@ Transform:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1850737088623996}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 7.22, y: 3, z: -9.89}
+  m_LocalPosition: {x: 7.22, y: 1, z: -9.89}
   m_LocalScale: {x: 3, y: 3, z: 3}
   m_Children:
   - {fileID: 224604350045859338}
@@ -134,8 +134,8 @@ Rigidbody:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1850737088623996}
   serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
+  m_Mass: 10
+  m_Drag: 1
   m_AngularDrag: 0.05
   m_UseGravity: 1
   m_IsKinematic: 0
@@ -165,7 +165,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 36d343bcfa8be44278108c4e83c9312e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _Manager: {fileID: 0}
   bot: {fileID: 114774718661530756}
   botDefensor: 0
   botSanguinario: 1
@@ -181,6 +180,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ded37da68c724f0eb15f158d337dfba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  players: []
+  cameras: []
 --- !u!114 &114385481143073306
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -265,7 +266,7 @@ MonoBehaviour:
     i13: 118
     i14: 153
     i15: 99
-  m_ServerOnly: 1
+  m_ServerOnly: 0
   m_LocalPlayerAuthority: 0
 --- !u!114 &114560860035080080
 MonoBehaviour:
@@ -330,11 +331,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   newName: 
+  anim: {fileID: 0}
+  rb: {fileID: 0}
   vaiAtirar: 0
   vaiDefender: 0
   estaDefendendo: 0
   vaiRecarregar: 0
   ready: 0
+  levouTiro: 0
   vidas: 2
   balas: 0
   maxBalas: 1
@@ -342,7 +346,13 @@ MonoBehaviour:
   alvosPanel: {fileID: 0}
   playerCamera: {fileID: 0}
   playerCanvas: {fileID: 0}
+  someInfoCanvas: {fileID: 0}
   toggleGroup: {fileID: 0}
+  playerVencedor: 0
+  playerMorto: 0
+  playersArray: []
+  ManagerPrefab: {fileID: 0}
+  allReady: 0
 --- !u!222 &222854245787248422
 CanvasRenderer:
   m_ObjectHideFlags: 1

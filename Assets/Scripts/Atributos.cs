@@ -10,9 +10,10 @@ public class Atributos : NetworkBehaviour {
 	//SyncVar parece nao estar funcionando, pelo menos para newName.
 	//Esta sendo necessario chamar RpcChangePlayerName() para que os
 	//outros clients saibam da mudanca de newName no server.
-	public string newName;
+	[SyncVar (hook="OnNameChange")] public string newName = "";
 
 	public Animator anim;
+	public Rigidbody rb;
 
 	[SyncVar] public bool vaiAtirar = false;
 	[SyncVar] public bool vaiDefender = false;
@@ -30,9 +31,14 @@ public class Atributos : NetworkBehaviour {
 
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
+	public GameObject someInfoCanvas;
 	public GameObject toggleGroup;
 
+	public bool playerVencedor = false;
+	public bool playerMorto = false;
+
 	public GameObject[] playersArray;
+	public GameObject ManagerPrefab; 
 
 	[SyncVar] public bool allReady;
 
@@ -40,7 +46,7 @@ public class Atributos : NetworkBehaviour {
 	void Start () {
 		
 		//Olha para o centro da arena (hardcoded)
-		this.GetComponent<Transform>().LookAt(new Vector3(0f,0f,0f));
+		this.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
 
 		//Importa o animator (se pa da pra fazer direto pelo editor)
 		//anim = GetComponent<Animator>();
@@ -53,7 +59,7 @@ public class Atributos : NetworkBehaviour {
 		//usar para evitar conflito.
 		if(!hasAuthority)
 		{
-			//CmdAttachAuthority();
+			CmdAttachAuthority();
 		}
 
 		//Ativa a camera e o canvas apenas para o jogador local
@@ -81,9 +87,11 @@ public class Atributos : NetworkBehaviour {
 		//Atualiza a lista de players
 		playersArray = GameObject.FindGameObjectsWithTag("Player");
 
-		//Se ainda nao tiver nome (default), muda nome
-		if(newName == "")
-			CmdChangeName();
+		/*//Funcao para forcar a mudanca de nome. Obsoleto for now.
+		if(this.name != newName && newName != "")
+		{
+			//this.name = newName;
+		}*/
 
 		//Chama quando todos estiverem prontos. Serve apenas pra desativar os Toggles por enquanto
 		if(allReady == true)
@@ -93,14 +101,63 @@ public class Atributos : NetworkBehaviour {
 		if(vidas == 0)
 			OnDeath();
 
+
 		//Quando o player for vitorioso
-		if(playersArray.Length == 1 && vidas > 0)
-			OnVictory();
+		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+		{
+			int mortos = 0;
+			foreach(GameObject go in playersArray)
+			{
+				if(go.name == "Morto")
+				{
+					mortos++;
+				}
+			}
+			if(mortos == playersArray.Length - 1 && this.vidas > 0)
+			{
+				OnVictory();
+			}
+			else
+			{
+				playerVencedor = false;
+			}
+		}
 
-		if( Input.GetKeyDown("1") )
-			Debug.Log("KeyPressed");
-			anim.Play("WIN00");
+		//Idle
+		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+		{
+			if(playerMorto == false && playerVencedor == false)
+			{
+				anim.Play("WAIT00");
+			}
+		}
 
+		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+		{
+			someInfoCanvas.GetComponent<Text>().text =
+			"hasAuthority == "+hasAuthority+"\n"+
+			"isLocalPlayer == "+isLocalPlayer+"\n"+
+			"isClient == "+isLocalPlayer+"\n"+
+			"isServer == "+isServer;
+		}
+
+		//Debug de coisas
+		if( Input.GetKeyDown("3") )
+		{
+			if(newName.Contains("Jogador"))
+			{
+				Debug.Log("Contem");
+			}
+		}
+
+	}
+
+	//Funcao chamada quando a SyncVar newName eh alterada (pelo _Manager)
+	void OnNameChange(string newNamez)
+	{
+		Debug.Log("OnNameChange: mudando nome local de "+this.name+" para "+newNamez);
+		newName = newNamez;
+		gameObject.name = newNamez;
 	}
 
 	void OnDeath() {
@@ -108,18 +165,31 @@ public class Atributos : NetworkBehaviour {
 		//Se for jogador local e nao bot
 		if(isLocalPlayer && this.GetComponent<botIA>() == null)
 		{
+			playerMorto = true;
+			//Muda de camera
 			GameObject[] cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 			cameras[1].GetComponent<Camera>().enabled = false;
 			cameras[0].GetComponent<Camera>().enabled = true;
 
+			//Desativa painel
 			playerCanvas.SetActive(false);
+
+			//Rigidbody[] rbs;
+			//rbs = this.GetComponentsInChildren<Rigidbody>();
+
+			this.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -5);
+			anim.Play("DAMAGED00");
 		}
 
 	}
 
 	void OnVictory() {
 
-		//anim.Play("WIN00");
+		playerVencedor = true;
+		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+		{	
+			anim.Play("WIN00");
+		}
 	}
 
 	//Funcao para ser chamada quando todos os estiverem prontos
