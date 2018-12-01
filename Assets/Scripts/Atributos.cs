@@ -42,9 +42,14 @@ public class Atributos : NetworkBehaviour {
 
 	[SyncVar] public bool allReady;
 
+	public GameObject[] cameras;
+
+
 	// Use this for initialization
 	void Start () {
 		
+		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
+
 		//Olha para o centro da arena (hardcoded)
 		this.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
 
@@ -59,13 +64,14 @@ public class Atributos : NetworkBehaviour {
 		//usar para evitar conflito.
 		if(!hasAuthority)
 		{
-			CmdAttachAuthority();
+			//CmdAttachAuthority();
 		}
 
 		//Ativa a camera e o canvas apenas para o jogador local
 		//Caso contrario, o mesmo painel aparece para todos de forma sobreposta
 		if (isLocalPlayer)
 		{
+			cameras[0].SetActive(false);
 			playerCamera.SetActive(true);
 			playerCanvas.SetActive(true);
 		}
@@ -132,14 +138,16 @@ public class Atributos : NetworkBehaviour {
 			}
 		}
 
-		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+
+		//Textos para debug. 
+		/*if(isLocalPlayer && this.GetComponent<botIA>() == null)
 		{
 			someInfoCanvas.GetComponent<Text>().text =
 			"hasAuthority == "+hasAuthority+"\n"+
 			"isLocalPlayer == "+isLocalPlayer+"\n"+
 			"isClient == "+isLocalPlayer+"\n"+
 			"isServer == "+isServer;
-		}
+		}*/
 
 		//Debug de coisas
 		if( Input.GetKeyDown("3") )
@@ -162,24 +170,32 @@ public class Atributos : NetworkBehaviour {
 
 	void OnDeath() {
 
-		//Se for jogador local e nao bot
-		if(isLocalPlayer && this.GetComponent<botIA>() == null)
+		if(playerMorto == true)
 		{
-			playerMorto = true;
+			ready = true;
+			return;
+		}
+
+		//Se for player
+		if(isLocalPlayer)
+		{
 			//Muda de camera
-			GameObject[] cameras = GameObject.FindGameObjectsWithTag("MainCamera");
-			cameras[1].GetComponent<Camera>().enabled = false;
-			cameras[0].GetComponent<Camera>().enabled = true;
+			cameras[1].active = false;
+			cameras[0].active = true;
 
 			//Desativa painel
 			playerCanvas.SetActive(false);
 
-			//Rigidbody[] rbs;
-			//rbs = this.GetComponentsInChildren<Rigidbody>();
-
-			this.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -5);
 			anim.Play("DAMAGED00");
 		}
+
+
+		playerMorto = true;
+		this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
+		//Debug.Log(this.name+ " esta morto");
+
+
+
 
 	}
 
@@ -190,24 +206,31 @@ public class Atributos : NetworkBehaviour {
 		{	
 			anim.Play("WIN00");
 		}
+
 	}
 
 	//Funcao para ser chamada quando todos os estiverem prontos
 	void WhenAllReady() {
 
-		//Desativa os toggles do jogador
-		GameObject[] toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
-		foreach (GameObject tog in toggles)
-		{
-			tog.GetComponent<Toggle>().isOn = false;
+		if(isLocalPlayer) //Faz os seguintes comandos apenas para quem for player
+		{		
+			//Desativa os toggles do jogador
+			GameObject[] toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
+			foreach (GameObject tog in toggles)
+			{
+				tog.GetComponent<Toggle>().isOn = false;
+			}
+	
+			//Desativa o painel de alvos
+			this.alvosPanel.SetActive (false);	
 		}
-
 		//Termina resetando
-		allReady = false;		
+		allReady = false;	
 	}
 
-
-	[Command]
+	//Metodo antigo para mudanca de nome do player. Ate que funcionava, mas prefero
+	//que o _Manager faça isso.
+	/*[Command]
 	void CmdChangeName()
 	{
 		int i = 0;
@@ -248,6 +271,7 @@ public class Atributos : NetworkBehaviour {
     	newName = n;
         this.name = n;
     }
+    */
 
 	[Command]
     void CmdAttachAuthority()

@@ -139,7 +139,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 		playersArray = GameObject.FindGameObjectsWithTag("Player");
 		foreach (GameObject go in playersArray) //para cada player em jogo
 		{
-			if(go.name.ToString() == "Jogador 0")
+			if(hasAuthority && go.GetComponent<Atributos>().vidas != 0)
 			{
 				return go;
 			}

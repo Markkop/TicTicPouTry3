@@ -19,6 +19,8 @@ public class _Manager : NetworkBehaviour {
 
 	public GameObject ManagerPrefab;
 
+	public bool fimDeJogo = false;
+
 	int nomesIndex = 0;
 
 	void Start () {
@@ -44,9 +46,12 @@ public class _Manager : NetworkBehaviour {
 			}
 		}
 		
+		if(fimDeJogo)
+		{
+			return;
+		}
 
 		CmdMudaNome2();
-
 		CheckReady();
 
 		if(!allReadyManager) // Verifica se todos estao prontos
@@ -68,25 +73,25 @@ public class _Manager : NetworkBehaviour {
 	//e avisado aos outros clients (nenhum) pelo Hook, entao um segundo player (client) se conecta,
 	//mas ele nao foi avisado da mudanca de nome do primeiro player.
 	[Command]
-	void CmdlistaPlayers()
+	void CmdlistaPlayers() //Nao esta sendo utilizada
 	{
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 
-		//Verifica se cada jogador ativo ainda esta sem nome
+		//Para cada jogador
 		foreach(GameObject go in gameObjectArray)
 		{
 			string oldGoName = go.name;
 			string newGoName = "Jogador "+nomesIndex;
 
+			//Verifica se esta sem nome
 			if(go.GetComponent<Atributos>().newName == "")
 			{
-				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" [NOVO]");
+				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" ");
 
 				go.GetComponent<Atributos>().newName = newGoName;
 				go.name = go.GetComponent<Atributos>().newName;
 
-				//Verifica se algum jogador ativo tem o mesmo nome escolhido e se tal jogador
-				//nao eh ele mesmo.
+				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
 				foreach (GameObject go2 in gameObjectArray)
 				{
 					if(go.name == go2.name && go2 != go) 
@@ -94,7 +99,7 @@ public class _Manager : NetworkBehaviour {
 						nomesIndex++; 
 						newGoName = "Jogador "+nomesIndex;
 
-						Debug.Log(oldGoName+" na verdade muda nome para "+newGoName);
+						Debug.Log(go.name+" na verdade muda nome para "+newGoName);
 						go.GetComponent<Atributos>().newName = newGoName; 
 						go.name = go.GetComponent<Atributos>().newName;
 
@@ -116,12 +121,13 @@ public class _Manager : NetworkBehaviour {
 	{
 		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
 
-		//Verifica se cada jogador ativo ainda esta sem nome
+		//Para cada jogador
 		foreach(GameObject go in gameObjectArray)
 		{
 			string oldGoName = go.name;
 			string newGoName = "Jogador "+nomesIndex;
 
+			//Verifica se esta sem nome
 			if(go.GetComponent<Atributos>().newName == "")
 			{
 				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" [NOVO]");
@@ -129,8 +135,7 @@ public class _Manager : NetworkBehaviour {
 				go.GetComponent<Atributos>().newName = newGoName;
 				go.name = go.GetComponent<Atributos>().newName;
 
-				//Verifica se algum jogador ativo tem o mesmo nome escolhido e se tal jogador
-				//nao eh ele mesmo.
+				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
 				foreach (GameObject go2 in gameObjectArray)
 				{
 					if(go.name == go2.name && go2 != go) 
@@ -138,7 +143,7 @@ public class _Manager : NetworkBehaviour {
 						nomesIndex++; 
 						newGoName = "Jogador "+nomesIndex;
 
-						Debug.Log(oldGoName+" na verdade muda nome para "+newGoName);
+						Debug.Log("Antigo" +go2.name+" na verdade muda nome para "+newGoName);
 						go2.GetComponent<Atributos>().newName = newGoName; 
 						go2.name = go2.GetComponent<Atributos>().newName;
 
@@ -176,7 +181,7 @@ public class _Manager : NetworkBehaviour {
 				return;
 			}
 		}
-		Debug.Log("Todos prontos, iniciando resolucoes...");
+		Debug.Log("Todos prontos...");
 		allReadyManager = true; //anuncia todos prontos
 		return; //mas se nao sair, retorna true
 	}
@@ -210,17 +215,25 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase2() //Verifica se ha balas
 	{
 		//Debug.Log("Resolvendo Phase 2");
-		foreach (GameObject go in gameObjectArray) //Para cada jogador
+		foreach (GameObject go in gameObjectArray) //Para cada jogador...
 		{
-			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar & tiver bala
+			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar...
 			{
-				if(go.GetComponent<Atributos>().balas > 0)
+				if(go.GetComponent<Atributos>().alvo != null) //e tiver escolhido um alvo..
 				{
-					//segue o baile
+					if(go.GetComponent<Atributos>().balas > 0)//e tiver bala
+					{
+						//segue o baile
+					}
+					else
+					{
+						Debug.Log(go.name+" tentou atirar, mas esta sem bala");
+						go.GetComponent<Atributos>().vaiAtirar = false;
+					}
 				}
 				else
 				{
-					Debug.Log(go.name+" tentou atirar, mas esta sem bala");
+					Debug.Log(go.name+" tentou atirar, mas nao escolheu um alvo");
 					go.GetComponent<Atributos>().vaiAtirar = false;
 				}
 			}
@@ -277,21 +290,33 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
+		go.GetComponent<Atributos>().alvo = null;
 
 		if(go.GetComponent<botIA>() == null) //Se nao for um bot
-			go.GetComponent<ButtonCreator>().Destroi();
+			go.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos
 
-		if(isLocalPlayer)
-			go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
+		//if(isLocalPlayer)
+			//go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
 
 		//Debug.Log("Fim do Resolve4");
 
 		}
 
-		if (gameObjectArray.Length == 1)
+		int a = 0;
+		foreach (GameObject go in gameObjectArray)
+		{	
+			
+			if(go.name == "Morto")
+			{
+				a++;
+			}
+
+		}
+		if (a == gameObjectArray.Length - 1)
 		{
 			//NetworkManager.StopClient
 			Debug.Log("FIM DE JOGO");
+			fimDeJogo = true;
 		}
 
 

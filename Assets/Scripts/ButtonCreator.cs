@@ -34,7 +34,7 @@ public class ButtonCreator : NetworkBehaviour
 	    	for(int i = 0; i < playersArray.Length; i++) //O ideal deve ser usar "foreach"
 	    	{
 
-                Debug.Log("Criou botao");
+                //Debug.Log("Criou botao");
 	    		textButton = playersArray[i].name; //Nome do player 
 	  			GameObject alvo = playersArray[i]; 
 

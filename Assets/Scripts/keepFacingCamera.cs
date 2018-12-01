@@ -27,7 +27,7 @@ public class keepFacingCamera : NetworkBehaviour {
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 		//players = GameObject.FindGameObjectsWithTag("Player");
-		transform.LookAt(cameras[1].transform);		
+		transform.LookAt(Camera.main.transform);		
 
 		
 	}
