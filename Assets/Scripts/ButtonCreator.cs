@@ -12,7 +12,10 @@ public class ButtonCreator : NetworkBehaviour
     public GameObject[] playersArray;
     private string textButton;
 
-    public GameObject player;
+    public List<int> buttonsList = new List<int>();
+
+    public GameObject playerz;
+
 
 
     public bool hasStuff = false;
@@ -21,45 +24,80 @@ public class ButtonCreator : NetworkBehaviour
 	// Use this for initialization
 	void Start () {
 
-        //this.GetComponent<NetworkIdentity>().AssignClientAuthority ( connectionToClient );
-	}
+        panelToAttachButtonsTo.SetActive(false);
+        playersArray = GameObject.FindGameObjectsWithTag("Player");
+        CriaBotoes();
 
 
-    public void Cria()//Creates a button and sets it up
+    }
+
+    void Update()
     {
-        player.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (true);
-    	if(!hasStuff)
-    	{
-	    	playersArray = GameObject.FindGameObjectsWithTag("Player");
-	    	for(int i = 0; i < playersArray.Length; i++) //O ideal deve ser usar "foreach"
-	    	{
+        playersArray = GameObject.FindGameObjectsWithTag("Player");
+        if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount)
+        {
+            Destroi();
+            CriaBotoes();            
+        }
 
-                //Debug.Log("Criou botao");
-	    		textButton = playersArray[i].name; //Nome do player 
-	  			GameObject alvo = playersArray[i]; 
 
-		        GameObject button = (GameObject)Instantiate(buttonPrefab);
-                //GameObject button = Instantiate(buttonPrefab);
+        foreach(Transform child in panelToAttachButtonsTo.transform)
+        {
+            if(playerz.GetComponent<Atributos>().alvo.name == child.transform.GetChild(0).GetComponent<Text>().text)
+            {
+                
+                ColorBlock cb = child.GetComponent<Button>().colors;
+                cb.normalColor = new Vector4(0f,10f,0f,10f);
+                child.GetComponent<Button>().colors = cb;
+            }
+        }
 
-                //NetworkServer.SpawnWithClientAuthority(button, connectionToClient);
+    }
 
-		        button.transform.SetParent(panelToAttachButtonsTo.transform);//Setting button parent
-		        button.GetComponent<Button>().onClick.AddListener(() => CmdOnClick(alvo));//Setting what button does when clicked
+    public void CriaBotoes()
+    {
+        foreach(GameObject player in playersArray)
+        {
+            GameObject alvo = player;
+            textButton = alvo.name;
 
-				//Next line assumes button has child with text as first gameobject like button created from GameObject->UI->Button
-		        button.transform.GetChild(0).GetComponent<Text>().text = textButton;//Changing text	
-		        hasStuff = true;
-    	    }
+            GameObject button = (GameObject)Instantiate(buttonPrefab);
+
+            button.transform.SetParent(panelToAttachButtonsTo.transform);// Defina como Parent o panelAlvos
+            button.GetComponent<Button>().onClick.AddListener(() => CmdOnClick(alvo));// Adiciona funcao no click
+
+            //Pega o primeiro Child do objeto (botao), que eh Text, e muda ele
+            button.transform.GetChild(0).GetComponent<Text>().text = textButton;
+
+       }        
+    }
+
+    public void AtivaPainel()
+    {
+        panelToAttachButtonsTo.SetActive(true);
+    }
+
+    public void Desativa()
+    {	//panelToAttachButtonsTo
+    	foreach (Transform child in panelToAttachButtonsTo.transform)
+        {
+    		foreach(GameObject player in playersArray)
+            {
+                if (player.name == child.GetComponent<Text>().text && player.GetComponent<Atributos>().vidas == 0)
+                {
+                    child.GetComponent<Toggle>().interactable = false;
+                }
+            }
+    		
     	}
-    	
+
     }
 
     public void Destroi()
-    {	//panelToAttachButtonsTo
-    	foreach (Transform child in panelToAttachButtonsTo.transform){
-    		GameObject.Destroy(child.gameObject);
-    		hasStuff = false;
-    	}
+    {   
+        foreach (Transform child in panelToAttachButtonsTo.transform){
+            GameObject.Destroy(child.gameObject);
+        }
 
     }
     
@@ -67,14 +105,25 @@ public class ButtonCreator : NetworkBehaviour
     public void CmdOnClick(GameObject target)
     {
         Debug.Log("Botao de alvo clicado..");
-    	CmdPedeAlvo(target);
+        if(playerz.GetComponent<Atributos>().alvo == target)
+        {
+            playerz.GetComponent<Atributos>().alvo = null;
+            return;    
+        }
+        else
+        {
+            CmdPedeAlvo(target);    
+        }
+
+
+    	
 
     }
 
     void CmdPedeAlvo(GameObject target)
     {
         Debug.Log("Pedindo alvo chamado " +target.name);
-        player.GetComponent<Atributos>().alvo = target;
+        playerz.GetComponent<Atributos>().alvo = target;
     }
 
 

@@ -292,8 +292,8 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().estaDefendendo = false;
 		go.GetComponent<Atributos>().alvo = null;
 
-		if(go.GetComponent<botIA>() == null) //Se nao for um bot
-			go.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos
+		//if(go.GetComponent<botIA>() == null) //Se nao for um bot
+		//	go.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos
 
 		//if(isLocalPlayer)
 			//go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);

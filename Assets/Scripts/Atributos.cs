@@ -29,8 +29,10 @@ public class Atributos : NetworkBehaviour {
 	public GameObject alvo;
 	public GameObject alvosPanel;
 
+	public GameObject playerModel;
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
+
 	public GameObject someInfoCanvas;
 	public GameObject toggleGroup;
 
@@ -40,6 +42,7 @@ public class Atributos : NetworkBehaviour {
 	public GameObject[] playersArray;
 	public GameObject ManagerPrefab; 
 
+	//[SyncVar (hook="WhenAllReady")] public bool allReady;
 	[SyncVar] public bool allReady;
 
 	public GameObject[] cameras;
@@ -51,7 +54,14 @@ public class Atributos : NetworkBehaviour {
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
 		//Olha para o centro da arena (hardcoded)
-		this.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
+		playerModel.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
+
+		//Vira a camera tambem
+		if(isLocalPlayer)
+		{
+			playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
+		}
+		
 
 		//Importa o animator (se pa da pra fazer direto pelo editor)
 		//anim = GetComponent<Animator>();
@@ -89,6 +99,7 @@ public class Atributos : NetworkBehaviour {
 	
 	// Update is called once per frame
 	void Update () { 
+
 
 		//Atualiza a lista de players
 		playersArray = GameObject.FindGameObjectsWithTag("Player");
@@ -165,6 +176,16 @@ public class Atributos : NetworkBehaviour {
 	{
 		Debug.Log("OnNameChange: mudando nome local de "+this.name+" para "+newNamez);
 		newName = newNamez;
+
+		if(isLocalPlayer){
+		foreach(Transform child in alvosPanel.transform)
+		{
+			if(child.name == this.name)
+			{
+				child.GetComponent<Text>().text = newNamez;
+			}
+		}}
+
 		gameObject.name = newNamez;
 	}
 
@@ -212,7 +233,7 @@ public class Atributos : NetworkBehaviour {
 	//Funcao para ser chamada quando todos os estiverem prontos
 	void WhenAllReady() {
 
-		if(isLocalPlayer) //Faz os seguintes comandos apenas para quem for player
+		if(this.GetComponent<botIA>() == null) //Faz os seguintes comandos apenas para quem for player
 		{		
 			//Desativa os toggles do jogador
 			GameObject[] toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
@@ -221,8 +242,9 @@ public class Atributos : NetworkBehaviour {
 				tog.GetComponent<Toggle>().isOn = false;
 			}
 	
-			//Desativa o painel de alvos
-			this.alvosPanel.SetActive (false);	
+			//Desativa o painel de alvos e os botoes de alvo
+			this.alvosPanel.SetActive (false);
+			//this.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos	
 		}
 		//Termina resetando
 		allReady = false;	
