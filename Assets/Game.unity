@@ -489,9 +489,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faddaab0ee7eb4b078e3453d10cb89a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameObjectArray: []
-  gameObjectList: []
-  playersList: 
+  playersArray: []
   goMorto: []
   allReadyManager: 0
   toggles: []
@@ -643,6 +641,53 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 10, y: 2.220446e-16, z: 10}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!1001 &1172625560
+Prefab:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: 224137946447153972, guid: d5138c16859e64323b200506a4de0f57,
+        type: 2}
+      propertyPath: m_LocalPosition.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalPosition.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalPosition.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalPosition.z
+      value: -5
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_LocalRotation.w
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4777026374569722, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+      propertyPath: m_RootOrder
+      value: 8
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: d5138c16859e64323b200506a4de0f57, type: 2}
+  m_IsPrefabAsset: 0
 --- !u!1 &1296265000
 GameObject:
   m_ObjectHideFlags: 0
@@ -793,7 +838,7 @@ Camera:
   field of view: 30
   orthographic: 0
   orthographic size: 5
-  m_Depth: 1
+  m_Depth: 0
   m_CullingMask:
     serializedVersion: 2
     m_Bits: 4294967295
@@ -926,8 +971,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   manager: {fileID: 0}
   showGUI: 1
-  offsetX: -7
-  offsetY: -36
+  offsetX: 91
+  offsetY: 51
 --- !u!114 &1820862568
 MonoBehaviour:
   m_ObjectHideFlags: 0

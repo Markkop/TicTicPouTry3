@@ -26,29 +26,27 @@ public class Atributos : NetworkBehaviour {
 	[SyncVar] public int balas = 0;
 	public int maxBalas = 1;	
 
+	public GameObject[] playersArray;
 	public GameObject alvo;
+	public GameObject mortoPor; 
 	public GameObject alvosPanel;
 
+	public GameObject[] cameras;
 	public GameObject playerModel;
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
-
 	public GameObject someInfoCanvas;
 	public GameObject toggleGroup;
+	public Toggle atiraButton;
 
 	public bool playerVencedor = false;
 	public bool playerMorto = false;
 
-	public GameObject[] playersArray;
-
-	public GameObject mortoPor; 
-
-	public Toggle atiraButton;
 
 	//[SyncVar (hook="WhenAllReady")] public bool allReady;
 	[SyncVar] public bool allReady;
 
-	public GameObject[] cameras;
+
 
 
 	// Use this for initialization
@@ -84,7 +82,7 @@ public class Atributos : NetworkBehaviour {
 		//Caso contrario, o mesmo painel aparece para todos de forma sobreposta
 		if (isLocalPlayer)
 		{
-			cameras[0].SetActive(false);
+			//cameras[0].SetActive(false);
 			playerCamera.SetActive(true);
 			playerCanvas.SetActive(true);
 		}
@@ -135,7 +133,7 @@ public class Atributos : NetworkBehaviour {
 			}
 			if(mortos == playersArray.Length - 1 && this.vidas > 0)
 			{
-				OnVictory();
+				//OnVictory();
 			}
 			else
 			{
@@ -205,7 +203,7 @@ public class Atributos : NetworkBehaviour {
 		if(isLocalPlayer)
 		{
 			//Muda de camera
-			cameras[1].active = false;
+			playerCamera.SetActive(false);
 			cameras[0].active = true;
 
 			//Desativa painel

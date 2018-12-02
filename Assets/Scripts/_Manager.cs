@@ -8,9 +8,9 @@ using System.Linq;
 
 public class _Manager : NetworkBehaviour {
 
-	public GameObject[] gameObjectArray;
-	public List<GameObject> gameObjectList = new List<GameObject>();
-	public List<int> playersList = new List<int>();
+	public GameObject[] playersArray;
+	//public List<GameObject> gameObjectList = new List<GameObject>();
+	//public List<int> playersList = new List<int>();
 	public GameObject[] goMorto;
 
 	public bool allReadyManager = false;
@@ -22,12 +22,14 @@ public class _Manager : NetworkBehaviour {
 
 	public bool fimDeJogo = false;
 
+
 	int nomesIndex = 0;
 	float timeLeft = 5;
 
 	void Start () {
 
-		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
+
+		playersArray = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	void Update () {
@@ -41,7 +43,7 @@ public class _Manager : NetworkBehaviour {
 		//Debug de coisas
 		if( Input.GetKeyDown("2") )
 		{
-			foreach(GameObject go in gameObjectArray)
+			foreach(GameObject go in playersArray)
 			{
 				go.GetComponent<Atributos>().newName = "trxao";
 				//go.name = "troxa";
@@ -51,7 +53,15 @@ public class _Manager : NetworkBehaviour {
 		//Caso tenha acabado o jogo
 		if(fimDeJogo)
 		{
-			//Reduz um segundo de timeLeft
+			foreach(GameObject player in playersArray)
+			{
+				if(player.GetComponent<botIA>() == null)
+				{
+					player.GetComponent<Atributos>().playerCamera.SetActive(false);
+				}
+			}
+
+			//Timer de 5 segundos
 			timeLeft -= Time.deltaTime;
 			if(timeLeft < 0)
 			{
@@ -93,10 +103,10 @@ public class _Manager : NetworkBehaviour {
 	[Command]
 	void CmdlistaPlayers() //Nao esta sendo utilizada
 	{
-		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
+		playersArray = GameObject.FindGameObjectsWithTag("Player");
 
 		//Para cada jogador
-		foreach(GameObject go in gameObjectArray)
+		foreach(GameObject go in playersArray)
 		{
 			string oldGoName = go.name;
 			string newGoName = "Jogador "+nomesIndex;
@@ -110,7 +120,7 @@ public class _Manager : NetworkBehaviour {
 				go.name = go.GetComponent<Atributos>().newName;
 
 				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
-				foreach (GameObject go2 in gameObjectArray)
+				foreach (GameObject go2 in playersArray)
 				{
 					if(go.name == go2.name && go2 != go) 
 					{
@@ -137,10 +147,10 @@ public class _Manager : NetworkBehaviour {
 	[Command]
 	void CmdMudaNome2()
 	{
-		gameObjectArray = GameObject.FindGameObjectsWithTag("Player");
+		playersArray = GameObject.FindGameObjectsWithTag("Player");
 
 		//Para cada jogador
-		foreach(GameObject go in gameObjectArray)
+		foreach(GameObject go in playersArray)
 		{
 			string oldGoName = go.name;
 			string newGoName = "Jogador "+nomesIndex;
@@ -154,7 +164,7 @@ public class _Manager : NetworkBehaviour {
 				go.name = go.GetComponent<Atributos>().newName;
 
 				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
-				foreach (GameObject go2 in gameObjectArray)
+				foreach (GameObject go2 in playersArray)
 				{
 					if(go.name == go2.name && go2 != go) 
 					{
@@ -192,9 +202,9 @@ public class _Manager : NetworkBehaviour {
 
 	void CheckReady() // Verifica se todos estao prontos
 	{
-		for(int i = 0; i < gameObjectArray.Length; i++) //Para cada jogador i
+		for(int i = 0; i < playersArray.Length; i++) //Para cada jogador i
 		{
-			if(gameObjectArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
+			if(playersArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
 			{
 				Debug.Log("Aguardando todos prontos...");
 				allReadyManager = false; //retorna falso e sai da funcao
@@ -209,7 +219,7 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase1() // Resolve defesas e carregamentos
 	{
 		//Debug.Log("Resolvendo Phase 1");
-		foreach (GameObject go in gameObjectArray) //Para cada jogador declarado
+		foreach (GameObject go in playersArray) //Para cada jogador declarado
 		{	
 			go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
@@ -235,7 +245,7 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase2() //Verifica se ha balas
 	{
 		//Debug.Log("Resolvendo Phase 2");
-		foreach (GameObject go in gameObjectArray) //Para cada jogador...
+		foreach (GameObject go in playersArray) //Para cada jogador...
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar...
 			{
@@ -264,7 +274,7 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase3() //Resolve ataque e defesa
 	{
 		//Debug.Log("Resolvendo Phase 3");
-		foreach (GameObject go in gameObjectArray) // Para cada jogador
+		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
 				{
@@ -295,7 +305,7 @@ public class _Manager : NetworkBehaviour {
 	void ResolvePhase4() //Verifica vidas
 	{
 		//Debug.Log("Resolvendo Phase 4");
-		foreach (GameObject go in gameObjectArray) // Para cada jogador
+		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
 			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
@@ -328,7 +338,7 @@ public class _Manager : NetworkBehaviour {
 		}
 
 		int playersMortos = 0;
-		foreach (GameObject go in gameObjectArray)
+		foreach (GameObject go in playersArray)
 		{	
 			
 			if(go.name == "Morto")
@@ -337,7 +347,7 @@ public class _Manager : NetworkBehaviour {
 			}
 
 		}
-		if (playersMortos == gameObjectArray.Length - 1)
+		if (playersMortos == playersArray.Length - 1)
 		{
 			//NetworkManager.StopClient
 			Debug.Log("FIM DE JOGO");

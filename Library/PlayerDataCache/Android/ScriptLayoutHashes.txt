@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-/home/cirogomes/game1/Built/game1apk.apk
+/home/cirogomes/game1/Built/ttpv2.apk
 SceneListBegin?
 Assets/Game.unity
 SceneListEnd?
@@ -146,8 +146,9 @@ da21fc3f8056b1f91c3dd09c7bf4f90a UnityEngine.Networking.dll:UnityEngine.Networki
 fc061f3ae8a876c0687e86378d4a447c UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 7ca56e063bd071986fff4f513cc4f477 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
 0329a48413ee6a60aaabb411451ae6bf Assembly-CSharp.dll:UnityChan.ThirdPersonCamera
-38a4042ba8fb20b455bba06b7f3b9f70 Assembly-CSharp.dll:.ButtonCreator
+9a2f01fc2eefe33a5c86405d24db1cd1 Assembly-CSharp.dll:.ButtonCreator
 72a8523b432c0a5317826b7a9e0a0e79 Unity.TextMeshPro.dll:TMPro.PackageResourceImporterWindow
+7c560ac52325456a7b8d3ce64956396a Assembly-CSharp.dll:.alvoButton
 e53cc67d84060d628c7f03fc725766d8 Unity.TextMeshPro.dll:TMPro.TMP_FontAsset
 0eaa6611a2fe3f9bafc8639126b2e1a8 Assembly-CSharp.dll:.makeAnimation
 392c5b921098bd4c139d9146d0efa6d7 Unity.TextMeshPro.dll:TMPro.TMP_Settings
@@ -180,7 +181,7 @@ ff63eb163a7626500867a9e490da06d4 Assembly-CSharp.dll:UnityChan.SpringBone
 3d3d9994da0b5628e87ab09fcefb0974 Assembly-CSharp.dll:UnityChan.RandomWind
 e04611b8715e6833d2bd7010fc6be10b Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet
 eba22b52ae82f177f2a34f0906950a43 Assembly-CSharp.dll:UnityChan.UnityChanControlScriptWithRgidBody
-a3853ebcb3b659c362da796cd225bb64 Assembly-CSharp.dll:.Atributos
+f79a199fcf210c3abbfbcc3eaf0816bb Assembly-CSharp.dll:.Atributos
 2f9af06a78208a67db480e9bfed4a076 Unity.TextMeshPro.dll:TMPro.TextMeshPro
 9318334b30e9f195f573b2ce00154b95 Unity.TextMeshPro.dll:TMPro.TMP_ColorGradient
 93307bd34e39d73fd24e00ec39c25a91 Unity.TextMeshPro.dll:TMPro.TMP_SubMesh

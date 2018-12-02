@@ -168,7 +168,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   bot: {fileID: 114774718661530756}
   botDefensor: 0
-  botSanguinario: 1
+  botSanguinario: 0
   botOraculo: 0
 --- !u!114 &114053771624531908
 MonoBehaviour:
@@ -375,6 +375,7 @@ MonoBehaviour:
   playerMorto: 0
   playersArray: []
   mortoPor: {fileID: 0}
+  atiraButton: {fileID: 0}
   allReady: 0
   cameras: []
 --- !u!222 &222854245787248422

@@ -25,93 +25,110 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 	// Update is called once per frame
 	void Update () {
 
+		// Se for LocalPlayer, retorna
+		// O bot eh pra rodar apenas como server
 		if (isLocalPlayer)
 		{
 			return;
 		}
-		else
-		{
-			BotIA();
-		}
 
-	}
-
-
-	void BotIA()
-	{
+		// Se o bot estiver morto, retorna
 		if(this.GetComponent<Atributos>().vidas == 0)
 		{
 			return;
 		}
 
-		if (botDefensor == true)
+		// Apenas defender
+		if(botDefensor == true)
+			BotDefensor();
+
+		// Recarregar e atira sempre
+		if(botSanguinario == true)
+			BotSanguinario();
+
+		// So atira em quem nao estiver defendendo
+		// Se todos defenderem, entao defende.
+		if(botOraculo == true)
+			BotOraculo();
+
+		
+
+	}
+
+
+	void BotDefensor()
+	{
+		//Enquanto ninguem estiver pronto
+		if (allReady != true)
 		{
-			if (allReady != true)
+			bot.vaiDefender = true;
+			bot.ready = true;	
+		}
+	}
+
+	void BotSanguinario()
+	{
+		if (allReady != true)
+		{
+			// Prioridade em recarregar pra ter 1 bala
+			if(bot.balas < 1)
 			{
-				bot.vaiDefender = true;
+				bot.vaiRecarregar = true;
 				bot.ready = true;	
 			}
-		}
-
-		if (botSanguinario == true) // Sempre ataca alguem 
-		{
-			if (allReady != true)
+			// 
+			else
 			{
-				if(bot.balas < 1)
-				{
-					bot.vaiRecarregar = true;
-					bot.ready = true;	
-				}
-				else
-				{
-					bot.vaiAtirar = true;
-					bot.vaiRecarregar = false;
+				bot.alvo = PegaPlayer(); //Foca no player
+				//bot.alvo = RandomMenosSiMesmo(); //Random
 
-					playersArray = GameObject.FindGameObjectsWithTag("Player");
+				bot.vaiAtirar = true;
+				bot.vaiRecarregar = false;
 
-					bot.alvo = PegaPlayer(); //Foca no player
-					//bot.alvo = RandomMenosSiMesmo(); //Random
-					bot.ready = true;	
+				bot.ready = true;	
 
-				}
 			}
 		}
+	}
 
-		if (botOraculo == true) // Soh atira em que nao estiver defendendo. Se nao houver: defende
+	void BotOraculo()
+	{
+		if (allReady != true)
 		{
-			if (allReady != true)
+			if(bot.balas < 1)
 			{
-				if(bot.balas < 1)
-				{
-					bot.vaiRecarregar = true;
-					bot.ready = true;	
-				}
-				else
-				{
-					playersArray = GameObject.FindGameObjectsWithTag("Player");
-					List<GameObject> list = new List<GameObject>();
+				bot.vaiRecarregar = true;
+				bot.ready = true;	
+			}
+			else
+			{
+				playersArray = GameObject.FindGameObjectsWithTag("Player");
+				List<GameObject> list = new List<GameObject>();
 
-					foreach (GameObject go in playersArray) //para cada player em jogo
+				foreach (GameObject go in playersArray) //para cada player em jogo (incluindo bots)
+				{
+					if(go != gameObject && go.GetComponent<Atributos>().vaiDefender == false)
 					{
-						if(go != gameObject && go.GetComponent<Atributos>().vaiDefender == false)
+						if(go.GetComponent<Atributos>().vidas > 0)
 						{
 							list.Add(go); 	//Bota numa lista apenas players que
-											//nao defendem e nao sao o objeto com o script botIA
+											//nao defendem e que nao eh si mesmo
 						}
+						
 					}
-					if (list.Count != 0) // Se essa lista nao estiver vazia
-					{
-						bot.vaiAtirar = true;
-						bot.vaiDefender = false;
-						bot.alvo = list[Random.Range(0,list.Count)]; //Ataca alguem dela
-						bot.ready = true;
-					}
-					else // Senao, defende
-					{
-						bot.vaiDefender = true;
-						bot.vaiAtirar = false;
-						bot.ready = true;						
-					}
+				}
+				if (list.Count != 0) // Se essa lista nao estiver vazia
+				{
+					bot.vaiAtirar = true;
+					bot.vaiDefender = false;
+					bot.alvo = list[Random.Range(0,list.Count)]; //Ataca alguem dela
+					bot.ready = true;
+				}
+				else // Senao, defende
+				{
+					bot.vaiDefender = true;
+					bot.vaiAtirar = false;
+					bot.ready = true;						
 				}
 			}
 		}

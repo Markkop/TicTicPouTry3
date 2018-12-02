@@ -16,18 +16,24 @@ public class keepFacingCamera : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		// players = GameObject.FindGameObjectsWithTag("Player");
-		// foreach(GameObject go in players)
-		// {
-		// 	if (go == isLocalPlayer)
-		// 	{
-		// 		transform.LookAt(go.transform);		
-		// 	}
-		// }
+		players = GameObject.FindGameObjectsWithTag("Player");
+		foreach(GameObject player in players)
+		{
+			//Se o jogador for ele mesmo (localPlayer)
+			if(player.GetComponent<NetworkIdentity>().isLocalPlayer == true)
+			{
+				if(player.GetComponent<Atributos>().playerCamera.active == true)
+				{
+					transform.LookAt(player.GetComponent<Atributos>().playerCamera.transform);	
+				}
+				else
+				{
+					transform.LookAt(Camera.main.transform);	
+				}
+				
+			}
+		}
 		
-		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
-		//players = GameObject.FindGameObjectsWithTag("Player");
-		transform.LookAt(Camera.main.transform);		
 
 		
 	}

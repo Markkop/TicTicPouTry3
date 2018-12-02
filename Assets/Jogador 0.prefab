@@ -6027,12 +6027,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114258198482548744}
-        m_MethodName: CallCmdSpawnBot
-        m_Mode: 1
+        m_MethodName: CmdSpawnBot
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 3
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -6480,11 +6480,11 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 114258198482548744}
         m_MethodName: CmdSpawnBot
-        m_Mode: 1
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -7289,12 +7289,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114258198482548744}
-        m_MethodName: CallCmdSpawnBot
-        m_Mode: 1
+        m_MethodName: CmdSpawnBot
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -7479,20 +7479,20 @@ MonoBehaviour:
   vidas: 2
   balas: 2
   maxBalas: 1
+  playersArray: []
   alvo: {fileID: 0}
+  mortoPor: {fileID: 0}
   alvosPanel: {fileID: 1730796695160632}
+  cameras: []
   playerModel: {fileID: 1154242173981658}
   playerCamera: {fileID: 1280009719880330}
   playerCanvas: {fileID: 1457931789403954}
   someInfoCanvas: {fileID: 1964120884789712}
   toggleGroup: {fileID: 1624387906259258}
+  atiraButton: {fileID: 114938569299249742}
   playerVencedor: 0
   playerMorto: 0
-  playersArray: []
-  mortoPor: {fileID: 0}
-  atiraButton: {fileID: 114938569299249742}
   allReady: 0
-  cameras: []
 --- !u!114 &114967451815033618
 MonoBehaviour:
   m_ObjectHideFlags: 1

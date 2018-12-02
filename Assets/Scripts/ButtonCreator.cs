@@ -34,6 +34,7 @@ public class ButtonCreator : NetworkBehaviour
 
     void Update()
     {
+        //Se o numero de jogadores mudar, refaz os botoes
         playersArray = GameObject.FindGameObjectsWithTag("Player");
         if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount)
         {
@@ -41,6 +42,7 @@ public class ButtonCreator : NetworkBehaviour
             CriaBotoes();            
         }
 
+        //Atualiza nomes caso alguem mude de nome (gambiarra)
         foreach(Transform child in panelToAttachButtonsTo.transform)
         {
             if(child.GetComponent<alvoButton>().alvo.ToString() != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
@@ -64,7 +66,7 @@ public class ButtonCreator : NetworkBehaviour
             GameObject button = (GameObject)Instantiate(buttonPrefab);
 
             //Bota o botao no painel 
-            button.transform.SetParent(panelToAttachButtonsTo.transform);
+            button.transform.SetParent(panelToAttachButtonsTo.transform, false);
 
             //Pega o Toggle e bota numa variavel para facilitar o coding
             Toggle m_Toggle = button.GetComponent<Toggle>();
