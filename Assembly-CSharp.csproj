@@ -57,6 +57,7 @@
      <Compile Include="Assets\Scenes\makeAnimation.cs" />
      <Compile Include="Assets\Scripts\_Manager.cs" />
      <Compile Include="Assets\Scripts\addBot.cs" />
+     <Compile Include="Assets\Scripts\alvoButton.cs" />
      <Compile Include="Assets\Scripts\Atributos.cs" />
      <Compile Include="Assets\Scripts\botIA.cs" />
      <Compile Include="Assets\Scripts\ButtonCreator.cs" />

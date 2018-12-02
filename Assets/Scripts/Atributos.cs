@@ -40,7 +40,10 @@ public class Atributos : NetworkBehaviour {
 	public bool playerMorto = false;
 
 	public GameObject[] playersArray;
-	public GameObject ManagerPrefab; 
+
+	public GameObject mortoPor; 
+
+	public Toggle atiraButton;
 
 	//[SyncVar (hook="WhenAllReady")] public bool allReady;
 	[SyncVar] public bool allReady;
@@ -116,7 +119,7 @@ public class Atributos : NetworkBehaviour {
 
 		//Ao morrer
 		if(vidas == 0)
-			OnDeath();
+			CmdOnDeath();
 
 
 		//Quando o player for vitorioso
@@ -189,7 +192,8 @@ public class Atributos : NetworkBehaviour {
 		gameObject.name = newNamez;
 	}
 
-	void OnDeath() {
+	[Command]
+	void CmdOnDeath() {
 
 		if(playerMorto == true)
 		{
@@ -212,7 +216,25 @@ public class Atributos : NetworkBehaviour {
 
 
 		playerMorto = true;
-		this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
+
+		
+
+		//Workaround pra que o player/bot seja empurrado pra tras
+		//Nao entendi o porque de ter que usar diferentes formas de forca pra cada caso,
+		//Talvez por playerModelo ser child do Jogador 0 e a forca ser relativa a ele e
+		//nao a si mesmo
+		if(this.GetComponent<botIA>() == null)
+		{
+			playerModel.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
+			playerModel.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
+		}
+		else
+		{	
+			this.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
+			this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
+		}
+
+		//this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
 		//Debug.Log(this.name+ " esta morto");
 
 
@@ -243,7 +265,7 @@ public class Atributos : NetworkBehaviour {
 			}
 	
 			//Desativa o painel de alvos e os botoes de alvo
-			this.alvosPanel.SetActive (false);
+			//this.alvosPanel.SetActive (false);
 			//this.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos	
 		}
 		//Termina resetando
@@ -381,16 +403,7 @@ public class Atributos : NetworkBehaviour {
 	[Command]
 	public void CmdIsReady(bool boleano)
 	{
-		if(boleano == true)
-		{
-			//A fazer: desativar toggle das acoes tb
-			//this.alvosPanel.gameObject.SetActive (false);
-			ready = true;
-		}
-		else
-		{
-			ready = false;
-		}
+		ready = boleano;
 	}
 
 	public void EscolheAlvo(int player)

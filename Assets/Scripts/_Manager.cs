@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using System.Linq;
 
 public class _Manager : NetworkBehaviour {
@@ -22,6 +23,7 @@ public class _Manager : NetworkBehaviour {
 	public bool fimDeJogo = false;
 
 	int nomesIndex = 0;
+	float timeLeft = 5;
 
 	void Start () {
 
@@ -46,9 +48,25 @@ public class _Manager : NetworkBehaviour {
 			}
 		}
 		
+		//Caso tenha acabado o jogo
 		if(fimDeJogo)
 		{
-			return;
+			//Reduz um segundo de timeLeft
+			timeLeft -= Time.deltaTime;
+			if(timeLeft < 0)
+			{
+				Debug.Log("Desconectando e resetando scene...");
+				SceneManager.LoadScene(0);
+				NetworkManager.singleton.StopClient();
+				NetworkManager.singleton.StopServer();
+				return;
+				
+			}
+			else
+			{
+				Debug.Log("Fim de jogo. "+Mathf.Round(timeLeft)+" segundos para encerrar...");
+				return;
+			}
 		}
 
 		CmdMudaNome2();
@@ -154,6 +172,8 @@ public class _Manager : NetworkBehaviour {
 
 
 		}
+
+		
 	}
 
 	//Por algum motivo esse (e outros) ClientRpc nao estao funcionando corretamente.
@@ -255,6 +275,10 @@ public class _Manager : NetworkBehaviour {
 						{
 							alvo1.GetComponent<Atributos>().levouTiro = true;
 							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+							if(alvo1.GetComponent<Atributos>().vidas == 0)
+							{
+								alvo1.GetComponent<Atributos>().mortoPor = go;
+							}
 						}
 
 						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
@@ -277,10 +301,11 @@ public class _Manager : NetworkBehaviour {
 			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
+				go.GetComponent<Atributos>().newName = "Morto";
 				//go.GetComponent<BoxCollider>().enabled = true;
 				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
 				//go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
-				go.name = "Morto";
+				//go.name = "Morto";
 				//go.tag = "Untagged"; //Esta crashando quando remove a tag
 			}
 
@@ -302,21 +327,25 @@ public class _Manager : NetworkBehaviour {
 
 		}
 
-		int a = 0;
+		int playersMortos = 0;
 		foreach (GameObject go in gameObjectArray)
 		{	
 			
 			if(go.name == "Morto")
 			{
-				a++;
+				playersMortos++;
 			}
 
 		}
-		if (a == gameObjectArray.Length - 1)
+		if (playersMortos == gameObjectArray.Length - 1)
 		{
 			//NetworkManager.StopClient
 			Debug.Log("FIM DE JOGO");
 			fimDeJogo = true;
+
+
+
+
 		}
 
 
