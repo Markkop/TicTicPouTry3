@@ -21,6 +21,7 @@ public class _Manager : NetworkBehaviour {
 	public GameObject ManagerPrefab;
 
 	public bool fimDeJogo = false;
+	public GameObject winner;
 
 
 	int nomesIndex = 0;
@@ -285,6 +286,8 @@ public class _Manager : NetworkBehaviour {
 						{
 							alvo1.GetComponent<Atributos>().levouTiro = true;
 							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+							if(alvo1.GetComponent<NetworkIdentity>().isLocalPlayer) alvo1.GetComponent<Animator>().SetTrigger("gotShot2");
+
 							if(alvo1.GetComponent<Atributos>().vidas == 0)
 							{
 								alvo1.GetComponent<Atributos>().mortoPor = go;
@@ -347,15 +350,26 @@ public class _Manager : NetworkBehaviour {
 			}
 
 		}
+
+		//Se houver apenas um jogador vivo
 		if (playersMortos == playersArray.Length - 1)
 		{
+			
+			foreach(GameObject player in playersArray)
+			{
+				if(player.GetComponent<Atributos>().vidas > 0)
+				{
+					//Atribui vitoria ao player vencedor
+					player.GetComponent<Atributos>().playerVencedor = true;
+					winner = player;
+					if(winner.GetComponent<NetworkIdentity>().isLocalPlayer) winner.GetComponent<Animator>().SetTrigger("winner");
+
+				}
+			}
 			//NetworkManager.StopClient
-			Debug.Log("FIM DE JOGO");
+			Debug.Log("||FIM DE JOGO|| . Vencedor: "+winner.name);
+
 			fimDeJogo = true;
-
-
-
-
 		}
 
 

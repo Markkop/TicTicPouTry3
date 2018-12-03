@@ -32,7 +32,6 @@ public class Atributos : NetworkBehaviour {
 	public GameObject alvosPanel;
 
 	public GameObject[] cameras;
-	public GameObject playerModel;
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
 	public GameObject someInfoCanvas;
@@ -41,7 +40,7 @@ public class Atributos : NetworkBehaviour {
 
 	public bool playerVencedor = false;
 	public bool playerMorto = false;
-
+	private bool firstSpawn = false;
 
 	//[SyncVar (hook="WhenAllReady")] public bool allReady;
 	[SyncVar] public bool allReady;
@@ -55,18 +54,16 @@ public class Atributos : NetworkBehaviour {
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
 		//Olha para o centro da arena (hardcoded)
-		playerModel.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
+		this.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
 
-		//Vira a camera tambem
+		//Vira a camera tambem e roda animacao
 		if(isLocalPlayer)
 		{
 			playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
 		}
+
 		
-
-		//Importa o animator (se pa da pra fazer direto pelo editor)
-		//anim = GetComponent<Animator>();
-
+		
 		//Tentei chamar a funcao CmdChangeName() no Start(), mas clients nao eram ouvidos sobre
 		//a mudanca, entao passei a chamar no Update(). Fica a dica
 		//CmdChangeName();
@@ -96,11 +93,36 @@ public class Atributos : NetworkBehaviour {
 			}
 		}
 
+
+
 	}
 	
 	// Update is called once per frame
 	void Update () { 
 
+		if(isLocalPlayer)
+		{
+			//Spawn (em breve apagar)
+			if(firstSpawn == false)
+			{
+				//Debug.Log("CARAI");
+				//anim.Play("WAIT02");
+				firstSpawn = true;
+			}
+			//Idle
+			else
+			{
+	
+			}	
+
+			//Se for fazer algo pra bot, precisa readaptar o que acontece quando o player ganha
+			if(playerVencedor == true)
+			{
+				//anim.Play("WIN00");
+				return;
+			}
+		}
+		
 
 		//Atualiza a lista de players
 		playersArray = GameObject.FindGameObjectsWithTag("Player");
@@ -111,42 +133,23 @@ public class Atributos : NetworkBehaviour {
 			//this.name = newName;
 		}*/
 
+
 		//Chama quando todos estiverem prontos. Serve apenas pra desativar os Toggles por enquanto
 		if(allReady == true)
 			WhenAllReady();
 
 		//Ao morrer
 		if(vidas == 0)
-			CmdOnDeath();
+			OnDeath();
 
 
-		//Quando o player for vitorioso
-		if(isLocalPlayer && this.GetComponent<botIA>() == null)
-		{
-			int mortos = 0;
-			foreach(GameObject go in playersArray)
-			{
-				if(go.name == "Morto")
-				{
-					mortos++;
-				}
-			}
-			if(mortos == playersArray.Length - 1 && this.vidas > 0)
-			{
-				//OnVictory();
-			}
-			else
-			{
-				playerVencedor = false;
-			}
-		}
 
 		//Idle
 		if(isLocalPlayer && this.GetComponent<botIA>() == null)
 		{
 			if(playerMorto == false && playerVencedor == false)
 			{
-				anim.Play("WAIT00");
+				//anim.Play("WAIT00");
 			}
 		}
 
@@ -190,8 +193,8 @@ public class Atributos : NetworkBehaviour {
 		gameObject.name = newNamez;
 	}
 
-	[Command]
-	void CmdOnDeath() {
+	
+	void OnDeath() {
 
 		if(playerMorto == true)
 		{
@@ -215,22 +218,8 @@ public class Atributos : NetworkBehaviour {
 
 		playerMorto = true;
 
-		
-
-		//Workaround pra que o player/bot seja empurrado pra tras
-		//Nao entendi o porque de ter que usar diferentes formas de forca pra cada caso,
-		//Talvez por playerModelo ser child do Jogador 0 e a forca ser relativa a ele e
-		//nao a si mesmo
-		if(this.GetComponent<botIA>() == null)
-		{
-			playerModel.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
-			playerModel.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
-		}
-		else
-		{	
-			this.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
-			this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
-		}
+		this.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
+		this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
 
 		//this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
 		//Debug.Log(this.name+ " esta morto");
