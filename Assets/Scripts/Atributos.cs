@@ -54,7 +54,7 @@ public class Atributos : NetworkBehaviour {
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
 		//Olha para o centro da arena (hardcoded)
-		this.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));
+		this.GetComponent<Transform>().LookAt(new Vector3(0f,this.GetComponent<Transform>().position[1],0f));
 
 		//Vira a camera tambem e roda animacao
 		if(isLocalPlayer)
@@ -219,7 +219,7 @@ public class Atributos : NetworkBehaviour {
 		playerMorto = true;
 
 		this.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
-		this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
+		this.GetComponent<Rigidbody>().AddForce(transform.forward * -8000);
 
 		//this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
 		//Debug.Log(this.name+ " esta morto");

@@ -12,7 +12,9 @@ public class addBot : NetworkBehaviour {
 	void Start () { }
 	
 	// Update is called once per frame
-	void Update () { }
+	void Update () { 
+
+	}
 
 	// Lista de bots
 	// 1 - Defensor

@@ -69,6 +69,7 @@ public class _Manager : NetworkBehaviour {
 				Debug.Log("Desconectando e resetando scene...");
 				SceneManager.LoadScene(0);
 				NetworkManager.singleton.StopClient();
+				NetworkManager.singleton.StopHost();
 				NetworkManager.singleton.StopServer();
 				return;
 				

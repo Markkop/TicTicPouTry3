@@ -58,10 +58,15 @@
      <Compile Include="Assets\Scripts\_Manager.cs" />
      <Compile Include="Assets\Scripts\addBot.cs" />
      <Compile Include="Assets\Scripts\alvoButton.cs" />
+     <Compile Include="Assets\Scripts\arenaCameraMoving.cs" />
      <Compile Include="Assets\Scripts\Atributos.cs" />
      <Compile Include="Assets\Scripts\botIA.cs" />
      <Compile Include="Assets\Scripts\ButtonCreator.cs" />
+     <Compile Include="Assets\Scripts\ChangeCameraButton.cs" />
      <Compile Include="Assets\Scripts\keepFacingCamera.cs" />
+     <Compile Include="Assets\Scripts\MenuButtons.cs" />
+     <Compile Include="Assets\Scripts\MyNetworkManager.cs" />
+     <Compile Include="Assets\Scripts\MyNetworkManagerHUD.cs" />
      <Compile Include="Assets\UnityChan\Scripts\AutoBlink.cs" />
      <Compile Include="Assets\UnityChan\Scripts\CameraController.cs" />
      <Compile Include="Assets\UnityChan\Scripts\FaceUpdate.cs" />
@@ -79,6 +84,7 @@
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eye_blend.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hair_ds.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_akarami_blend.shader" />
+     <None Include="Assets\Mega Fantasy Props Pack\README.txt" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hair.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_eyelash_blend.shader" />
      <None Include="Assets\UnityChan\Models\UnityChanShader\Shader\Unitychan_chara_hada.shader" />
