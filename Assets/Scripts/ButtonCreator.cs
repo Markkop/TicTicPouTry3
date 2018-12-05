@@ -123,18 +123,18 @@ public class ButtonCreator : NetworkBehaviour
     [Command]
     public void CmdToggleValueChanged(bool change, GameObject alvo)
     {
-        Debug.Log("Botao de alvo clicado.." +change);
+        //Debug.Log("Botao de alvo clicado.." +change);
         playerz.GetComponent<Atributos>().vaiAtirar = true;
         playerz.GetComponent<Atributos>().atiraButton.isOn = true;
 
         if(change == true)
         {
-            Debug.Log("Player recevendo alvo: "+alvo.name);
+           //Debug.Log("Player recevendo alvo: "+alvo.name);
             playerz.GetComponent<Atributos>().alvo = alvo;
         }
         else
         {
-            Debug.Log("Player resetando alvo");
+            //Debug.Log("Player resetando alvo");
             playerz.GetComponent<Atributos>().alvo = null;   
         }
         //playerz.GetComponent<Atributos>().alvo = this.GetComponent<alvoButton>().alvo;
@@ -156,7 +156,7 @@ public class ButtonCreator : NetworkBehaviour
 
     void CmdPedeAlvo(GameObject target)
     {
-        Debug.Log("Pedindo alvo chamado " +target.name);
+        //Debug.Log("Pedindo alvo chamado " +target.name);
         playerz.GetComponent<Atributos>().alvo = target;
     }
 

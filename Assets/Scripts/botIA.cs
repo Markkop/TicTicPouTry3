@@ -9,11 +9,17 @@ public class botIA : NetworkBehaviour {
 public Atributos bot;
 
 private bool allReady;
-private GameObject[] playersArray;
+
+//private GameObject[] playersArray;
+public List<GameObject> playersArray = new List<GameObject>();
 
 public bool botDefensor; //Sempre defende
 public bool botSanguinario; //Sempre ataca o player
 public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
+
+public GameObject[] playersArrayOraculo;
+
+public List<GameObject> list = new List<GameObject>();
 
 	// Use this for initialization
 	void Start () {
@@ -25,6 +31,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 	// Update is called once per frame
 	void Update () {
 
+		playersArray = bot.playersArray;
 		// Se for LocalPlayer, retorna
 		// O bot eh pra rodar apenas como server
 		if (isLocalPlayer)
@@ -102,19 +109,27 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 			}
 			else
 			{
-				playersArray = GameObject.FindGameObjectsWithTag("Player");
-				List<GameObject> list = new List<GameObject>();
+				playersArrayOraculo = GameObject.FindGameObjectsWithTag("Player");
 
-				foreach (GameObject go in playersArray) //para cada player em jogo (incluindo bots)
+				foreach (GameObject go in playersArrayOraculo) //para cada player em jogo (incluindo bots)
 				{
-					if(go != gameObject && go.GetComponent<Atributos>().vaiDefender == false)
+					if(go.GetComponent<Atributos>().vaiDefender == false)
 					{
-						if(go.GetComponent<Atributos>().vidas > 0)
+						if(go != gameObject)
 						{
-							list.Add(go); 	//Bota numa lista apenas players que
-											//nao defendem e que nao eh si mesmo
+							if(go.GetComponent<Atributos>().vidas > 0)
+							{
+								if(!list.Contains(go))
+								{
+									list.Add(go); 	//Bota numa lista apenas players que
+									//nao defendem e que nao eh si mesmo
+								}
+							}
 						}
-						
+					}
+					else
+					{
+						list.Remove(go);
 					}
 				}
 				if (list.Count != 0) // Se essa lista nao estiver vazia
@@ -138,8 +153,8 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 
 	GameObject RandomMenosSiMesmo()
 	{
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
-		GameObject alvo0 = playersArray[Random.Range(0,playersArray.Length)];
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
+		GameObject alvo0 = playersArray[Random.Range(0,playersArray.Count)];
 
 		if(alvo0 == gameObject) //Se o alvo for ele mesmo (inteligente hein)
 		{
@@ -153,7 +168,7 @@ public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 
 	GameObject PegaPlayer()
 	{
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 		foreach (GameObject go in playersArray) //para cada player em jogo
 		{
 			if(hasAuthority && go.GetComponent<Atributos>().vidas != 0)

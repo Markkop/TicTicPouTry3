@@ -202,6 +202,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2ded37da68c724f0eb15f158d337dfba, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  player: {fileID: 1850737088623996}
   players: []
   cameras: []
 --- !u!114 &114385481143073306
@@ -364,20 +365,19 @@ MonoBehaviour:
   vidas: 2
   balas: 0
   maxBalas: 1
+  playersArray: []
   alvo: {fileID: 0}
+  mortoPor: {fileID: 0}
   alvosPanel: {fileID: 0}
-  playerModel: {fileID: 1850737088623996}
+  cameras: []
   playerCamera: {fileID: 0}
   playerCanvas: {fileID: 0}
   someInfoCanvas: {fileID: 0}
   toggleGroup: {fileID: 0}
+  atiraButton: {fileID: 0}
   playerVencedor: 0
   playerMorto: 0
-  playersArray: []
-  mortoPor: {fileID: 0}
-  atiraButton: {fileID: 0}
   allReady: 0
-  cameras: []
 --- !u!222 &222854245787248422
 CanvasRenderer:
   m_ObjectHideFlags: 1

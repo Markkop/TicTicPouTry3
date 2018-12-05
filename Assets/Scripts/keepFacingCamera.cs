@@ -5,7 +5,9 @@ using UnityEngine.Networking;
 
 public class keepFacingCamera : NetworkBehaviour {
 
-	public GameObject[] players;
+	public GameObject player;
+	//public GameObject[] players;
+	public List<GameObject> players = new List<GameObject>();
 	public GameObject[] cameras;
 
 	// Use this for initialization
@@ -16,7 +18,9 @@ public class keepFacingCamera : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		players = GameObject.FindGameObjectsWithTag("Player");
+		//players = GameObject.FindGameObjectsWithTag("Player");
+		players = player.GetComponent<Atributos>().playersArray;
+
 		foreach(GameObject player in players)
 		{
 			//Se o jogador for ele mesmo (localPlayer)

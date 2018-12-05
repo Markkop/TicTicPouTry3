@@ -8,6 +8,7 @@ public class MyNetworkManager : NetworkManager {
 public GameObject hosta;
 public GameObject clienta;
 public GameObject canvas;
+public GameObject CenarioObject;
 
 
 	public void Host()
@@ -19,5 +20,17 @@ public GameObject canvas;
 	public void Client()
 	{
 		base.StartClient();
+	}
+
+	public void Cenario()
+	{
+		if(CenarioObject.activeSelf == false)
+		{
+			CenarioObject.SetActive(true);
+		}
+		else
+		{
+			CenarioObject.SetActive(false);	
+		}
 	}
 }

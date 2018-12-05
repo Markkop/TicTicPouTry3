@@ -8,9 +8,10 @@ using System.Linq;
 
 public class _Manager : NetworkBehaviour {
 
-	public GameObject[] playersArray;
+	//public GameObject[] playersArray;
 	//public List<GameObject> gameObjectList = new List<GameObject>();
 	//public List<int> playersList = new List<int>();
+	public List<GameObject> playersArray = new List<GameObject>();
 	public GameObject[] goMorto;
 
 	public bool allReadyManager = false;
@@ -22,6 +23,7 @@ public class _Manager : NetworkBehaviour {
 
 	public bool fimDeJogo = false;
 	public GameObject winner;
+	public GameObject overviewCamera;
 
 
 	int nomesIndex = 0;
@@ -30,10 +32,22 @@ public class _Manager : NetworkBehaviour {
 	void Start () {
 
 
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	void Update () {
+
+		//Atualiza o playersArray e manda para todos os players 
+		//Ficar ligado que isso pode causar lag
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
+
+
+		foreach(GameObject player in playersArray)
+		{
+			//player.GetComponent<Atributos>().playersArray = playersArray;
+		}
+
+
 
 		//Soh roda no servidor
 		if(!isServer)
@@ -76,13 +90,18 @@ public class _Manager : NetworkBehaviour {
 			}
 			else
 			{
+				//Afastar camera
+				overviewCamera.GetComponent<Transform>().position = overviewCamera.GetComponent<Transform>().position + new Vector3(-Time.deltaTime,Time.deltaTime,-Time.deltaTime);
 				Debug.Log("Fim de jogo. "+Mathf.Round(timeLeft)+" segundos para encerrar...");
 				return;
 			}
 		}
 
 		CmdMudaNome2();
-		CheckReady();
+
+		CheckReady();	
+
+		
 
 		if(!allReadyManager) // Verifica se todos estao prontos
 		{
@@ -105,7 +124,7 @@ public class _Manager : NetworkBehaviour {
 	[Command]
 	void CmdlistaPlayers() //Nao esta sendo utilizada
 	{
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 
 		//Para cada jogador
 		foreach(GameObject go in playersArray)
@@ -149,7 +168,7 @@ public class _Manager : NetworkBehaviour {
 	[Command]
 	void CmdMudaNome2()
 	{
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
+		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 
 		//Para cada jogador
 		foreach(GameObject go in playersArray)
@@ -204,9 +223,16 @@ public class _Manager : NetworkBehaviour {
 
 	void CheckReady() // Verifica se todos estao prontos
 	{
-		for(int i = 0; i < playersArray.Length; i++) //Para cada jogador i
+		if(playersArray.Count <= 1)
+		{	
+			Debug.Log("Aguardando mais jogadores...");
+			return;
+		}
+
+		foreach(GameObject player in playersArray) //Para cada jogador 
 		{
-			if(playersArray[i].GetComponent<Atributos>().ready == false) //Se o jogador i nao esta pronto
+			//Debug.Log("Verificando se "+player.name+" esta pronto...");
+			if(player.GetComponent<Atributos>().ready == false) //Se o jogador nao esta pronto
 			{
 				Debug.Log("Aguardando todos prontos...");
 				allReadyManager = false; //retorna falso e sai da funcao
@@ -215,7 +241,7 @@ public class _Manager : NetworkBehaviour {
 		}
 		Debug.Log("Todos prontos...");
 		allReadyManager = true; //anuncia todos prontos
-		return; //mas se nao sair, retorna true
+		return;
 	}
 
 	void ResolvePhase1() // Resolve defesas e carregamentos
@@ -226,10 +252,16 @@ public class _Manager : NetworkBehaviour {
 			go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
 				{
+					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
+						go.GetComponent<Animator>().SetTrigger("Defende");
+
 					go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
 				}
 			if(go.GetComponent<Atributos>().vaiRecarregar == true) //Se optou por recarregar
 				{
+					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
+						go.GetComponent<Animator>().SetTrigger("Recarrega");
+
 					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 					{
 						Debug.Log(go.name+" carrega uma bala...");
@@ -251,6 +283,9 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar...
 			{
+				if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
+				go.GetComponent<Animator>().SetTrigger("Atira");
+
 				if(go.GetComponent<Atributos>().alvo != null) //e tiver escolhido um alvo..
 				{
 					if(go.GetComponent<Atributos>().balas > 0)//e tiver bala
@@ -353,7 +388,7 @@ public class _Manager : NetworkBehaviour {
 		}
 
 		//Se houver apenas um jogador vivo
-		if (playersMortos == playersArray.Length - 1)
+		if (playersMortos == playersArray.Count - 1)
 		{
 			
 			foreach(GameObject player in playersArray)
@@ -371,6 +406,13 @@ public class _Manager : NetworkBehaviour {
 			Debug.Log("||FIM DE JOGO|| . Vencedor: "+winner.name);
 
 			fimDeJogo = true;
+		}
+
+		if (playersMortos == playersArray.Count )
+		{
+			Debug.Log("||FIM DE JOGO|| . Ninguem ganhou");
+
+			fimDeJogo = true;			
 		}
 
 

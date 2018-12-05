@@ -26,7 +26,9 @@ public class Atributos : NetworkBehaviour {
 	[SyncVar] public int balas = 0;
 	public int maxBalas = 1;	
 
-	public GameObject[] playersArray;
+	//public GameObject[] playersArray;
+	public List<GameObject> playersArray = new List<GameObject>();
+
 	public GameObject alvo;
 	public GameObject mortoPor; 
 	public GameObject alvosPanel;
@@ -44,6 +46,8 @@ public class Atributos : NetworkBehaviour {
 
 	//[SyncVar (hook="WhenAllReady")] public bool allReady;
 	[SyncVar] public bool allReady;
+
+	public GameObject _Manager;
 
 
 
@@ -93,6 +97,10 @@ public class Atributos : NetworkBehaviour {
 			}
 		}
 
+		//Pega o Manager da cena
+		_Manager = GameObject.FindWithTag("Manager");
+		_Manager.GetComponent<_Manager>().playersArray.Add(gameObject);
+
 
 
 	}
@@ -100,40 +108,19 @@ public class Atributos : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () { 
 
-		if(isLocalPlayer)
+		//Mantem a lista de player atualizada do _Manager
+		if(playersArray != _Manager.GetComponent<_Manager>().playersArray)
 		{
-			//Spawn (em breve apagar)
-			if(firstSpawn == false)
-			{
-				//Debug.Log("CARAI");
-				//anim.Play("WAIT02");
-				firstSpawn = true;
-			}
-			//Idle
-			else
-			{
-	
-			}	
-
-			//Se for fazer algo pra bot, precisa readaptar o que acontece quando o player ganha
-			if(playerVencedor == true)
-			{
-				//anim.Play("WIN00");
-				return;
-			}
+			playersArray = _Manager.GetComponent<_Manager>().playersArray;	
 		}
 		
-
-		//Atualiza a lista de players
-		playersArray = GameObject.FindGameObjectsWithTag("Player");
-
-		/*//Funcao para forcar a mudanca de nome. Obsoleto for now.
-		if(this.name != newName && newName != "")
+		//Se for fazer algo pra bot, precisa readaptar o que acontece quando o player ganha
+		if(playerVencedor == true)
 		{
-			//this.name = newName;
-		}*/
-
-
+			//anim.Play("WIN00");
+			return;
+		}
+		
 		//Chama quando todos estiverem prontos. Serve apenas pra desativar os Toggles por enquanto
 		if(allReady == true)
 			WhenAllReady();
@@ -142,27 +129,6 @@ public class Atributos : NetworkBehaviour {
 		if(vidas == 0)
 			OnDeath();
 
-
-
-		//Idle
-		if(isLocalPlayer && this.GetComponent<botIA>() == null)
-		{
-			if(playerMorto == false && playerVencedor == false)
-			{
-				//anim.Play("WAIT00");
-			}
-		}
-
-
-		//Textos para debug. 
-		/*if(isLocalPlayer && this.GetComponent<botIA>() == null)
-		{
-			someInfoCanvas.GetComponent<Text>().text =
-			"hasAuthority == "+hasAuthority+"\n"+
-			"isLocalPlayer == "+isLocalPlayer+"\n"+
-			"isClient == "+isLocalPlayer+"\n"+
-			"isServer == "+isServer;
-		}*/
 
 		//Debug de coisas
 		if( Input.GetKeyDown("3") )
@@ -255,6 +221,15 @@ public class Atributos : NetworkBehaviour {
 			//this.alvosPanel.SetActive (false);
 			//this.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos	
 		}
+		Debug.Log("allready");
+
+		// if(estaDefendendo == true)
+		// {
+		// 	Debug.Log("Animation play defender...");
+		// 	this.GetComponent<Animator>().SetTrigger("Defende");
+		// }
+
+
 		//Termina resetando
 		allReady = false;	
 	}
@@ -314,7 +289,7 @@ public class Atributos : NetworkBehaviour {
 
     bool CheckAllReady()
     {
-		GameObject[] playersArray = GameObject.FindGameObjectsWithTag("Player");
+		//GameObject[] playersArray = GameObject.FindGameObjectsWithTag("Player");
 		foreach (GameObject go in playersArray)
 		{
 			if(go.GetComponent<Atributos>().ready == false)	
@@ -396,7 +371,7 @@ public class Atributos : NetworkBehaviour {
 	public void EscolheAlvo(int player)
 	{
 
-		for(int i = 0; i < playersArray.Length; i++) 
+		for(int i = 0; i < playersArray.Count; i++) 
 		{	//Se o play
 			if(player == i)
 			{
