@@ -10,10 +10,9 @@ public class Atributos : NetworkBehaviour {
 	//SyncVar parece nao estar funcionando, pelo menos para newName.
 	//Esta sendo necessario chamar RpcChangePlayerName() para que os
 	//outros clients saibam da mudanca de newName no server.
-	[SyncVar (hook="OnNameChange")] public string newName = "";
 
-	public Animator anim;
-	public Rigidbody rb;
+	//[SyncVar (hook="OnNameChange")] public string newName = "";
+	public string newName = "";
 
 	[SyncVar] public bool vaiAtirar = false;
 	[SyncVar] public bool vaiDefender = false;
@@ -31,47 +30,30 @@ public class Atributos : NetworkBehaviour {
 
 	public GameObject alvo;
 	public GameObject mortoPor; 
-	public GameObject alvosPanel;
-
+	
+	public GameObject _Manager;
 	public GameObject[] cameras;
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
-	public GameObject someInfoCanvas;
+	public GameObject alvosPanel;
 	public GameObject toggleGroup;
 	public Toggle atiraButton;
+	public Animator anim;
 
 	public bool playerVencedor = false;
 	public bool playerMorto = false;
 	private bool firstSpawn = false;
-
-	//[SyncVar (hook="WhenAllReady")] public bool allReady;
-	[SyncVar] public bool allReady;
-
-	public GameObject _Manager;
-
-
-
 
 	// Use this for initialization
 	void Start () {
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
-		//Olha para o centro da arena (hardcoded)
-		//this.GetComponent<Transform>().LookAt(new Vector3(0f,this.GetComponent<Transform>().position[1],0f));
-		//Comentado pois quem esta fazendo isso agora é o _Manager
-
 		//Vira a camera tambem e roda animacao
 		if(isLocalPlayer)
 		{
 			playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
 		}
-
-		
-		
-		//Tentei chamar a funcao CmdChangeName() no Start(), mas clients nao eram ouvidos sobre
-		//a mudanca, entao passei a chamar no Update(). Fica a dica
-		//CmdChangeName();
 
 		//Caso o objeto seja spawnado sem autoridade. Usar para debugging, mas de preferencia nao
 		//usar para evitar conflito.
@@ -101,9 +83,6 @@ public class Atributos : NetworkBehaviour {
 		//Pega o Manager da cena
 		_Manager = GameObject.FindWithTag("Manager");
 		_Manager.GetComponent<_Manager>().playersArray.Add(gameObject);
-
-
-
 	}
 	
 	// Update is called once per frame
@@ -114,193 +93,15 @@ public class Atributos : NetworkBehaviour {
 		{
 			playersArray = _Manager.GetComponent<_Manager>().playersArray;	
 		}
-		
-		//Se for fazer algo pra bot, precisa readaptar o que acontece quando o player ganha
-		if(playerVencedor == true)
-		{
-			//anim.Play("WIN00");
-			return;
-		}
-		
-		//Chama quando todos estiverem prontos. Serve apenas pra desativar os Toggles por enquanto
-		if(allReady == true)
-			WhenAllReady();
-
-		//Ao morrer
-		if(vidas == 0)
-			OnDeath();
-
-
-		//Debug de coisas
-		if( Input.GetKeyDown("3") )
-		{
-			if(newName.Contains("Jogador"))
-			{
-				Debug.Log("Contem");
-			}
-		}
-
 	}
 
-	//Funcao chamada quando a SyncVar newName eh alterada (pelo _Manager)
-	void OnNameChange(string newNamez)
-	{
-		Debug.Log("OnNameChange: mudando nome local de "+this.name+" para "+newNamez);
-		newName = newNamez;
-
-		if(isLocalPlayer){
-		foreach(Transform child in alvosPanel.transform)
-		{
-			if(child.name == this.name)
-			{
-				child.GetComponent<Text>().text = newNamez;
-			}
-		}}
-
-		gameObject.name = newNamez;
-	}
-
-	
-	void OnDeath() {
-
-		if(playerMorto == true)
-		{
-			ready = true;
-			return;
-		}
-
-		//Se for player
-		if(isLocalPlayer)
-		{
-			//Muda de camera
-			playerCamera.SetActive(false);
-			cameras[0].active = true;
-
-			//Desativa painel
-			playerCanvas.SetActive(false);
-
-			anim.Play("DAMAGED00");
-		}
-
-
-		playerMorto = true;
-
-		this.GetComponent<Transform>().LookAt(mortoPor.GetComponent<Transform>().position);
-		this.GetComponent<Rigidbody>().AddForce(transform.forward * -8000);
-
-		//this.GetComponent<Rigidbody>().AddForce(transform.forward * -4000);
-		//Debug.Log(this.name+ " esta morto");
-
-
-
-
-	}
-
-	void OnVictory() {
-
-		playerVencedor = true;
-		if(isLocalPlayer && this.GetComponent<botIA>() == null)
-		{	
-			anim.Play("WIN00");
-		}
-
-	}
-
-	//Funcao para ser chamada quando todos os estiverem prontos
-	void WhenAllReady() {
-
-		if(this.GetComponent<botIA>() == null) //Faz os seguintes comandos apenas para quem for player
-		{		
-			//Desativa os toggles do jogador
-			GameObject[] toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
-			foreach (GameObject tog in toggles)
-			{
-				tog.GetComponent<Toggle>().isOn = false;
-			}
-	
-			//Desativa o painel de alvos e os botoes de alvo
-			//this.alvosPanel.SetActive (false);
-			//this.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos	
-		}
-		//Debug.Log("allready");
-
-		// if(estaDefendendo == true)
-		// {
-		// 	Debug.Log("Animation play defender...");
-		// 	this.GetComponent<Animator>().SetTrigger("Defende");
-		// }
-
-
-		//Termina resetando
-		allReady = false;	
-	}
-
-	//Metodo antigo para mudanca de nome do player. Ate que funcionava, mas prefero
-	//que o _Manager faça isso.
-	/*[Command]
-	void CmdChangeName()
-	{
-		int i = 0;
-		string oldName = this.name;
-
-		//Bota todos os jogadores num array, menos o player que tira a tag temporariamente
-		this.tag = "Untagged";
-		GameObject[] playersArray = GameObject.FindGameObjectsWithTag("Player");
-
-		//Nome do jogador vira Jogador 0
-		newName = "Jogador "+i;
-		this.name = newName;
-
-		foreach (GameObject go in playersArray)
-		{
-			if(go.name == newName) //Mas caso ja tenha algume chamado Jogador 0
-			{
-				i++; 
-				newName = "Jogador "+i; //Vira Jogador 1
-				this.name = newName;	
-			}
-				
-		}
-
-		Debug.Log(oldName+" muda nome para "+newName);
-
-		//Avisa todos os clients dessa mudanca
-		RpcChangePlayerName(newName);
-
-		//Recupera a tag
-		this.tag = "Player";
-	}
-
-	[ClientRpc]
-    void RpcChangePlayerName(string n)
-    {
-    	Debug.Log("Avisando todos os clientes da mudanca de nome do "+n);
-    	newName = n;
-        this.name = n;
-    }
-    */
-
+	//Funcao para Debug
 	[Command]
     void CmdAttachAuthority()
     {
 		//Da a autoridade sob o objeto para quem conectou com este client
 		this.GetComponent<NetworkIdentity>().AssignClientAuthority ( connectionToClient );
 		Debug.Log(this.name+" recebeu autoridade de "+connectionToClient);
-    }
-
-    bool CheckAllReady()
-    {
-		//GameObject[] playersArray = GameObject.FindGameObjectsWithTag("Player");
-		foreach (GameObject go in playersArray)
-		{
-			if(go.GetComponent<Atributos>().ready == false)	
-			{
-				Debug.Log("CheckAllReady == False");
-				return false;
-			}
-		}
-		Debug.Log("CheckAllReady == True");
-		return true;
     }
 
     [Command]
@@ -360,8 +161,6 @@ public class Atributos : NetworkBehaviour {
 		Debug.Log("Server: pedido de mudanca de DEFESA para "+boleano);
 		this.vaiDefender = boleano;
 	}
-
-
 
 	[Command]
 	public void CmdIsReady(bool boleano)

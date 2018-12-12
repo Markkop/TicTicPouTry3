@@ -62,7 +62,6 @@ public List<GameObject> list = new List<GameObject>();
 
 	}
 
-
 	void BotDefensor()
 	{
 		//Enquanto ninguem estiver pronto

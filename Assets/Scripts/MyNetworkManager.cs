@@ -22,6 +22,7 @@ public GameObject CenarioObject;
 		base.StartClient();
 	}
 
+	//Nao esta sendo utilizado
 	public void Cenario()
 	{
 		if(CenarioObject.activeSelf == false)

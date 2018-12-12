@@ -12,14 +12,7 @@ public class _Manager : NetworkBehaviour {
 	//public List<GameObject> gameObjectList = new List<GameObject>();
 	//public List<int> playersList = new List<int>();
 	public List<GameObject> playersArray = new List<GameObject>();
-	public GameObject[] goMorto;
-
-	public bool allReadyManager = false;
-	public GameObject[] toggles;
-
-	static public bool haveSpawnedManager = false;
-
-	public GameObject ManagerPrefab;
+	//public GameObject[] toggles;
 
 	public bool fimDeJogo = false;
 	public GameObject winner;
@@ -27,11 +20,10 @@ public class _Manager : NetworkBehaviour {
 
 	public bool primeiroTurno = false;
 	public bool fimDeTurno = false;
+	public bool allReadyManager = false;
 	public bool startReadyManager = false;
 	public int rodada = 0;
 
-
-	int nomesIndex = 0;
 	float timeLeft = 5;
 	float timeRitmo = 5;
 	float timeLeft2 = 2;
@@ -39,83 +31,32 @@ public class _Manager : NetworkBehaviour {
 
 	void Start () {
 
-
-		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 	}
 	
 	void Update () {
-
-		//Atualiza o playersArray e manda para todos os players 
-		//Ficar ligado que isso pode causar lag
-		//playersArray = GameObject.FindGameObjectsWithTag("Player");
-
-
-		foreach(GameObject player in playersArray)
-		{
-			//player.GetComponent<Atributos>().playersArray = playersArray;
-		}
-
-
 
 		//Soh roda no servidor
 		if(!isServer)
 		{
 			return;
 		}
-
-		//Debug de coisas
-		if( Input.GetKeyDown("2") )
-		{
-			foreach(GameObject go in playersArray)
-			{
-				go.GetComponent<Atributos>().newName = "trxao";
-				//go.name = "troxa";
-			}
-		}
 		
 		//Caso tenha acabado o jogo
 		if(fimDeJogo)
 		{
-			foreach(GameObject player in playersArray)
-			{
-				if(player.GetComponent<botIA>() == null)
-				{
-					player.GetComponent<Atributos>().playerCamera.SetActive(false);
-				}
-			}
-
-			//Timer de 5 segundos
-			timeLeft -= Time.deltaTime;
-			if(timeLeft < 0)
-			{
-				Debug.Log("Desconectando e resetando scene...");
-				SceneManager.LoadScene(0);
-				NetworkManager.singleton.StopClient();
-				NetworkManager.singleton.StopHost();
-				NetworkManager.singleton.StopServer();
-				return;
-				
-			}
-			else
-			{
-				//Afastar camera
-				overviewCamera.GetComponent<Transform>().position = overviewCamera.GetComponent<Transform>().position + new Vector3(-Time.deltaTime,Time.deltaTime,-Time.deltaTime);
-				Debug.Log("Fim de jogo. "+Mathf.Round(timeLeft)+" segundos para encerrar...");
-				return;
-			}
+			FimDeJogo();
+			return;
 		}
-
-		CmdMudaNome2();	
 
 		if(!startReadyManager) // Verifica se todos estao prontos
 		{
 			// Caso a partida ainda nao tenha começado, posiciona os jogadores
 			if(playersArray.Count != 0 && !primeiroTurno)
 			{
-				RpcPosicionaPlayers();
+				NomeiaPlayers();
+				PosicionaPlayers();
 				CheckReady();	
 			}
-			
 			return; //Se nao estiverem prontos, nao continua a rotina.
 		}
 		else
@@ -133,14 +74,14 @@ public class _Manager : NetworkBehaviour {
 		if(!allReadyManager)
 		{
 			timeRitmo -= Time.deltaTime;
-			RpcRitmo();
+			Ritmo();
 			return;
 		}
 
-		//Para que o jogo aguarde 2 segundos antes de recomeçar a próxima rodada, adicionou-se o seguinte procedimento
+		//Para que o jogo aguarde 2 segundos antes de recomeçar a próxima rodada, adicionou-se "fimDeTurno"
 		if(!fimDeTurno)
 		{
-			Debug.Log("Iniciando rodada "+rodada);
+			Debug.Log("Iniciando rodada "+rodada+"...");
 			ResolvePhase1(); //Resolve defesa e recarregamento
 			ResolvePhase2(); //Verifica se ha municao para atirar
 			ResolvePhase3(); //Resolve ataque x defesa
@@ -152,132 +93,34 @@ public class _Manager : NetworkBehaviour {
 			if (timeLeft2 < 0)
 			{
 				//Desativas as bolinhas de timer
-				foreach (GameObject go in playersArray)
+				foreach (GameObject player in playersArray)
 				{
-					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
+					if(player.GetComponent<botIA>() == null)
 					{
-						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(false);
-						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola2").gameObject.SetActive(false);
-						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola3").gameObject.SetActive(false);
+						RpcToggleBola(1, player, false);
+						RpcToggleBola(2, player, false);
+						RpcToggleBola(3, player, false);
 					}
 				}
-
 				//Reseta os contadores
 				timeRitmo = 5;
-				allReadyManager = false;
 				timeLeft2 = 2;
 				fimDeTurno = false;
+				allReadyManager = false;
 				rodada = rodada +1;
 			}
 		}
 	}
-
-
-	//O unico comando era de manter o gameObjectArray atualizado com os players para caso 
-	//entre novos players ou bots durante a partida (pelo menos para debug), mas houve um
-	//problema que os Clients nao tinham seu nome atualizado (mas newName sim), possivelmente
-	//por conta de alguma ordem de execuçao, tipo entra o host+client, seu nome eh atualizado
-	//e avisado aos outros clients (nenhum) pelo Hook, entao um segundo player (client) se conecta,
-	//mas ele nao foi avisado da mudanca de nome do primeiro player.
-	[Command]
-	void CmdlistaPlayers() //Nao esta sendo utilizada
-	{
-		//playersArray = GameObject.FindGameObjectsWithTag("Player");
-
-		//Para cada jogador
-		foreach(GameObject go in playersArray)
-		{
-			string oldGoName = go.name;
-			string newGoName = "Jogador "+nomesIndex;
-
-			//Verifica se esta sem nome
-			if(go.GetComponent<Atributos>().newName == "")
-			{
-				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" ");
-
-				go.GetComponent<Atributos>().newName = newGoName;
-				go.name = go.GetComponent<Atributos>().newName;
-
-				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
-				foreach (GameObject go2 in playersArray)
-				{
-					if(go.name == go2.name && go2 != go) 
-					{
-						nomesIndex++; 
-						newGoName = "Jogador "+nomesIndex;
-
-						Debug.Log(go.name+" na verdade muda nome para "+newGoName);
-						go.GetComponent<Atributos>().newName = newGoName; 
-						go.name = go.GetComponent<Atributos>().newName;
-
-						RpcChangePlayerName(go, go.GetComponent<Atributos>().newName);
-					}
-				}
-			}
-
-
-		}
-	}
-
-
-	//Esta eh uma versao levemente modificada da de cima que ao invez de renomear quem tentou pegar
-	//um nome repetido, renomeia quem ja tinha o nome definido. Assim o hook de newName em Atributos
-	//eh acionado toda vez que alguem muda de nome (pois todos mudam). (baita workaround)
-	[Command]
-	void CmdMudaNome2()
-	{
-		//playersArray = GameObject.FindGameObjectsWithTag("Player");
-
-		//Para cada jogador
-		foreach(GameObject go in playersArray)
-		{
-			string oldGoName = go.name;
-			string newGoName = "Jogador "+nomesIndex;
-
-			//Verifica se esta sem nome
-			if(go.GetComponent<Atributos>().newName == "")
-			{
-				Debug.Log("Mudando o nome de "+oldGoName+" para "+newGoName+" [NOVO]");
-
-				go.GetComponent<Atributos>().newName = newGoName;
-				go.name = go.GetComponent<Atributos>().newName;
-
-				//Verifica se algum jogador ativo (exceto ele mesmo) ja possui este nome
-				foreach (GameObject go2 in playersArray)
-				{
-					if(go.name == go2.name && go2 != go) 
-					{
-						nomesIndex++; 
-						newGoName = "Jogador "+nomesIndex;
-
-						Debug.Log("Antigo" +go2.name+" na verdade muda nome para "+newGoName);
-						go2.GetComponent<Atributos>().newName = newGoName; 
-						go2.name = go2.GetComponent<Atributos>().newName;
-
-						//RpcChangePlayerName(go, go.GetComponent<Atributos>().newName);
-					}
-				}
-			}
-
-
-		}
-
-		
-	}
-
-	//Por algum motivo esse (e outros) ClientRpc nao estao funcionando corretamente.
-	//No lugar de chamar essa funcao, utilizei hook em newName de Atributos.
-	[ClientRpc]
-    void RpcChangePlayerName(GameObject go, string n)
-    {
-		Debug.Log("Avisando todos os clientes da mudanca de nome do "+go.name+" para "+n);
-		go.GetComponent<Atributos>().newName = n;
-		go.name = n;
-    }
-
-
-		 	
 	
+	void NomeiaPlayers()
+	{
+		for(int i = 0; i < playersArray.Count; i++)
+		{
+			playersArray[i].GetComponent<Atributos>().newName = "Jogador "+i;
+			playersArray[i].name = "Jogador "+i;
+			RpcChangePlayerName(playersArray[i], "Jogador "+i);
+		}
+	}
 
 	void CheckReady() // Verifica se todos estao prontos
 	{
@@ -286,7 +129,6 @@ public class _Manager : NetworkBehaviour {
 			Debug.Log("Aguardando mais jogadores...");
 			return;
 		}
-
 		foreach(GameObject player in playersArray) //Para cada jogador 
 		{
 			//Debug.Log("Verificando se "+player.name+" esta pronto...");
@@ -295,6 +137,15 @@ public class _Manager : NetworkBehaviour {
 				Debug.Log("Aguardando todos prontos para comecar a partida...");
 				startReadyManager = false; //retorna falso e sai da funcao
 				return;
+			}
+		}
+
+		//Desativa os botoes de ready uma vez que todos estao prontos
+		foreach(GameObject player in playersArray)
+		{
+			if(player.GetComponent<botIA>() == null)
+			{
+				RpcDesativaReadyButton(player);	
 			}
 		}
 		Debug.Log("Todos prontos...");
@@ -307,30 +158,30 @@ public class _Manager : NetworkBehaviour {
 		//Debug.Log("Resolvendo Phase 1");
 		foreach (GameObject go in playersArray) //Para cada jogador declarado
 		{	
-			go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
+			//go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
-				{
-					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
-						go.GetComponent<Animator>().SetTrigger("Defende");
+			{
+				if(go.GetComponent<botIA>() == null)
+					RpcAnimTrigger(go, "Defende");
 
-					go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
-				}
+				go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
+			}
 			if(go.GetComponent<Atributos>().vaiRecarregar == true) //Se optou por recarregar
-				{
-					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
-						go.GetComponent<Animator>().SetTrigger("Recarrega");
+			{
+				if(go.GetComponent<botIA>() == null)
+					RpcAnimTrigger(go, "Recarrega");
 
-					if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
-					{
-						Debug.Log(go.name+" carrega uma bala...");
-						go.GetComponent<Atributos>().balas += 1; // ganha uma bala
-					}
-					else
-					{
-						//caso contrario, nao ganha bala.
-						//Obs: o player vai gastar a propria acao
-					}		
+				if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
+				{
+					Debug.Log(go.name+" carrega uma bala...");
+					go.GetComponent<Atributos>().balas += 1; // ganha uma bala
 				}
+				else
+				{
+					//caso contrario, nao ganha bala.
+					//Obs: o player vai gastar a propria acao
+				}		
+			}
 		}
 	}
 
@@ -341,8 +192,8 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar...
 			{
-				if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
-				go.GetComponent<Animator>().SetTrigger("Atira");
+				if(go.GetComponent<botIA>() == null)
+				RpcAnimTrigger(go, "Atira");
 
 				if(go.GetComponent<Atributos>().alvo != null) //e tiver escolhido um alvo..
 				{
@@ -363,7 +214,6 @@ public class _Manager : NetworkBehaviour {
 				}
 			}
 		}
-
 	}
 
 	void ResolvePhase3() //Resolve ataque e defesa
@@ -380,14 +230,11 @@ public class _Manager : NetworkBehaviour {
 						{
 							alvo1.GetComponent<Atributos>().levouTiro = true;
 							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
-							if(alvo1.GetComponent<NetworkIdentity>().isLocalPlayer) alvo1.GetComponent<Animator>().SetTrigger("gotShot2");
-
-							if(alvo1.GetComponent<Atributos>().vidas == 0)
+							if(alvo1.GetComponent<Atributos>().vidas == 0) //Se estiver morto
 							{
-								alvo1.GetComponent<Atributos>().mortoPor = go;
+								alvo1.GetComponent<Atributos>().mortoPor = go; //memoriza quem o matou
 							}
 						}
-
 						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
 					}
 					else
@@ -405,15 +252,13 @@ public class _Manager : NetworkBehaviour {
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
-			if(go.GetComponent<Atributos>().vidas == 0 && go.name != "Morto") // se nao tiver vida 
+			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
 				go.GetComponent<Atributos>().newName = "Morto";
-				//go.GetComponent<BoxCollider>().enabled = true;
-				//go.GetComponent<Transform>().position = new Vector3(0,0,0);
-				//go.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -4000);
-				//go.name = "Morto";
-				//go.tag = "Untagged"; //Esta crashando quando remove a tag
+
+				RpcChangePlayerName(go, "Morto");
+				RpcMorte(go, go.GetComponent<Atributos>().mortoPor);
 			}
 
 		//Reseta as acoes
@@ -423,27 +268,25 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
 		go.GetComponent<Atributos>().alvo = null;
+		RpcDesativaToggles(go);
 
 		fimDeTurno = true;
 		//Debug.Log("Fim do Resolve4");
-
 		}
 
+		//Contabiliza players mortos
 		int playersMortos = 0;
 		foreach (GameObject go in playersArray)
-		{	
-			
-			if(go.name == "Morto")
+		{		
+			if(go.GetComponent<Atributos>().vidas == 0)
 			{
 				playersMortos++;
 			}
-
 		}
 
 		//Se houver apenas um jogador vivo
 		if (playersMortos == playersArray.Count - 1)
 		{
-			
 			foreach(GameObject player in playersArray)
 			{
 				if(player.GetComponent<Atributos>().vidas > 0)
@@ -451,34 +294,23 @@ public class _Manager : NetworkBehaviour {
 					//Atribui vitoria ao player vencedor
 					player.GetComponent<Atributos>().playerVencedor = true;
 					winner = player;
-					if(winner.GetComponent<NetworkIdentity>().isLocalPlayer) winner.GetComponent<Animator>().SetTrigger("winner");
-
+					//if(winner.GetComponent<NetworkIdentity>().isLocalPlayer) winner.GetComponent<Animator>().SetTrigger("winner");
 				}
 			}
-			//NetworkManager.StopClient
 			Debug.Log("||FIM DE JOGO|| . Vencedor: "+winner.name);
-
 			fimDeJogo = true;
 		}
-
 		if (playersMortos == playersArray.Count )
 		{
 			Debug.Log("||FIM DE JOGO|| . Ninguem ganhou");
-
 			fimDeJogo = true;			
 		}
-
-
-
 	}
 
 	//Posiciona os jogadores em espaçamentos iguais em um circulo
-	[ClientRpc]
-	void RpcPosicionaPlayers()
+	void PosicionaPlayers()
 	{
 		float angulo = 360/playersArray.Count;
-		//Debug.Log("Angulo:"+angulo);
-
 		for(int i = 0; i < playersArray.Count; i++)
 		{
 			float altura = playersArray[i].GetComponent<Collider>().bounds.max[1];
@@ -487,23 +319,21 @@ public class _Manager : NetworkBehaviour {
 			if(playersArray[i].GetComponent<botIA>() == null)
 			{
 				//Gambiarra pra arrumar depois que tiver modelos pra player e players definidos
+				//Nota-se que é preciso fazer isso pois os players são Spawnados pelo NetworkManager e
+				//provavelmente spawnando usando a base do player, enquanto que os Bots são spawnados
+				//pelo jogador (host) e usando o centro do bot.
 				y = 0;
 			}
-
 			float x = 8*Mathf.Cos(i*angulo*3.14f/180f);
 			float z = 8*Mathf.Sin(i*angulo*3.14f/180f);
-			playersArray[i].GetComponent<Transform>().position = new Vector3(x,y,z);
-
-			playersArray[i].GetComponent<Transform>().LookAt(new Vector3(0f,playersArray[i].GetComponent<Transform>().position[1],0f));
-
+			RpcPosiciona(playersArray[i], new Vector3(x,y,z));
 			//Debug.Log("Posicao do "+playersArray[i]+"em x: "+x+" e em z: "+z);
 		}
 	}
 
-	//Mesmo com Rpc, essa funcao nao esta ativando as bolas do Ritmo nos Clients, apenas no server
-	//O Ritmo ainda funciona, só nao aparece visualmente
-	[ClientRpc]
-	void RpcRitmo()
+	// Temporizador para definir o ritmo das acoes dos jogadores.
+	// Deve ter alguma forma de deixar isso mais limpo.	
+	void Ritmo()
 	{
 		//Debug.Log("Entrando na funcao ritmo");
 		if(timeRitmo < 4)
@@ -513,7 +343,8 @@ public class _Manager : NetworkBehaviour {
 			{
 				if(player.GetComponent<botIA>() == null)
 				{
-					player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(true);
+					//player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(true);
+					RpcToggleBola(1, player, true);
 				}
 			}			
 		}
@@ -522,10 +353,9 @@ public class _Manager : NetworkBehaviour {
 			//Debug.Log("Ritmo = 3");
 			foreach (GameObject player in playersArray)
 			{
-				if(player.GetComponent<NetworkIdentity>().isLocalPlayer)
+				if(player.GetComponent<botIA>() == null)
 				{
-					GameObject bola2 = player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola2").gameObject;
-					bola2.SetActive(true);
+					RpcToggleBola(2, player, true);
 				}
 			}			
 		}
@@ -534,10 +364,9 @@ public class _Manager : NetworkBehaviour {
 			//Debug.Log("Ritmo = 2");
 			foreach (GameObject player in playersArray)
 			{
-				if(player.GetComponent<NetworkIdentity>().isLocalPlayer)
+				if(player.GetComponent<botIA>() == null)
 				{
-					GameObject bola3 = player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola3").gameObject;
-					bola3.SetActive(true);
+					RpcToggleBola(3, player, true);
 				}
 			}
 			allReadyManager = true;			
@@ -545,6 +374,100 @@ public class _Manager : NetworkBehaviour {
 		
 	}
 
+	void FimDeJogo()
+	{
+		foreach(GameObject player in playersArray)
+		{
+			//Desativa a camera e afasta a camera OverView
+			RpcFimDeJogo(player);
+		}
 
+		//Timer de 5 segundos
+		timeLeft -= Time.deltaTime;
+		if(timeLeft < 0)
+		{
+			Debug.Log("Desconectando e resetando scene...");
+			SceneManager.LoadScene(0);
+			NetworkManager.singleton.StopClient();
+			NetworkManager.singleton.StopHost();
+			NetworkManager.singleton.StopServer();
+			return;	
+		}
+		else
+		{	
+			Debug.Log("Fim de jogo. "+Mathf.Round(timeLeft)+" segundos para encerrar...");
+			return;
+		}
+	}
+
+	//========== RPC CALLS =============== //
+	//Os seguintes comandos são chamados pelo server e executados em todos os Clients.
+
+
+	[ClientRpc]
+    void RpcChangePlayerName(GameObject go, string n)
+    {
+		Debug.Log("Avisando todos os clientes da mudanca de nome do "+go.name+" para "+n);
+		go.GetComponent<Atributos>().newName = n;
+		go.name = n;
+    }
+
+	[ClientRpc]
+	void RpcToggleBola(int bola, GameObject player, bool bools)
+	{
+		player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola"+bola).gameObject.SetActive(bools);
+	}
+
+	[ClientRpc]
+	void RpcAnimTrigger(GameObject player, string anim)
+	{
+		player.GetComponent<Animator>().SetTrigger(anim);
+	}
+
+	[ClientRpc]
+	void RpcMorte(GameObject playerQueMorreu, GameObject playerQueMatou)
+	{
+		playerQueMorreu.GetComponent<Transform>().LookAt(playerQueMatou.GetComponent<Transform>().position);
+		playerQueMorreu.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -8000);
+
+		playerQueMorreu.GetComponent<Atributos>().playerCamera.SetActive(false);
+		playerQueMorreu.GetComponent<Atributos>().cameras[0].active = true;
+		playerQueMorreu.GetComponent<Atributos>().playerCanvas.SetActive(false);
+		playerQueMorreu.GetComponent<Atributos>().playerMorto = true;
+	}
+
+	[ClientRpc]
+	void RpcPosiciona(GameObject player, Vector3 pos)
+	{
+		player.GetComponent<Transform>().position = pos;
+		player.GetComponent<Transform>().LookAt(new Vector3(0f,player.GetComponent<Transform>().position[1],0f));
+	}
+
+	[ClientRpc]
+	void RpcDesativaReadyButton(GameObject player)
+	{
+		player.GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
+	}
+
+	[ClientRpc]
+	void RpcDesativaToggles(GameObject player)
+	{
+		GameObject[] toggles = GameObject.FindGameObjectsWithTag("PlayerToggle");
+		foreach (GameObject tog in toggles)
+		{
+			tog.GetComponent<Toggle>().isOn = false;
+		}
+	}
+
+	[ClientRpc]
+	void RpcFimDeJogo(GameObject player)
+	{
+		if(player.GetComponent<botIA>() == null)
+		{
+			player.GetComponent<Atributos>().playerCamera.SetActive(false);
+			player.GetComponent<Atributos>().playerCanvas.SetActive(false);
+		}
+		overviewCamera.GetComponent<Transform>().position = overviewCamera.GetComponent<Transform>().position + new Vector3(-Time.deltaTime,Time.deltaTime,-Time.deltaTime);
+	}
 
 }
