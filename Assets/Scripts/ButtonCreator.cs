@@ -47,7 +47,7 @@ public class ButtonCreator : NetworkBehaviour
         {
             if(child.GetComponent<alvoButton>().alvo.ToString() != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
             {
-                Debug.Log("opa");
+                //Debug.Log("opa");
                 child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.ToString();
 
             }

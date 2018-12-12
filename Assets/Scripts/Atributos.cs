@@ -58,7 +58,8 @@ public class Atributos : NetworkBehaviour {
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
 		//Olha para o centro da arena (hardcoded)
-		this.GetComponent<Transform>().LookAt(new Vector3(0f,this.GetComponent<Transform>().position[1],0f));
+		//this.GetComponent<Transform>().LookAt(new Vector3(0f,this.GetComponent<Transform>().position[1],0f));
+		//Comentado pois quem esta fazendo isso agora é o _Manager
 
 		//Vira a camera tambem e roda animacao
 		if(isLocalPlayer)
@@ -221,7 +222,7 @@ public class Atributos : NetworkBehaviour {
 			//this.alvosPanel.SetActive (false);
 			//this.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos	
 		}
-		Debug.Log("allready");
+		//Debug.Log("allready");
 
 		// if(estaDefendendo == true)
 		// {

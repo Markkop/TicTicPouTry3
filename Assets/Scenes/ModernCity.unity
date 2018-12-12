@@ -620,6 +620,10 @@ MonoBehaviour:
   fimDeJogo: 0
   winner: {fileID: 0}
   overviewCamera: {fileID: 563229729}
+  primeiroTurno: 0
+  fimDeTurno: 0
+  startReadyManager: 0
+  rodada: 0
 --- !u!114 &367678849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1342,7 +1346,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!65 &984977482
 BoxCollider:
   m_ObjectHideFlags: 0

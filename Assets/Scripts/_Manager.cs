@@ -25,9 +25,17 @@ public class _Manager : NetworkBehaviour {
 	public GameObject winner;
 	public GameObject overviewCamera;
 
+	public bool primeiroTurno = false;
+	public bool fimDeTurno = false;
+	public bool startReadyManager = false;
+	public int rodada = 0;
+
 
 	int nomesIndex = 0;
 	float timeLeft = 5;
+	float timeRitmo = 5;
+	float timeLeft2 = 2;
+
 
 	void Start () {
 
@@ -97,21 +105,71 @@ public class _Manager : NetworkBehaviour {
 			}
 		}
 
-		CmdMudaNome2();
+		CmdMudaNome2();	
 
-		CheckReady();	
-
-		
-
-		if(!allReadyManager) // Verifica se todos estao prontos
+		if(!startReadyManager) // Verifica se todos estao prontos
 		{
-			return; //Se retornar falso, nao faz nada
+			// Caso a partida ainda nao tenha começado, posiciona os jogadores
+			if(playersArray.Count != 0 && !primeiroTurno)
+			{
+				RpcPosicionaPlayers();
+				CheckReady();	
+			}
+			
+			return; //Se nao estiverem prontos, nao continua a rotina.
+		}
+		else
+		{	
+			//Quando todos os jogadores estiverem prontos pela primeira vez, ativa o primeiro Turno
+			//para que eles não fiquem sendo posicionados toda vez.
+			if(!primeiroTurno)
+			{
+				primeiroTurno = true;	
+			}
 		}
 
-		ResolvePhase1(); //Resolve defesa e recarregamento
-		ResolvePhase2(); //Verifica se ha municao para atirar
-		ResolvePhase3(); //Resolve ataque x defesa
-		ResolvePhase4(); //Verifica vida e remove player		
+		//Contador para definir o Ritmo do jogo, exibindo as bolinhas de timer pros jogadores
+		//e iniciando as resolucoes na bolinha maior (bola3)
+		if(!allReadyManager)
+		{
+			timeRitmo -= Time.deltaTime;
+			RpcRitmo();
+			return;
+		}
+
+		//Para que o jogo aguarde 2 segundos antes de recomeçar a próxima rodada, adicionou-se o seguinte procedimento
+		if(!fimDeTurno)
+		{
+			Debug.Log("Iniciando rodada "+rodada);
+			ResolvePhase1(); //Resolve defesa e recarregamento
+			ResolvePhase2(); //Verifica se ha municao para atirar
+			ResolvePhase3(); //Resolve ataque x defesa
+			ResolvePhase4(); //Verifica vida e remove player
+		}
+		else
+		{
+			timeLeft2 -= Time.deltaTime;
+			if (timeLeft2 < 0)
+			{
+				//Desativas as bolinhas de timer
+				foreach (GameObject go in playersArray)
+				{
+					if(go.GetComponent<NetworkIdentity>().isLocalPlayer)
+					{
+						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(false);
+						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola2").gameObject.SetActive(false);
+						go.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola3").gameObject.SetActive(false);
+					}
+				}
+
+				//Reseta os contadores
+				timeRitmo = 5;
+				allReadyManager = false;
+				timeLeft2 = 2;
+				fimDeTurno = false;
+				rodada = rodada +1;
+			}
+		}
 	}
 
 
@@ -234,13 +292,13 @@ public class _Manager : NetworkBehaviour {
 			//Debug.Log("Verificando se "+player.name+" esta pronto...");
 			if(player.GetComponent<Atributos>().ready == false) //Se o jogador nao esta pronto
 			{
-				Debug.Log("Aguardando todos prontos...");
-				allReadyManager = false; //retorna falso e sai da funcao
+				Debug.Log("Aguardando todos prontos para comecar a partida...");
+				startReadyManager = false; //retorna falso e sai da funcao
 				return;
 			}
 		}
 		Debug.Log("Todos prontos...");
-		allReadyManager = true; //anuncia todos prontos
+		startReadyManager = true; //anuncia todos prontos
 		return;
 	}
 
@@ -347,7 +405,7 @@ public class _Manager : NetworkBehaviour {
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
-			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
+			if(go.GetComponent<Atributos>().vidas == 0 && go.name != "Morto") // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
 				go.GetComponent<Atributos>().newName = "Morto";
@@ -359,19 +417,14 @@ public class _Manager : NetworkBehaviour {
 			}
 
 		//Reseta as acoes
-		go.GetComponent<Atributos>().ready = false;
+		//go.GetComponent<Atributos>().ready = false;
 		go.GetComponent<Atributos>().vaiAtirar = false;
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
 		go.GetComponent<Atributos>().alvo = null;
 
-		//if(go.GetComponent<botIA>() == null) //Se nao for um bot
-		//	go.GetComponent<ButtonCreator>().Destroi(); //Destroi os botoes de alvos
-
-		//if(isLocalPlayer)
-			//go.GetComponent<Atributos>().alvosPanel.gameObject.SetActive (false);
-
+		fimDeTurno = true;
 		//Debug.Log("Fim do Resolve4");
 
 		}
@@ -418,4 +471,80 @@ public class _Manager : NetworkBehaviour {
 
 
 	}
+
+	//Posiciona os jogadores em espaçamentos iguais em um circulo
+	[ClientRpc]
+	void RpcPosicionaPlayers()
+	{
+		float angulo = 360/playersArray.Count;
+		//Debug.Log("Angulo:"+angulo);
+
+		for(int i = 0; i < playersArray.Count; i++)
+		{
+			float altura = playersArray[i].GetComponent<Collider>().bounds.max[1];
+			float y = altura/2;
+
+			if(playersArray[i].GetComponent<botIA>() == null)
+			{
+				//Gambiarra pra arrumar depois que tiver modelos pra player e players definidos
+				y = 0;
+			}
+
+			float x = 8*Mathf.Cos(i*angulo*3.14f/180f);
+			float z = 8*Mathf.Sin(i*angulo*3.14f/180f);
+			playersArray[i].GetComponent<Transform>().position = new Vector3(x,y,z);
+
+			playersArray[i].GetComponent<Transform>().LookAt(new Vector3(0f,playersArray[i].GetComponent<Transform>().position[1],0f));
+
+			//Debug.Log("Posicao do "+playersArray[i]+"em x: "+x+" e em z: "+z);
+		}
+	}
+
+	//Mesmo com Rpc, essa funcao nao esta ativando as bolas do Ritmo nos Clients, apenas no server
+	//O Ritmo ainda funciona, só nao aparece visualmente
+	[ClientRpc]
+	void RpcRitmo()
+	{
+		//Debug.Log("Entrando na funcao ritmo");
+		if(timeRitmo < 4)
+		{
+			//Debug.Log("Ritmo = 4");
+			foreach (GameObject player in playersArray)
+			{
+				if(player.GetComponent<botIA>() == null)
+				{
+					player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(true);
+				}
+			}			
+		}
+		if(timeRitmo < 3)
+		{
+			//Debug.Log("Ritmo = 3");
+			foreach (GameObject player in playersArray)
+			{
+				if(player.GetComponent<NetworkIdentity>().isLocalPlayer)
+				{
+					GameObject bola2 = player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola2").gameObject;
+					bola2.SetActive(true);
+				}
+			}			
+		}
+		if(timeRitmo < 2)
+		{
+			//Debug.Log("Ritmo = 2");
+			foreach (GameObject player in playersArray)
+			{
+				if(player.GetComponent<NetworkIdentity>().isLocalPlayer)
+				{
+					GameObject bola3 = player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola3").gameObject;
+					bola3.SetActive(true);
+				}
+			}
+			allReadyManager = true;			
+		}
+		
+	}
+
+
+
 }

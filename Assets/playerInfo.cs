@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using TMPro;
 
 public class playerInfo : NetworkBehaviour {
 
@@ -17,7 +18,7 @@ public class playerInfo : NetworkBehaviour {
 	// Update is called once per frame
 	void Update () {
 
-		vidasText.GetComponent<Text>().text =""+this.GetComponent<Atributos>().vidas.ToString()
+		vidasText.GetComponent<TextMeshProUGUI>().text =""+this.GetComponent<Atributos>().vidas.ToString()
 											+" // "+this.GetComponent<Atributos>().balas.ToString()
 											+"\n"+this.name;
 		

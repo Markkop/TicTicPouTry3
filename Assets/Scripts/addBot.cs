@@ -36,10 +36,13 @@ public class addBot : NetworkBehaviour {
 	
 		//Arruma a altura do spawn para que o objeto seja transportado para a base
 		//do spawn point e nao ao centro.
-		var spawn = NetworkManager.singleton.GetStartPosition();
+		
+		//var spawn = NetworkManager.singleton.GetStartPosition();
+		var spawn = new Vector3(0, 0, 0);
+		
 		float altura = go.GetComponent<Collider>().bounds.max[1];
 		altura = altura/2;
-		go.GetComponent<Transform>().position = spawn.position + new Vector3(0,altura,0);
+		go.GetComponent<Transform>().position = spawn + new Vector3(0,altura,0); //spawn.position
 		NetworkServer.Spawn(go);
 		
 		switch(bot){
