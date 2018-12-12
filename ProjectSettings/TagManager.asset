@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlayerToggle
   - Manager
+  - NetMan
   layers:
   - Default
   - TransparentFX

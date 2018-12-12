@@ -8,11 +8,17 @@ using System.Linq;
 
 public class _Manager : NetworkBehaviour {
 
+	public GameObject MyNetworkManager;
+
 	//public GameObject[] playersArray;
 	//public List<GameObject> gameObjectList = new List<GameObject>();
 	//public List<int> playersList = new List<int>();
+
+	//O playerArray (que é na vdd é uma lista) é populado toda vez
+	//que um jogador entra no jogo.
 	public List<GameObject> playersArray = new List<GameObject>();
-	//public GameObject[] toggles;
+	public int tempCountPlayers = 0;
+	
 
 	public bool fimDeJogo = false;
 	public GameObject winner;
@@ -20,17 +26,23 @@ public class _Manager : NetworkBehaviour {
 
 	public bool primeiroTurno = false;
 	public bool fimDeTurno = false;
-	public bool allReadyManager = false;
+	public bool comecaRodada = false;
 	public bool startReadyManager = false;
 	public int rodada = 0;
 
+	public float tempoRodada = 3; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
-	float timeRitmo = 5;
-	float timeLeft2 = 2;
+	float timeRitmo;
+	float timeLeft2;
 
 
 	void Start () {
 
+	//Gambiarra temporaria para sumir e aparecer os botoes Host e Client do NetworkManager
+	MyNetworkManager = GameObject.Find("_NetworkManager");
+
+	timeRitmo = tempoRodada;
+	timeLeft2 = 2*tempoRodada/5;
 	}
 	
 	void Update () {
@@ -53,16 +65,20 @@ public class _Manager : NetworkBehaviour {
 			// Caso a partida ainda nao tenha começado, posiciona os jogadores
 			if(playersArray.Count != 0 && !primeiroTurno)
 			{
-				NomeiaPlayers();
-				PosicionaPlayers();
-				CheckReady();	
+				if(tempCountPlayers != playersArray.Count)
+				{
+					NomeiaPlayers();
+					PosicionaPlayers();
+					tempCountPlayers = playersArray.Count;	
+				}
+				CheckReady();
 			}
 			return; //Se nao estiverem prontos, nao continua a rotina.
 		}
 		else
 		{	
 			//Quando todos os jogadores estiverem prontos pela primeira vez, ativa o primeiro Turno
-			//para que eles não fiquem sendo posicionados toda vez.
+			//para que eles não fiquem sendo posicionados toda vez. (na real talvez nao precise por conta do startReadyManager)
 			if(!primeiroTurno)
 			{
 				primeiroTurno = true;	
@@ -71,7 +87,7 @@ public class _Manager : NetworkBehaviour {
 
 		//Contador para definir o Ritmo do jogo, exibindo as bolinhas de timer pros jogadores
 		//e iniciando as resolucoes na bolinha maior (bola3)
-		if(!allReadyManager)
+		if(!comecaRodada)
 		{
 			timeRitmo -= Time.deltaTime;
 			Ritmo();
@@ -103,10 +119,10 @@ public class _Manager : NetworkBehaviour {
 					}
 				}
 				//Reseta os contadores
-				timeRitmo = 5;
-				timeLeft2 = 2;
+				timeRitmo = tempoRodada;
+				timeLeft2 = 2*tempoRodada/5;
 				fimDeTurno = false;
-				allReadyManager = false;
+				comecaRodada = false;
 				rodada = rodada +1;
 			}
 		}
@@ -252,7 +268,7 @@ public class _Manager : NetworkBehaviour {
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
-			if(go.GetComponent<Atributos>().vidas == 0) // se nao tiver vida 
+			if(go.GetComponent<Atributos>().vidas == 0 && go.GetComponent<Atributos>().playerMorto == false) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
 				go.GetComponent<Atributos>().newName = "Morto";
@@ -336,7 +352,7 @@ public class _Manager : NetworkBehaviour {
 	void Ritmo()
 	{
 		//Debug.Log("Entrando na funcao ritmo");
-		if(timeRitmo < 4)
+		if(timeRitmo < 4*tempoRodada/5)
 		{
 			//Debug.Log("Ritmo = 4");
 			foreach (GameObject player in playersArray)
@@ -348,7 +364,7 @@ public class _Manager : NetworkBehaviour {
 				}
 			}			
 		}
-		if(timeRitmo < 3)
+		if(timeRitmo < 3*tempoRodada/5)
 		{
 			//Debug.Log("Ritmo = 3");
 			foreach (GameObject player in playersArray)
@@ -359,7 +375,7 @@ public class _Manager : NetworkBehaviour {
 				}
 			}			
 		}
-		if(timeRitmo < 2)
+		if(timeRitmo < 2*tempoRodada/5)
 		{
 			//Debug.Log("Ritmo = 2");
 			foreach (GameObject player in playersArray)
@@ -369,7 +385,7 @@ public class _Manager : NetworkBehaviour {
 					RpcToggleBola(3, player, true);
 				}
 			}
-			allReadyManager = true;			
+			comecaRodada = true;			
 		}
 		
 	}
@@ -407,7 +423,7 @@ public class _Manager : NetworkBehaviour {
 	[ClientRpc]
     void RpcChangePlayerName(GameObject go, string n)
     {
-		Debug.Log("Avisando todos os clientes da mudanca de nome do "+go.name+" para "+n);
+		//Debug.Log("Avisando todos os clientes da mudanca de nome do "+go.name+" para "+n);
 		go.GetComponent<Atributos>().newName = n;
 		go.name = n;
     }
@@ -429,11 +445,14 @@ public class _Manager : NetworkBehaviour {
 	{
 		playerQueMorreu.GetComponent<Transform>().LookAt(playerQueMatou.GetComponent<Transform>().position);
 		playerQueMorreu.GetComponent<Rigidbody>().AddRelativeForce(transform.forward * -8000);
-
-		playerQueMorreu.GetComponent<Atributos>().playerCamera.SetActive(false);
-		playerQueMorreu.GetComponent<Atributos>().cameras[0].active = true;
-		playerQueMorreu.GetComponent<Atributos>().playerCanvas.SetActive(false);
 		playerQueMorreu.GetComponent<Atributos>().playerMorto = true;
+
+		if(playerQueMorreu.GetComponent<botIA>() == null)
+		{
+			playerQueMorreu.GetComponent<Atributos>().playerCamera.SetActive(false);
+			playerQueMorreu.GetComponent<Atributos>().cameras[0].active = true;
+			playerQueMorreu.GetComponent<Atributos>().playerCanvas.SetActive(false);
+		}
 	}
 
 	[ClientRpc]
@@ -447,6 +466,8 @@ public class _Manager : NetworkBehaviour {
 	void RpcDesativaReadyButton(GameObject player)
 	{
 		player.GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
+		//Gambiarra temporaria para sumir com os botoes Host e Client
+		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(false);
 	}
 
 	[ClientRpc]
@@ -468,6 +489,8 @@ public class _Manager : NetworkBehaviour {
 			player.GetComponent<Atributos>().playerCanvas.SetActive(false);
 		}
 		overviewCamera.GetComponent<Transform>().position = overviewCamera.GetComponent<Transform>().position + new Vector3(-Time.deltaTime,Time.deltaTime,-Time.deltaTime);
+		//Gambiarra temporaria para voltar com os botoes Host e Client
+		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(true);
 	}
 
 }

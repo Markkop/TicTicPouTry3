@@ -155,12 +155,14 @@ public List<GameObject> list = new List<GameObject>();
 		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 		GameObject alvo0 = playersArray[Random.Range(0,playersArray.Count)];
 
-		if(alvo0 == gameObject) //Se o alvo for ele mesmo (inteligente hein)
+		if(alvo0 == gameObject || alvo0.GetComponent<Atributos>().vidas <= 0) //Se o alvo for ele mesmo (inteligente hein)
 		{
+			Debug.Log(this.name+" pegou si mesmo, tentando de novo...");
 			return RandomMenosSiMesmo();
 		}
 		else
 		{
+			Debug.Log(this.name+" pegou "+alvo0+" como alvo...");
 			return alvo0;
 		}
 	}
@@ -170,7 +172,7 @@ public List<GameObject> list = new List<GameObject>();
 		//playersArray = GameObject.FindGameObjectsWithTag("Player");
 		foreach (GameObject go in playersArray) //para cada player em jogo
 		{
-			if(hasAuthority && go.GetComponent<Atributos>().vidas != 0)
+			if(go.GetComponent<botIA>() == null && go.GetComponent<Atributos>().vidas > 0)
 			{
 				return go;
 			}
