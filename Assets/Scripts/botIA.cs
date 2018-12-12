@@ -16,8 +16,9 @@ public List<GameObject> playersArray = new List<GameObject>();
 public bool botDefensor; //Sempre defende
 public bool botSanguinario; //Sempre ataca o player
 public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
+public bool botAlvoEsperto; //Se for alvo de alguém, defende
 
-public GameObject[] playersArrayOraculo;
+public GameObject[] playersArraySecundario;
 
 public List<GameObject> list = new List<GameObject>();
 
@@ -40,7 +41,7 @@ public List<GameObject> list = new List<GameObject>();
 		}
 
 		// Se o bot estiver morto, retorna
-		if(this.GetComponent<Atributos>().vidas == 0)
+		if(this.GetComponent<Atributos>().vidas <= 0)
 		{
 			return;
 		}
@@ -57,6 +58,10 @@ public List<GameObject> list = new List<GameObject>();
 		// Se todos defenderem, entao defende.
 		if(botOraculo == true)
 			BotOraculo();
+
+		//Se for alvo, defende.
+		if(botAlvoEsperto == true)
+			BotAlvoEsperto();
 
 		
 
@@ -108,9 +113,9 @@ public List<GameObject> list = new List<GameObject>();
 			}
 			else
 			{
-				playersArrayOraculo = GameObject.FindGameObjectsWithTag("Player");
+				playersArraySecundario = GameObject.FindGameObjectsWithTag("Player");
 
-				foreach (GameObject go in playersArrayOraculo) //para cada player em jogo (incluindo bots)
+				foreach (GameObject go in playersArraySecundario) //para cada player em jogo (incluindo bots)
 				{
 					if(go.GetComponent<Atributos>().vaiDefender == false)
 					{
@@ -122,6 +127,13 @@ public List<GameObject> list = new List<GameObject>();
 								{
 									list.Add(go); 	//Bota numa lista apenas players que
 									//nao defendem e que nao eh si mesmo
+								}
+							}
+							else
+							{
+								if(list.Contains(go))
+								{
+									list.Remove(go);
 								}
 							}
 						}
@@ -149,6 +161,44 @@ public List<GameObject> list = new List<GameObject>();
 	}
 
 
+	void BotAlvoEsperto()
+	{
+		if (allReady != true)
+		{
+			playersArraySecundario = GameObject.FindGameObjectsWithTag("Player");
+			
+			foreach (GameObject player in playersArraySecundario)
+			{
+				if(player.GetComponent<Atributos>().alvo == gameObject)
+				{
+					bot.vaiDefender = true;
+					bot.vaiRecarregar = false;
+					bot.vaiAtirar = false;
+					bot.ready = true;
+					return;
+				}
+				else
+				{
+					if(bot.balas < 1)
+					{
+						bot.vaiRecarregar = true;
+						bot.ready = true;	
+					}
+					// 
+					else
+					{
+						
+						bot.alvo = RandomMenosSiMesmo(); //Random
+
+						bot.vaiAtirar = true;
+						bot.vaiDefender = false;
+						bot.vaiRecarregar = false;
+						bot.ready = true;	
+					}
+				}
+			}
+		}
+	}
 
 	GameObject RandomMenosSiMesmo()
 	{
@@ -157,12 +207,12 @@ public List<GameObject> list = new List<GameObject>();
 
 		if(alvo0 == gameObject || alvo0.GetComponent<Atributos>().vidas <= 0) //Se o alvo for ele mesmo (inteligente hein)
 		{
-			Debug.Log(this.name+" pegou si mesmo, tentando de novo...");
+			//Debug.Log(this.name+" pegou si mesmo, tentando de novo...");
 			return RandomMenosSiMesmo();
 		}
 		else
 		{
-			Debug.Log(this.name+" pegou "+alvo0+" como alvo...");
+			//Debug.Log(this.name+" pegou "+alvo0+" como alvo...");
 			return alvo0;
 		}
 	}

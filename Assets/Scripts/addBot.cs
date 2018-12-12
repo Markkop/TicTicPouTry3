@@ -38,30 +38,36 @@ public class addBot : NetworkBehaviour {
 		//do spawn point e nao ao centro.
 		
 		//var spawn = NetworkManager.singleton.GetStartPosition();
-		var spawn = new Vector3(0, 0, 0);
+		//var spawn = new Vector3(0, 0, 0);
 		
-		float altura = go.GetComponent<Collider>().bounds.max[1];
-		altura = altura/2;
-		go.GetComponent<Transform>().position = spawn + new Vector3(0,altura,0); //spawn.position
+		//float altura = go.GetComponent<Collider>().bounds.max[1];
+		//altura = altura/2;
+		//go.GetComponent<Transform>().position = spawn + new Vector3(0,altura,0); //spawn.position
 		NetworkServer.Spawn(go);
 		
 		switch(bot){
 			case 1:
 			go.GetComponent<botIA>().botDefensor = true;
-			go.GetComponent<Renderer>().material.color = Color.blue;
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.blue;
 			RpcSpawnBot(go, Color.blue); //Avisa outros clients dessa mudança
 			break;
 
 			case 2:
 			go.GetComponent<botIA>().botSanguinario = true;
-			go.GetComponent<Renderer>().material.color = Color.red;
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
 			RpcSpawnBot(go, Color.red);
 			break;
 
 			case 3:
 			go.GetComponent<botIA>().botOraculo = true;			
-			go.GetComponent<Renderer>().material.color = Color.white;
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.white;
 			RpcSpawnBot(go, Color.white);
+			break;
+
+			case 4:
+			go.GetComponent<botIA>().botAlvoEsperto = true;			
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.green;
+			RpcSpawnBot(go, Color.green);
 			break;
 		}
 		
@@ -72,7 +78,7 @@ public class addBot : NetworkBehaviour {
 	[ClientRpc]
 	public void RpcSpawnBot(GameObject bot, Color cor)
 	{
-		bot.GetComponent<Renderer>().material.color = cor;
+		bot.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = cor;
 	}
 }
 

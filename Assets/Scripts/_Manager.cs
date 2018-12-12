@@ -30,7 +30,7 @@ public class _Manager : NetworkBehaviour {
 	public bool startReadyManager = false;
 	public int rodada = 0;
 
-	public float tempoRodada = 3; //Verifique se no Editor tambem foi alterado
+	public float tempoRodada = 4; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
 	float timeRitmo;
 	float timeLeft2;
@@ -177,16 +177,12 @@ public class _Manager : NetworkBehaviour {
 			//go.GetComponent<Atributos>().allReady = true; // (aproveita e confirma a todos que todos estao prontos)
 			if(go.GetComponent<Atributos>().vaiDefender == true) //Se optou por defender 
 			{
-				if(go.GetComponent<botIA>() == null)
-					RpcAnimTrigger(go, "Defende");
-
+				RpcAnimTrigger(go, "Defende");
 				go.GetComponent<Atributos>().estaDefendendo = true; //Entao esta defendendo
 			}
 			if(go.GetComponent<Atributos>().vaiRecarregar == true) //Se optou por recarregar
 			{
-				if(go.GetComponent<botIA>() == null)
-					RpcAnimTrigger(go, "Recarrega");
-
+				RpcAnimTrigger(go, "Recarrega");
 				if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 				{
 					Debug.Log(go.name+" carrega uma bala...");
@@ -208,9 +204,6 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) //Se for atirar...
 			{
-				if(go.GetComponent<botIA>() == null)
-				RpcAnimTrigger(go, "Atira");
-
 				if(go.GetComponent<Atributos>().alvo != null) //e tiver escolhido um alvo..
 				{
 					if(go.GetComponent<Atributos>().balas > 0)//e tiver bala
@@ -240,6 +233,9 @@ public class _Manager : NetworkBehaviour {
 			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
 				{
 					GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
+					RpcAnimTrigger(go, "Atira");
+					RpcFaceTo(go, alvo1);
+
 					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
 					{
 						if(!alvo1.GetComponent<Atributos>().levouTiro) // Para levar apenas um tiro no max
@@ -286,6 +282,7 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().alvo = null;
 		RpcDesativaToggles(go);
 
+
 		fimDeTurno = true;
 		//Debug.Log("Fim do Resolve4");
 		}
@@ -329,8 +326,9 @@ public class _Manager : NetworkBehaviour {
 		float angulo = 360/playersArray.Count;
 		for(int i = 0; i < playersArray.Count; i++)
 		{
-			float altura = playersArray[i].GetComponent<Collider>().bounds.max[1];
-			float y = altura/2;
+			//float altura = playersArray[i].GetComponent<Collider>().bounds.max[1];
+			//float y = altura/2;
+			float y = 0.5f ;
 
 			if(playersArray[i].GetComponent<botIA>() == null)
 			{
@@ -338,7 +336,7 @@ public class _Manager : NetworkBehaviour {
 				//Nota-se que é preciso fazer isso pois os players são Spawnados pelo NetworkManager e
 				//provavelmente spawnando usando a base do player, enquanto que os Bots são spawnados
 				//pelo jogador (host) e usando o centro do bot.
-				y = 0;
+				y = 0.5f;
 			}
 			float x = 8*Mathf.Cos(i*angulo*3.14f/180f);
 			float z = 8*Mathf.Sin(i*angulo*3.14f/180f);
@@ -360,6 +358,7 @@ public class _Manager : NetworkBehaviour {
 				if(player.GetComponent<botIA>() == null)
 				{
 					//player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(true);
+					RpcFaceToReset(player);
 					RpcToggleBola(1, player, true);
 				}
 			}			
@@ -463,9 +462,63 @@ public class _Manager : NetworkBehaviour {
 	}
 
 	[ClientRpc]
+	void RpcFaceTo(GameObject player, GameObject alvo)
+	{
+		//Gambiarra fudida para que apenas o jogador vire no LookAt, com a camera permanecendo igual
+		Quaternion originalCameraRot = new Quaternion(0f,0f,0f,1f);
+		Vector3 originalCameraPos = Vector3.zero;
+
+		//Essa verificação para player/bot é necessaria para evitar erros, uma vez que bot nao tem camera
+		if(player.GetComponent<botIA>() == null)
+		{
+			//Armazena a posicao e rotacao original da camera
+			originalCameraRot = player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().rotation;
+			originalCameraPos = player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().position;
+		}
+
+		//A funcao poderia ser só essa linha... sigh..
+		player.GetComponent<Transform>().LookAt(alvo.GetComponent<Transform>());
+
+		if(player.GetComponent<botIA>() == null)
+		{
+			//Retorna a posicao e rotacao original da camera
+			player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().rotation = originalCameraRot;
+			player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().position = originalCameraPos;
+		}
+		
+	}
+
+	[ClientRpc]
+	void RpcFaceToReset(GameObject player)
+	{
+		Quaternion originalCameraRot = new Quaternion(0f,0f,0f,1f);
+		Vector3 originalCameraPos = Vector3.zero;
+		
+		if(player.GetComponent<botIA>() == null)
+		{
+			originalCameraRot = player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().rotation;
+			originalCameraPos = player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().position;
+		}
+
+		//Olhar para o centro hardcoded
+		player.GetComponent<Transform>().LookAt(new Vector3(0f,player.GetComponent<Transform>().position[1],0f));
+
+		if(player.GetComponent<botIA>() == null)
+		{
+			player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().rotation = originalCameraRot;
+			player.GetComponent<Atributos>().playerCamera.GetComponent<Transform>().position = originalCameraPos;
+		}
+
+	}
+
+	[ClientRpc]
 	void RpcDesativaReadyButton(GameObject player)
 	{
 		player.GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
+
+		//Aproveita e desativa o painel de bots
+		player.GetComponent<Transform>().Find("playerCanvas/addBotPanel").gameObject.SetActive(false);
+		
 		//Gambiarra temporaria para sumir com os botoes Host e Client
 		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(false);
 	}

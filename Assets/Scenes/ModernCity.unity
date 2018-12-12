@@ -988,7 +988,7 @@ MonoBehaviour:
   comecaRodada: 0
   startReadyManager: 0
   rodada: 0
-  tempoRodada: 3
+  tempoRodada: 4
 --- !u!114 &367678849
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1493,6 +1493,7 @@ MonoBehaviour:
   m_SpawnPrefabs:
   - {fileID: 1850737088623996, guid: 433978f9a5ed74839a89bec355769963, type: 2}
   - {fileID: 1932431819602258, guid: 3078f1e1adba44c61bf3e0d90e6e929a, type: 2}
+  - {fileID: 1566603986647626, guid: ffce71e2995344ce4ba5dde888ef5039, type: 2}
   m_CustomConfig: 0
   m_MaxConnections: 4
   m_ConnectionConfig:
