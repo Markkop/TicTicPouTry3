@@ -1539,7 +1539,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!114 &631085061
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1564,7 +1564,7 @@ MonoBehaviour:
     type: 2}
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
-  m_OfflineScene: ModernCity
+  m_OfflineScene: MainMenu
   m_OnlineScene: ModernCity
   m_SpawnPrefabs:
   - {fileID: 1850737088623996, guid: 433978f9a5ed74839a89bec355769963, type: 2}
@@ -1629,6 +1629,7 @@ MonoBehaviour:
   clienta: {fileID: 1418232472}
   canvas: {fileID: 114138484}
   CenarioObject: {fileID: 0}
+  _started: 0
 --- !u!4 &631085062
 Transform:
   m_ObjectHideFlags: 0
@@ -4536,7 +4537,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}

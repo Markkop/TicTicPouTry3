@@ -11,11 +11,12 @@ public class ResetButtonScript : NetworkBehaviour {
 	{
 		GameObject MyNetworkManager = GameObject.Find("_NetworkManager");
 		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(true);
+		MyNetworkManager.GetComponent<MyNetworkManager>()._started = false;
 		Debug.Log("Desconectando e resetando scene...");
 		SceneManager.LoadScene(0);
 		NetworkManager.singleton.StopClient();
 		NetworkManager.singleton.StopHost();
-		NetworkManager.singleton.StopServer();
+		//NetworkManager.singleton.StopServer();
 	}
 
 

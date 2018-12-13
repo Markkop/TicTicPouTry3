@@ -46,6 +46,12 @@ public class Atributos : NetworkBehaviour {
 
 	// Use this for initialization
 	void Start () {
+
+		if(this.GetComponent<botIA>() == null)
+		{
+			vidas = Settings.startingVidas;
+			balas = Settings.startingBalas;
+		}
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 

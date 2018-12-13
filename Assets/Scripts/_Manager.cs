@@ -41,6 +41,7 @@ public class _Manager : NetworkBehaviour {
 	//Gambiarra temporaria para sumir e aparecer os botoes Host e Client do NetworkManager
 	MyNetworkManager = GameObject.Find("_NetworkManager");
 
+	tempoRodada = Settings.newRitmo;
 	timeRitmo = tempoRodada;
 	timeLeft2 = 2*tempoRodada/5;
 	}
