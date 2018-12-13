@@ -6,6 +6,7 @@ using UnityEngine.Networking;
 
 public class ButtonCreator : NetworkBehaviour
 {
+    public GameObject alvosTextPrefab;
     public GameObject buttonPrefab;
     public GameObject panelToAttachButtonsTo;
     public ToggleGroup toggleGroup;
@@ -34,9 +35,9 @@ public class ButtonCreator : NetworkBehaviour
 
     void Update()
     {
-        //Se o numero de jogadores mudar, refaz os botoes
+        //Se o numero de jogadores mudar, refaz os botoes (o -1 esta ali por causa do text "Alvos:")
         playersArray = GameObject.FindGameObjectsWithTag("Player");
-        if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount)
+        if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount-1)
         {
             Destroi();
             CriaBotoes();            
@@ -45,18 +46,26 @@ public class ButtonCreator : NetworkBehaviour
         //Atualiza nomes caso alguem mude de nome (gambiarra)
         foreach(Transform child in panelToAttachButtonsTo.transform)
         {
-            if(child.GetComponent<alvoButton>().alvo.ToString() != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
+            if(child.GetComponent<alvoButton>() != null) //Para que nao faca isso com o texto "Alvos:"
             {
-                //Debug.Log("opa");
-                child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.ToString();
+                if(child.GetComponent<alvoButton>().alvo.ToString() != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
+                {
+                    //Debug.Log("opa");
+                    
+                    child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.ToString();
 
+                }
             }
+                
         }
 
     }
 
     public void CriaBotoes()
     {
+        GameObject textA = (GameObject)Instantiate(alvosTextPrefab);
+        textA.transform.SetParent(panelToAttachButtonsTo.transform, false);
+
         foreach(GameObject player in playersArray)
         {
             GameObject alvo = player;

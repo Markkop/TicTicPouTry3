@@ -9,6 +9,7 @@ using System.Linq;
 public class _Manager : NetworkBehaviour {
 
 	public GameObject MyNetworkManager;
+	public GameObject addBotPanel;
 
 	//public GameObject[] playersArray;
 	//public List<GameObject> gameObjectList = new List<GameObject>();
@@ -29,6 +30,9 @@ public class _Manager : NetworkBehaviour {
 	public bool comecaRodada = false;
 	public bool startReadyManager = false;
 	public int rodada = 0;
+
+	public bool prePartida = false;
+	public bool posPartida = false;
 
 	public float tempoRodada = 4; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
@@ -61,6 +65,8 @@ public class _Manager : NetworkBehaviour {
 			return;
 		}
 
+
+
 		if(!startReadyManager) // Verifica se todos estao prontos
 		{
 			// Caso a partida ainda nao tenha começado, posiciona os jogadores
@@ -84,6 +90,12 @@ public class _Manager : NetworkBehaviour {
 			{
 				primeiroTurno = true;	
 			}
+		}
+
+		//Caso os eventos prePartida ainda nao tenham ocorrido
+		if(!prePartida)
+		{
+			return;
 		}
 
 		//Contador para definir o Ritmo do jogo, exibindo as bolinhas de timer pros jogadores
@@ -348,7 +360,7 @@ public class _Manager : NetworkBehaviour {
 
 	// Temporizador para definir o ritmo das acoes dos jogadores.
 	// Deve ter alguma forma de deixar isso mais limpo.	
-	void Ritmo()
+	public void Ritmo()
 	{
 		//Debug.Log("Entrando na funcao ritmo");
 		if(timeRitmo < 4*tempoRodada/5)
@@ -402,6 +414,11 @@ public class _Manager : NetworkBehaviour {
 		timeLeft -= Time.deltaTime;
 		if(timeLeft < 0)
 		{
+			if(posPartida == false)
+			{
+				return;
+			}
+
 			Debug.Log("Desconectando e resetando scene...");
 			SceneManager.LoadScene(0);
 			NetworkManager.singleton.StopClient();
@@ -521,7 +538,8 @@ public class _Manager : NetworkBehaviour {
 		player.GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
 
 		//Aproveita e desativa o painel de bots
-		player.GetComponent<Transform>().Find("playerCanvas/addBotPanel").gameObject.SetActive(false);
+		if(addBotPanel != null)
+			addBotPanel.SetActive(false);
 		
 		//Gambiarra temporaria para sumir com os botoes Host e Client
 		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(false);

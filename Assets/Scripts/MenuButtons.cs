@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 using TMPro;
 
 
@@ -16,7 +17,8 @@ public bool _started;
 
 	public void Update()
 	{
-		this.GetComponent<Transform>().Find("OptionsPanel/RitmoCanvas/RitmoText").GetComponent<TextMeshProUGUI>().text = "Velocidade: "+Settings.newRitmo;
+		this.GetComponent<Transform>().Find("OptionsPanel/RitmoCanvas/RitmoText").GetComponent<TextMeshProUGUI>().text = "Velocidade: "+Settings.newRitmo+
+																														  "\n(menor, mais rápido)";
 		this.GetComponent<Transform>().Find("OptionsPanel/VidasCanvas/VidasText").GetComponent<TextMeshProUGUI>().text = "Vidas Iniciais: "+Settings.startingVidas;
 		this.GetComponent<Transform>().Find("OptionsPanel/BalasCanvas/BalasText").GetComponent<TextMeshProUGUI>().text = "Balas Iniciais: "+Settings.startingBalas;
 	}
@@ -51,6 +53,14 @@ public bool _started;
 	public void ChangeBalas(float startBala)
 	{
 		Settings.startingBalas = (int)Mathf.Round(startBala);
+	}
+
+	public void ChangeScene(int scene)
+	{
+		Host();
+		SceneManager.LoadScene(scene);
+		//Se for pro Tutorial
+
 	}
 
 }

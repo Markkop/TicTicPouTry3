@@ -7,6 +7,7 @@ public class botIA : NetworkBehaviour {
 
 //public GameObject _Manager;
 public Atributos bot;
+public GameObject _Manager;
 
 private bool allReady;
 
@@ -17,6 +18,9 @@ public bool botDefensor; //Sempre defende
 public bool botSanguinario; //Sempre ataca o player
 public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 public bool botAlvoEsperto; //Se for alvo de alguém, defende
+public bool botRDRA;
+
+public int rodadasLoop = 0;
 
 public GameObject[] playersArraySecundario;
 
@@ -27,6 +31,9 @@ public List<GameObject> list = new List<GameObject>();
 		
 		//allReady = _Manager.GetComponent<_Manager>().allReady;
 		allReady = false;
+
+		//Pega o Manager da cena
+		_Manager = GameObject.FindWithTag("Manager");
 	}
 	
 	// Update is called once per frame
@@ -62,6 +69,10 @@ public List<GameObject> list = new List<GameObject>();
 		//Se for alvo, defende.
 		if(botAlvoEsperto == true)
 			BotAlvoEsperto();
+
+		//Recarrega, Defende, Recarrega, Atirar (loop)
+		if(botRDRA == true)
+			BotRDRA();
 
 		
 
@@ -197,6 +208,48 @@ public List<GameObject> list = new List<GameObject>();
 					}
 				}
 			}
+		}
+	}
+
+	void BotRDRA()
+	{
+		if (allReady != true)
+		{
+			rodadasLoop = _Manager.GetComponent<_Manager>().rodada;
+
+			//Caso passe da 4º rodada
+			if(rodadasLoop > 3)
+			{
+				//Ex: 	AcaoDaRodada = 5 - RoundDown(5/4) * 4
+				//		AcaoDaRodada = 5 - 1*4 = 1
+				//		AcaoDaRodada = 10 - 2*4 = 2
+				rodadasLoop = rodadasLoop - (int)Mathf.Floor(rodadasLoop/4)*4;
+			}
+			switch(rodadasLoop)
+			{
+				case 0:
+					bot.vaiDefender = false;
+					bot.vaiRecarregar = true;
+					bot.vaiAtirar = false;					
+				break;
+				case 1:
+					bot.vaiDefender = true;
+					bot.vaiRecarregar = false;
+					bot.vaiAtirar = false;					
+				break;
+				case 2:
+					bot.vaiDefender = false;
+					bot.vaiRecarregar = false;
+					bot.vaiAtirar = true;
+					bot.alvo = PegaPlayer();					
+				break;
+				case 3:
+					bot.vaiDefender = true;
+					bot.vaiRecarregar = false;
+					bot.vaiAtirar = false;					
+				break;
+			}
+			bot.ready = true;
 		}
 	}
 

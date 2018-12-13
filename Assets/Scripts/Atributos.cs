@@ -55,7 +55,9 @@ public class Atributos : NetworkBehaviour {
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
-		//Vira a camera tambem e roda animacao
+
+
+		//Vira a camera tambem 
 		if(isLocalPlayer)
 		{
 			playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
@@ -89,6 +91,17 @@ public class Atributos : NetworkBehaviour {
 		//Pega o Manager da cena
 		_Manager = GameObject.FindWithTag("Manager");
 		_Manager.GetComponent<_Manager>().playersArray.Add(gameObject);
+
+		if(isServer && this.GetComponent<botIA>() == null)
+		{
+			Debug.Log("Eh server e eh player real");
+			if(_Manager.GetComponent<_Manager>().addBotPanel != null)
+			{
+				_Manager.GetComponent<_Manager>().addBotPanel.SetActive(true);	
+			}
+			
+		}
+
 	}
 	
 	// Update is called once per frame
@@ -99,6 +112,7 @@ public class Atributos : NetworkBehaviour {
 		{
 			playersArray = _Manager.GetComponent<_Manager>().playersArray;	
 		}
+			
 	}
 
 	//Funcao para Debug
