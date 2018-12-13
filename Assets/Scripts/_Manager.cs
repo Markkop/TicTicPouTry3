@@ -406,6 +406,9 @@ public class _Manager : NetworkBehaviour {
 			NetworkManager.singleton.StopClient();
 			NetworkManager.singleton.StopHost();
 			NetworkManager.singleton.StopServer();
+
+			//Gambiarra temporaria para voltar com os botoes Host e Client
+			MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(true);
 			return;	
 		}
 		else
@@ -542,8 +545,7 @@ public class _Manager : NetworkBehaviour {
 			player.GetComponent<Atributos>().playerCanvas.SetActive(false);
 		}
 		overviewCamera.GetComponent<Transform>().position = overviewCamera.GetComponent<Transform>().position + new Vector3(-Time.deltaTime,Time.deltaTime,-Time.deltaTime);
-		//Gambiarra temporaria para voltar com os botoes Host e Client
-		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(true);
+	
 	}
 
 }

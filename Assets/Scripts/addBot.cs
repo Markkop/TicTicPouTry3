@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Networking;
+using UnityEngine.SceneManagement;
 
 public class addBot : NetworkBehaviour {
 
@@ -20,6 +21,7 @@ public class addBot : NetworkBehaviour {
 	// 1 - Defensor
 	// 2 - Sanguinario
 	// 3 - Oraculo
+	// 4 - AlvoEsperto
 
 
 	[Command]
@@ -79,6 +81,17 @@ public class addBot : NetworkBehaviour {
 	public void RpcSpawnBot(GameObject bot, Color cor)
 	{
 		bot.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = cor;
+	}
+
+	public void Reset()
+	{
+		GameObject MyNetworkManager = GameObject.Find("_NetworkManager");
+		MyNetworkManager.GetComponent<Transform>().Find("canvasAll").gameObject.SetActive(true);
+		Debug.Log("Desconectando e resetando scene...");
+		SceneManager.LoadScene(0);
+		NetworkManager.singleton.StopClient();
+		NetworkManager.singleton.StopHost();
+		NetworkManager.singleton.StopServer();
 	}
 }
 
