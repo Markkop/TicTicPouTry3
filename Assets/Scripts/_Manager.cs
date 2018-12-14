@@ -19,7 +19,8 @@ public class _Manager : NetworkBehaviour {
 	//que um jogador entra no jogo.
 	public List<GameObject> playersArray = new List<GameObject>();
 	public int tempCountPlayers = 0;
-	
+
+	public List<GameObject> magosKadabra = new List<GameObject>();
 
 	public bool fimDeJogo = false;
 	public GameObject winner;
@@ -207,11 +208,32 @@ public class _Manager : NetworkBehaviour {
 					//Obs: o player vai gastar a propria acao
 				}		
 			}
+			if(go.GetComponent<Atributos>().vaiRecarrEsp == true)
+			{
+				switch(go.GetComponent<Atributos>().classe)
+				{
+					case 1: //Mago
+						if(go.GetComponent<Atributos>().espCargas != go.GetComponent<Atributos>().maxEspCargas)
+						{
+							Debug.Log(go.name+" carrega um ABRA");
+							go.GetComponent<Atributos>().espCargas += 1;	
+						}
+					break;
+					case 2: //Samurai
+						if(go.GetComponent<Atributos>().espCargas != go.GetComponent<Atributos>().maxEspCargas)
+						{
+							Debug.Log(go.name+" carrega um CONTRA-ATAQUE");
+							go.GetComponent<Atributos>().espCargas += 1;	
+						}
+					break;
+				}
+			}
 		}
 	}
 
 	void ResolvePhase2() //Verifica se ha balas
 	{
+		magosKadabra.Clear();
 		//Debug.Log("Resolvendo Phase 2");
 		foreach (GameObject go in playersArray) //Para cada jogador...
 		{
@@ -235,6 +257,27 @@ public class _Manager : NetworkBehaviour {
 					go.GetComponent<Atributos>().vaiAtirar = false;
 				}
 			}
+			if(go.GetComponent<Atributos>().vaiUsarEsp == true)
+			{
+				if(go.GetComponent<Atributos>().espCargas > 0)
+				{
+					switch(go.GetComponent<Atributos>().classe)
+					{
+						case 1: //Mago
+							magosKadabra.Add(go); //Magos usando Kadabra
+						break;
+						case 2: //Samurai
+							//
+						break;
+
+					}
+				}
+				else
+				{
+					Debug.Log("Nao carregou sua ação especial...");
+					go.GetComponent<Atributos>().vaiUsarEsp = false;
+				}
+			}
 		}
 	}
 
@@ -244,33 +287,108 @@ public class _Manager : NetworkBehaviour {
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
-				{
-					GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
-					RpcAnimTrigger(go, "Atira");
-					RpcFaceTo(go, alvo1);
+			{
+				GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
+				RpcAnimTrigger(go, "Atira");
+				RpcFaceTo(go, alvo1);
 
-					if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
+				if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
+				{
+					if(!alvo1.GetComponent<Atributos>().levouTiro) // Para levar apenas um tiro no max
 					{
-						if(!alvo1.GetComponent<Atributos>().levouTiro) // Para levar apenas um tiro no max
+						alvo1.GetComponent<Atributos>().levouTiro = true;
+						alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+						alvo1.GetComponent<PlaySound>().PainSound();
+						if(alvo1.GetComponent<Atributos>().vidas == 0) //Se estiver morto
 						{
-							alvo1.GetComponent<Atributos>().levouTiro = true;
-							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
-							alvo1.GetComponent<PlaySound>().PainSound();
-							if(alvo1.GetComponent<Atributos>().vidas == 0) //Se estiver morto
+							RpcAnimTrigger(alvo1, "Morto");
+							alvo1.GetComponent<Atributos>().mortoPor = go; //memoriza quem o matou
+						}
+					}
+					Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
+				}
+				else
+				{
+					alvo1.GetComponent<PlaySound>().BlockSound();
+					Debug.Log(go.name+" atira em "+alvo1.name+" que se defende...");
+				}
+				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
+			}
+		}
+
+
+		foreach (GameObject go in playersArray)
+		{
+			if(go.GetComponent<Atributos>().vaiUsarEsp == true)	//Se alguem usar especial
+			{
+				switch(go.GetComponent<Atributos>().classe) 
+				{
+					case 1: //Mago
+						if(go.GetComponent<Atributos>().vidas > 0) //Se o mago nao tiver morrido pra um tiro
+						{
+							if(magosKadabra.Count > 1) //Se dois ou mais magos usarem Kadabra
 							{
-								RpcAnimTrigger(alvo1, "Morto");
-								alvo1.GetComponent<Atributos>().mortoPor = go; //memoriza quem o matou
+								foreach(GameObject mago in magosKadabra) 
+								{
+									if(mago.GetComponent<Atributos>().levouKadabra == false) // Se o mago nao levou Kadabra (pra perder apenas 1 vida)
+									{ 	
+										mago.GetComponent<Atributos>().vidas -= 1;
+										mago.GetComponent<Atributos>().levouKadabra = true;
+									}
+									if(mago.GetComponent<Atributos>().vidas == 0)
+									{
+										mago.GetComponent<Atributos>().mortoPor = mago;
+									}
+								}
+
+								foreach(GameObject mago in magosKadabra)
+								{
+									if(mago.GetComponent<Atributos>().vidas > 0) //Se sobrar algum mago vivo
+									{
+										foreach(GameObject player in playersArray) // Então ataca os demais jogadores
+										{
+											if(player.GetComponent<Atributos>().estaDefendendo == false && player != go)
+											{
+												if(player.GetComponent<Atributos>().levouKadabra == false)
+												{
+													player.GetComponent<Atributos>().vidas -= 1;
+													player.GetComponent<Atributos>().levouKadabra = true;
+												}
+												if(player.GetComponent<Atributos>().vidas == 0) 
+												{
+													RpcAnimTrigger(player, "Morto");
+													player.GetComponent<Atributos>().mortoPor = go; 
+												}
+											}
+										}
+									}
+								}
+								go.GetComponent<Atributos>().espCargas -= 1;
+							}
+							else //Se apenas um mago usar Kadabra
+							{
+								foreach(GameObject player in playersArray)
+								{
+									if(player.GetComponent<Atributos>().estaDefendendo == false && player != go)
+									{
+										if(player.GetComponent<Atributos>().levouKadabra == false)
+										{
+											player.GetComponent<Atributos>().vidas -= 1;
+											player.GetComponent<Atributos>().levouKadabra = true;
+										}
+										if(player.GetComponent<Atributos>().vidas == 0) 
+										{
+											RpcAnimTrigger(player, "Morto");
+											player.GetComponent<Atributos>().mortoPor = go; 
+										}
+									}
+								}
+								go.GetComponent<Atributos>().espCargas -= 1;
 							}
 						}
-						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
-					}
-					else
-					{
-						alvo1.GetComponent<PlaySound>().BlockSound();
-						Debug.Log(go.name+" atira em "+alvo1.name+" que se defende...");
-					}
-				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
+					break;
 				}
+			}
 		}	
 	}
 
@@ -280,6 +398,7 @@ public class _Manager : NetworkBehaviour {
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
 			go.GetComponent<Atributos>().levouTiro = false;
+			go.GetComponent<Atributos>().levouKadabra = false;
 			if(go.GetComponent<Atributos>().vidas == 0 && go.GetComponent<Atributos>().playerMorto == false) // se nao tiver vida 
 			{
 				Debug.Log("O ["+go.name+"] morreu");
@@ -295,6 +414,8 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiRecarregar = false;
 		go.GetComponent<Atributos>().vaiDefender = false;
 		go.GetComponent<Atributos>().estaDefendendo = false;
+		go.GetComponent<Atributos>().vaiUsarEsp = false;
+		go.GetComponent<Atributos>().vaiRecarrEsp = false;
 		go.GetComponent<Atributos>().alvo = null;
 		RpcDesativaToggles(go);
 

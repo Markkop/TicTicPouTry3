@@ -71,6 +71,18 @@ public class addBot : NetworkBehaviour {
 			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.green;
 			RpcSpawnBot(go, Color.green);
 			break;
+
+			case 5:
+			go.GetComponent<botIA>().botRDRA = true;			
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.grey;
+			RpcSpawnBot(go, Color.grey);
+			break;
+
+			case 6:
+			go.GetComponent<botIA>().botMagoSanguinario = true;			
+			go.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.magenta;
+			RpcSpawnBot(go, Color.magenta);
+			break;
 		}
 		
 

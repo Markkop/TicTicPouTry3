@@ -19,6 +19,7 @@ public bool botSanguinario; //Sempre ataca o player
 public bool botOraculo; //Sanguinario, mas se o alvo for defender, mira em outro
 public bool botAlvoEsperto; //Se for alvo de alguém, defende
 public bool botRDRA;
+public bool botMagoSanguinario;
 
 public int rodadasLoop = 0;
 
@@ -73,6 +74,9 @@ public List<GameObject> list = new List<GameObject>();
 		//Recarrega, Defende, Recarrega, Atirar (loop)
 		if(botRDRA == true)
 			BotRDRA();
+
+		if(botMagoSanguinario == true)
+			BotMagoSanguinario();
 
 		
 
@@ -251,6 +255,21 @@ public List<GameObject> list = new List<GameObject>();
 			}
 			bot.ready = true;
 		}
+	}
+
+	void BotMagoSanguinario()
+	{
+		if(bot.espCargas < 1)
+		{
+			bot.vaiRecarrEsp = true;
+			bot.vaiUsarEsp = false;
+		}
+		else
+		{
+			bot.vaiUsarEsp = true;
+			bot.vaiRecarrEsp = false;
+		}
+		bot.ready = true;
 	}
 
 	GameObject RandomMenosSiMesmo()
