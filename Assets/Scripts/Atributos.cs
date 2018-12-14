@@ -17,11 +17,12 @@ public class Atributos : NetworkBehaviour {
 	[SyncVar] public bool vaiAtirar = false;
 	[SyncVar] public bool vaiDefender = false;
 	[SyncVar] public bool estaDefendendo;
+	[SyncVar] public bool estaContraAtacando;
 	[SyncVar] public bool vaiRecarregar = false;
 	[SyncVar] public bool vaiRecarrEsp = false;
 	[SyncVar] public bool vaiUsarEsp = false;
 	[SyncVar] public bool ready = false;
-	[SyncVar] public bool levouTiro = false;
+	[SyncVar] public bool levouDano = false;
 	[SyncVar] public bool levouKadabra = false;
 
 	[SyncVar] public int vidas = 2;

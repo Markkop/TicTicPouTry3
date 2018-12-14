@@ -3367,11 +3367,13 @@ MonoBehaviour:
   vaiAtirar: 0
   vaiDefender: 0
   estaDefendendo: 0
+  estaContraAtacando: 0
   vaiRecarregar: 0
   vaiRecarrEsp: 0
   vaiUsarEsp: 0
   ready: 0
-  levouTiro: 0
+  levouDano: 0
+  levouKadabra: 0
   vidas: 2
   balas: 2
   espCargas: 0
