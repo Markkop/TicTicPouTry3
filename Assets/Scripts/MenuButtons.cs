@@ -63,6 +63,11 @@ public bool _started;
 
 	}
 
+	public void QuitGame()
+	{
+		Application.Quit();
+	}
+
 }
 
 public static class Settings{

@@ -23,6 +23,7 @@ public class Atributos : NetworkBehaviour {
 
 	[SyncVar] public int vidas = 2;
 	[SyncVar] public int balas = 0;
+	public int classe = 0;
 	public int maxBalas = 1;	
 
 	//public GameObject[] playersArray;
@@ -94,7 +95,6 @@ public class Atributos : NetworkBehaviour {
 
 		if(isServer && this.GetComponent<botIA>() == null)
 		{
-			Debug.Log("Eh server e eh player real");
 			if(_Manager.GetComponent<_Manager>().addBotPanel != null)
 			{
 				_Manager.GetComponent<_Manager>().addBotPanel.SetActive(true);	

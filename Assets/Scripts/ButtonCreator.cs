@@ -48,11 +48,19 @@ public class ButtonCreator : NetworkBehaviour
         {
             if(child.GetComponent<alvoButton>() != null) //Para que nao faca isso com o texto "Alvos:"
             {
-                if(child.GetComponent<alvoButton>().alvo.ToString() != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
+                //Se o alvo do botao não for igual ao texto do botao
+                if(child.GetComponent<alvoButton>().alvo.name != child.GetChild(0).GetChild(0).GetComponent<Text>().text)
                 {
-                    //Debug.Log("opa");
-                    
-                    child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.ToString();
+                    //Se o alvo do botao, for o proprio player
+                    if(child.GetComponent<alvoButton>().alvo == gameObject)
+                    {
+                        child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.name+" (self)";
+                    }
+                    else
+                    {
+                        //O texto do botao recebe o nome do alvo
+                        child.GetChild(0).GetChild(0).GetComponent<Text>().text = child.GetComponent<alvoButton>().alvo.name;
+                    }
 
                 }
             }
@@ -69,7 +77,13 @@ public class ButtonCreator : NetworkBehaviour
         foreach(GameObject player in playersArray)
         {
             GameObject alvo = player;
+
             textButton = alvo.name;
+            if(player == gameObject)
+            {
+                textButton = alvo.name+" (self)";
+            }
+            
 
             //Cria o botao a partir do Prefab
             GameObject button = (GameObject)Instantiate(buttonPrefab);
@@ -95,6 +109,12 @@ public class ButtonCreator : NetworkBehaviour
             button.GetComponent<Toggle>().group = toggleGroup;
 
             button.GetComponent<alvoButton>().alvo = alvo;
+
+            if(player == gameObject)
+            {
+
+                button.GetComponent<Toggle>().interactable = false;
+            }
         
 
        }        

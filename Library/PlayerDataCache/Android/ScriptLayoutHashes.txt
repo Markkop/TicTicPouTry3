@@ -25,6 +25,7 @@ ae74fd416caff01761b328d80df40b43 Assembly-CSharp.dll:._Manager
 f6637497451c9a030c421de4a1ad5cdb Unity.TextMeshPro.dll:TMPro.TMP_ScrollbarEventHandler
 b14b4630cc47b6e9ea8a644551a6a8cc Unity.TextMeshPro.dll:TMPro.TMP_Text
 490a2962e07e4914af87d7bfbc0d9c16 Assembly-CSharp.dll:.arenaCameraMoving
+8c05f32c7dfc306e5fb5d794ece5fc1d Assembly-CSharp.dll:.PrePosPartida_CustomGame
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:TMPro.TMP_PhoneNumberValidator
 53cefe5d98cadefbab750835e70b89c0 UnityEngine.UI.dll:UnityEngine.UI.AspectRatioFitter
 486cd95c82d8305219c352c06b776e1f UnityEngine.UI.dll:UnityEngine.EventSystems.BaseInput
@@ -218,5 +219,4 @@ d6847627ba7741c18a9d5258fc293648 Assembly-CSharp.dll:TMPro.Examples.VertexShakeA
 dd223b2cbb523615eee8980d99d61ddd Assembly-CSharp.dll:.EnvMapAnimator
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.ResetButtonScript
 93307bd34e39d73fd24e00ec39c25a91 Unity.TextMeshPro.dll:TMPro.TMP_SubMesh
-8c05f32c7dfc306e5fb5d794ece5fc1d Assembly-CSharp.dll:.PrePosPartida_CustomGame
 aad2287acf6e6e240d9e7c7faf55b3e2 Assembly-CSharp.dll:.Boss1Script

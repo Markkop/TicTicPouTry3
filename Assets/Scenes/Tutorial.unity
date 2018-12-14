@@ -1865,6 +1865,8 @@ MonoBehaviour:
   comecaRodada: 0
   startReadyManager: 0
   rodada: 0
+  prePartida: 0
+  posPartida: 0
   tempoRodada: 4
 --- !u!114 &904888463
 MonoBehaviour:
@@ -2770,7 +2772,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f70555f144d8491a825f0804e09c671c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 0
+  m_UiScaleMode: 1
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 800, y: 600}
@@ -3482,6 +3484,7 @@ MonoBehaviour:
     type: 2}
   playersArray: []
   tutorialEtapas: 0
+  liberaInfo: 0
 --- !u!4 &1650274753
 Transform:
   m_ObjectHideFlags: 0

@@ -95,6 +95,7 @@ public class Boss1Script : NetworkBehaviour {
 				NetworkServer.Spawn(bot1);
 				bot1.GetComponent<botIA>().botSanguinario = true;
 				bot1.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+				bot1.GetComponent<Atributos>().vidas = 1;
 
 				playersArray[0].GetComponent<Atributos>().vidas = 1;
 				playersArray[0].GetComponent<Atributos>().balas = 0;
@@ -106,7 +107,7 @@ public class Boss1Script : NetworkBehaviour {
 				NetworkServer.Spawn(bot2);
 				bot2.GetComponent<botIA>().botRDRA = true;
 				bot2.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.grey;
-				bot2.GetComponent<Atributos>().vidas = 3;
+				bot2.GetComponent<Atributos>().vidas = 2;
 				bot2.GetComponent<Atributos>().balas = 0;
 			break;
 
@@ -118,7 +119,8 @@ public class Boss1Script : NetworkBehaviour {
 				GameObject bot3 = (GameObject)Instantiate(botPrefab);
 				NetworkServer.Spawn(bot3);
 				bot3.GetComponent<botIA>().botSanguinario = true;
-				bot3.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;				
+				bot3.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = Color.red;
+				bot3.GetComponent<Atributos>().vidas = 1;				
 			break;
 
 			case 4:

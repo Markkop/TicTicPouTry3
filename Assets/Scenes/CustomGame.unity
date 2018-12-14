@@ -2047,7 +2047,7 @@ MonoBehaviour:
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
   m_OfflineScene: MainMenu
-  m_OnlineScene: ModernCity
+  m_OnlineScene: CustomGame
   m_SpawnPrefabs:
   - {fileID: 1850737088623996, guid: 433978f9a5ed74839a89bec355769963, type: 2}
   - {fileID: 1932431819602258, guid: 3078f1e1adba44c61bf3e0d90e6e929a, type: 2}

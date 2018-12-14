@@ -255,8 +255,10 @@ public class _Manager : NetworkBehaviour {
 						{
 							alvo1.GetComponent<Atributos>().levouTiro = true;
 							alvo1.GetComponent<Atributos>().vidas -= 1; //perde uma vida
+							alvo1.GetComponent<PlaySound>().PainSound();
 							if(alvo1.GetComponent<Atributos>().vidas == 0) //Se estiver morto
 							{
+								RpcAnimTrigger(alvo1, "Morto");
 								alvo1.GetComponent<Atributos>().mortoPor = go; //memoriza quem o matou
 							}
 						}
@@ -264,6 +266,7 @@ public class _Manager : NetworkBehaviour {
 					}
 					else
 					{
+						alvo1.GetComponent<PlaySound>().BlockSound();
 						Debug.Log(go.name+" atira em "+alvo1.name+" que se defende...");
 					}
 				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
