@@ -1,12 +1,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
+using TMPro;
 using UnityEngine.Networking;
 
 
 public class addBot : NetworkBehaviour {
 
 	public GameObject botPrefab;
+	public GameObject botInfoPrefab;
+	public GameObject parentCanvas;
+	public Toggle botInfoToggle;
+
+	public GameObject infoPanel;
 
 
 	// Use this for initialization
@@ -33,18 +40,7 @@ public class addBot : NetworkBehaviour {
 			return;
 		}
 
-
 		GameObject go = (GameObject)Instantiate(botPrefab);
-	
-		//Arruma a altura do spawn para que o objeto seja transportado para a base
-		//do spawn point e nao ao centro.
-		
-		//var spawn = NetworkManager.singleton.GetStartPosition();
-		//var spawn = new Vector3(0, 0, 0);
-		
-		//float altura = go.GetComponent<Collider>().bounds.max[1];
-		//altura = altura/2;
-		//go.GetComponent<Transform>().position = spawn + new Vector3(0,altura,0); //spawn.position
 		NetworkServer.Spawn(go);
 		
 		switch(bot){
@@ -94,13 +90,47 @@ public class addBot : NetworkBehaviour {
 		}
 		
 
-
 	}
 
 	[ClientRpc]
 	public void RpcSpawnBot(GameObject bot, Color cor)
 	{
 		bot.GetComponent<Transform>().Find("Beta_Surface").gameObject.GetComponent<SkinnedMeshRenderer>().material.color = cor;
+	}
+
+	public void BotInfo(bool onoff)
+	{
+		Debug.Log("BotInfo clicado");
+		if(onoff == !botInfoToggle.isOn)
+		{
+			infoPanel = (GameObject)Instantiate(botInfoPrefab);
+			infoPanel.transform.SetParent(parentCanvas.transform, false);
+
+			infoPanel.GetComponent<Transform>().GetChild(0).GetComponent<TextMeshProUGUI>().text = 
+			"<#ff0000ff>botSanguinario:</color> Recarrega e Ataca, priorizando o player\n"+
+			"<#add8e6ff>botDefensor:</color> defende todo turno (imortal)\n"+
+			"<#00ffffff>botOraculo:</color> não atira em quem for defender; se todos defenderem, defende também.\n"+
+			"<#00ff00ff>botAlvoEsperto:</color> se for alvo de alguém, defende; caso contrário atira em alguém random (imortal)\n"+
+			"<#808080ff>botRDRA:</color> Recarrega, Defende, Atira, Recarrega e repete\n"+
+			"<#800080ff>botMagoSanguinario:</color> Mago que carrega e explode continuamente\n"+
+			"<#add8e6ff>botSamuraiMedroso:</color> Samurai que carrega e contra-ataca continuamente\n";
+
+			infoPanel.GetComponent<Transform>().GetChild(1).GetComponent<Button>().onClick.AddListener(delegate {OkButton();});
+
+			Debug.Log("BotInfo clicado TRUE");
+		}
+		else
+		{
+			Debug.Log("BotInfo clicado FALSE");
+			Destroy(infoPanel);
+		}
+		
+	}
+
+	public void OkButton()
+	{
+		botInfoToggle.isOn = false;
+		Destroy(infoPanel);
 	}
 
 

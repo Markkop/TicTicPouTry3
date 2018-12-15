@@ -188,7 +188,7 @@ public List<GameObject> list = new List<GameObject>();
 			
 			foreach (GameObject player in playersArraySecundario)
 			{
-				if(player.GetComponent<Atributos>().alvo == gameObject)
+				if(player.GetComponent<Atributos>().alvo == gameObject || player.GetComponent<Atributos>().segundoAlvo == gameObject)
 				{
 					bot.vaiDefender = true;
 					bot.vaiRecarregar = false;

@@ -317,10 +317,12 @@ public class Atributos : NetworkBehaviour {
 			if(espCargas > 0)
 			{
 				recarrEspButton.GetComponent<Toggle>().interactable = false;
+				usaEspButton.GetComponent<Toggle>().interactable = true;
 			}
 			else
 			{
 				recarrEspButton.GetComponent<Toggle>().interactable = true;
+				usaEspButton.GetComponent<Toggle>().interactable = false;
 			}
 			break;
 			case 2: // Samurai
@@ -334,10 +336,12 @@ public class Atributos : NetworkBehaviour {
 			if(espCargas > 0)
 			{
 				recarrEspButton.GetComponent<Toggle>().interactable = false;
+				usaEspButton.GetComponent<Toggle>().interactable = true;
 			}
 			else
 			{
 				recarrEspButton.GetComponent<Toggle>().interactable = true;
+				usaEspButton.GetComponent<Toggle>().interactable = false;
 			}
 			break;
 			case 3: // Padre

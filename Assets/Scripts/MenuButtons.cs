@@ -9,6 +9,7 @@ using TMPro;
 public class MenuButtons : MonoBehaviour {
 
 public bool _started;
+public GameObject HostClientPanel;
 
 	public void Start()
 	{
@@ -63,10 +64,17 @@ public bool _started;
 
 	}
 
+	public void MostraHostClient()
+	{
+		HostClientPanel.SetActive(true);
+	}
+
 	public void QuitGame()
 	{
 		Application.Quit();
 	}
+
+
 
 }
 

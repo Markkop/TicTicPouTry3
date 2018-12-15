@@ -50,7 +50,7 @@ public class ButtonCreator : NetworkBehaviour
     {
         //Se o numero de jogadores mudar, refaz os botoes (o -1 esta ali por causa do text "Alvos:")
         playersArray = GameObject.FindGameObjectsWithTag("Player");
-        if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount-1)
+         if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount-1)
         {
             Destroi(panelToAttachButtonsTo);
             CriaBotoes(panelToAttachButtonsTo, toggleGroup);            
@@ -76,10 +76,15 @@ public class ButtonCreator : NetworkBehaviour
                     }
 
                 }
-            }
                 
+                //Se o alvo do botao estiver morto
+                if(child.GetComponent<alvoButton>().alvo.GetComponent<Atributos>().vidas <= 0)
+                {
+                    //Desativa o botao
+                    child.GetComponent<Toggle>().interactable = false;   
+                }
+            }
         }
-
     }
 
     public void CriaBotoes(GameObject panelToAttachButtonsTo, ToggleGroup toggleGroup)
@@ -134,9 +139,9 @@ public class ButtonCreator : NetworkBehaviour
 
             if(player == gameObject)
             {
-
                 button.GetComponent<Toggle>().interactable = false;
             }
+
         
 
        }        
