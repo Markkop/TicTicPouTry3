@@ -8,6 +8,11 @@ public class PlaySound : MonoBehaviour {
 	public AudioClip reloadSound;
 	public AudioClip painSound;
 	public AudioClip blockSound;
+	public AudioClip explosaoSound;
+	public AudioClip carregaKadabraSound;
+	public AudioClip swordSheathe;
+	public AudioClip swordKatchin;
+	public AudioClip ohhSound;
 	public AudioSource audioSource;
 
 	// Use this for initialization
@@ -28,6 +33,31 @@ public class PlaySound : MonoBehaviour {
 	void ReloadSound()
 	{
 		audioSource.PlayOneShot(reloadSound);
+	}
+
+	void CarregaKadabraSound()
+	{
+		audioSource.PlayOneShot(carregaKadabraSound);
+	}
+
+	void ExplosaoSound()
+	{
+		audioSource.PlayOneShot(explosaoSound);
+	}
+
+		void SwordSheathe()
+	{
+		audioSource.PlayOneShot(swordSheathe);
+	}
+
+		void SwordKatchin()
+	{
+		audioSource.PlayOneShot(swordKatchin);
+	}
+
+		void OhhSound()
+	{
+		audioSource.PlayOneShot(ohhSound);
 	}
 
 	public void PainSound()

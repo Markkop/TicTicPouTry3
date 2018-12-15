@@ -1115,13 +1115,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: faddaab0ee7eb4b078e3453d10cb89a0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MyNetworkManager: {fileID: 0}
+  addBotPanel: {fileID: 0}
   playersArray: []
-  goMorto: []
-  allReadyManager: 0
-  toggles: []
-  ManagerPrefab: {fileID: 0}
+  tempCountPlayers: 0
+  magosKadabra: []
   fimDeJogo: 0
   winner: {fileID: 0}
+  overviewCamera: {fileID: 0}
+  primeiroTurno: 0
+  fimDeTurno: 0
+  comecaRodada: 0
+  startReadyManager: 0
+  rodada: 0
+  prePartida: 0
+  posPartida: 0
+  tempoRodada: 4
 --- !u!114 &777422422
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1774,6 +1783,7 @@ MonoBehaviour:
   clienta: {fileID: 208541950}
   canvas: {fileID: 658885541}
   CenarioObject: {fileID: 0}
+  _started: 0
 --- !u!4 &1845466214
 Transform:
   m_ObjectHideFlags: 0

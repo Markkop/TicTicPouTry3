@@ -3387,6 +3387,7 @@ MonoBehaviour:
   cameras: []
   playerCamera: {fileID: 1463467688702246}
   playerCanvas: {fileID: 1790249804942062}
+  acoesCanvasIn: {fileID: 1210156485452280}
   alvosPanel: {fileID: 1205955438508744}
   toggleGroup: {fileID: 1450764541488520}
   atiraButton: {fileID: 114981622361987960}

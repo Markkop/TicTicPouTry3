@@ -36,14 +36,18 @@ public class Atributos : NetworkBehaviour {
 	public List<GameObject> playersArray = new List<GameObject>();
 
 	public GameObject alvo;
+	public GameObject segundoAlvo;
 	public GameObject mortoPor; 
 	
 	public GameObject _Manager;
 	public GameObject[] cameras;
 	public GameObject playerCamera;
 	public GameObject playerCanvas;
+	public GameObject acoesCanvasIn;
 	public GameObject alvosPanel;
+	public GameObject alvosPanel2;
 	public GameObject toggleGroup;
+	public Dropdown ClasseDropdown;
 	public Toggle atiraButton;
 	public Animator anim;
 
@@ -62,13 +66,11 @@ public class Atributos : NetworkBehaviour {
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
 
-
-
 		//Vira a camera tambem 
-		if(isLocalPlayer)
-		{
-			playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
-		}
+		// if(isLocalPlayer)
+		// {
+		// 	playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
+		// }
 
 		//Caso o objeto seja spawnado sem autoridade. Usar para debugging, mas de preferencia nao
 		//usar para evitar conflito.
@@ -118,7 +120,54 @@ public class Atributos : NetworkBehaviour {
 		{
 			playersArray = _Manager.GetComponent<_Manager>().playersArray;	
 		}
-			
+
+		//Tirar do Update e botar em alguma parada de mudar de classe (se houver)
+		if(this.GetComponent<botIA>() == null)
+		{
+			Debug.Log("Eh aqui?");
+			MudaMenuAcoes();
+			switch(classe)
+			{
+				case 0: //Nada
+					maxBalas = 1;
+				break;
+				case 1: //Mago
+					maxBalas = 1;
+					maxEspCargas = 1;
+				break;
+				case 2: //Samurai
+					maxBalas = 1;
+					maxEspCargas = 1;
+				break;
+				case 3: //Padre
+					maxBalas = 1;
+					maxEspCargas = 2;
+				break;
+				case 4: //Cangaceiro
+					maxBalas = 2;
+				break;
+			}
+
+			switch(ClasseDropdown.value)
+			{
+				case 0: //Nada
+					classe = 0;
+				break;
+				case 1: //Mago
+					classe = 1;
+				break;
+				case 2: //Samurai
+					classe = 2;
+				break;
+				case 3: //Padre
+					classe = 3;
+				break;
+				case 4: //Cangaceiro
+					classe = 4;
+				break;
+			}
+	
+		}
 	}
 
 	//Funcao para Debug
@@ -155,7 +204,7 @@ public class Atributos : NetworkBehaviour {
 			vaiDefender = false;
 			vaiAtirar = true;
 			vaiRecarregar = false;
-			this.alvosPanel.gameObject.SetActive (true);
+			//this.alvosPanel.gameObject.SetActive (true);
 		}
 		else
 		{
@@ -239,6 +288,86 @@ public class Atributos : NetworkBehaviour {
 			}
 		} 
 		
+	}
+
+	public void MudaMenuAcoes()
+	{
+		GameObject defendeButton = acoesCanvasIn.GetComponent<Transform>().Find("defendeButton").gameObject;
+		GameObject atiraButton = acoesCanvasIn.GetComponent<Transform>().Find("atiraButton").gameObject;
+		GameObject RecarregaButton = acoesCanvasIn.GetComponent<Transform>().Find("RecarregaButton").gameObject;
+		GameObject recarrEspButton = acoesCanvasIn.GetComponent<Transform>().Find("recarrEspButton").gameObject;
+		GameObject usaEspButton = acoesCanvasIn.GetComponent<Transform>().Find("usaEspButton").gameObject;
+		switch(classe)
+		{
+			case 0: //Nada
+			atiraButton.SetActive(true);
+			RecarregaButton.SetActive(true);
+			recarrEspButton.SetActive(false);
+			usaEspButton.SetActive(false);
+			alvosPanel2.SetActive(false);
+			break;
+			case 1: // Mago
+			atiraButton.SetActive(true);
+			RecarregaButton.SetActive(true);
+			recarrEspButton.SetActive(true);
+			alvosPanel2.SetActive(false);
+			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Kadabra";
+			usaEspButton.SetActive(true);
+			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Kadabra";
+			break;
+			case 2: // Samurai
+			atiraButton.SetActive(true);
+			RecarregaButton.SetActive(true);
+			recarrEspButton.SetActive(true);
+			alvosPanel2.SetActive(false);
+			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Katchin";
+			usaEspButton.SetActive(true);
+			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Katchin";
+			break;
+			case 3: // Padre
+			atiraButton.SetActive(true);
+			RecarregaButton.SetActive(true);
+			recarrEspButton.SetActive(true);
+			alvosPanel2.SetActive(false);
+			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Reza ("+espCargas+"/"+maxEspCargas+")";
+			usaEspButton.SetActive(false);
+			break;
+			case 4: // Cangaceiro
+			atiraButton.SetActive(true);
+			RecarregaButton.SetActive(true);
+			recarrEspButton.SetActive(false);
+			usaEspButton.SetActive(false);
+			if(balas > 1)
+			{
+				alvosPanel2.SetActive(true)	;
+			}
+			else
+			{
+				alvosPanel2.SetActive(false);
+			}
+			
+			break;
+			case 5: // Assasino
+			atiraButton.SetActive(false);
+			RecarregaButton.SetActive(false);
+			recarrEspButton.SetActive(true);
+			alvosPanel2.SetActive(false);
+			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Afia a adaga";
+			usaEspButton.SetActive(true);
+			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Apunhala o alvo";
+			break;
+		}
+		if(balas > 0)
+		{
+			Debug.Log(balas);
+			atiraButton.GetComponent<Toggle>().interactable = true;
+			alvosPanel.SetActive(true);
+		}
+		else
+		{
+			atiraButton.GetComponent<Toggle>().interactable = false;	
+			alvosPanel.SetActive(false);
+		}
 	}
 
 }

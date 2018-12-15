@@ -23,6 +23,7 @@ public bool botMagoSanguinario;
 public bool botSamuraiMedroso;
 
 public int rodadasLoop = 0;
+public int AcaoDaRodada = 0;
 
 public GameObject[] playersArraySecundario;
 
@@ -222,6 +223,7 @@ public List<GameObject> list = new List<GameObject>();
 	{
 		if (allReady != true)
 		{
+			Debug.Log("Rodada que o bot esta vendo:"+rodadasLoop);
 			rodadasLoop = _Manager.GetComponent<_Manager>().rodada;
 
 			//Caso passe da 4º rodada
@@ -230,33 +232,42 @@ public List<GameObject> list = new List<GameObject>();
 				//Ex: 	AcaoDaRodada = 5 - RoundDown(5/4) * 4
 				//		AcaoDaRodada = 5 - 1*4 = 1
 				//		AcaoDaRodada = 10 - 2*4 = 2
-				rodadasLoop = rodadasLoop - (int)Mathf.Floor(rodadasLoop/4)*4;
+				AcaoDaRodada = rodadasLoop - (int)Mathf.Floor(rodadasLoop/4)*4;
+				Debug.Log(AcaoDaRodada+"do bot "+this.name);
 			}
-			switch(rodadasLoop)
+			else
+			{
+				AcaoDaRodada = rodadasLoop;
+				Debug.Log(AcaoDaRodada+"do bot "+this.name);
+			}
+			switch(AcaoDaRodada)
 			{
 				case 0:
 					bot.vaiDefender = false;
 					bot.vaiRecarregar = true;
-					bot.vaiAtirar = false;					
+					bot.vaiAtirar = false;
+					bot.ready = true;					
 				break;
 				case 1:
 					bot.vaiDefender = true;
 					bot.vaiRecarregar = false;
-					bot.vaiAtirar = false;					
+					bot.vaiAtirar = false;
+					bot.ready = true;					
 				break;
 				case 2:
 					bot.vaiDefender = false;
 					bot.vaiRecarregar = false;
 					bot.vaiAtirar = true;
-					bot.alvo = PegaPlayer();					
+					bot.alvo = PegaPlayer();
+					bot.ready = true;					
 				break;
 				case 3:
 					bot.vaiDefender = true;
 					bot.vaiRecarregar = false;
-					bot.vaiAtirar = false;					
+					bot.vaiAtirar = false;
+					bot.ready = true;					
 				break;
 			}
-			bot.ready = true;
 		}
 	}
 
@@ -292,18 +303,51 @@ public List<GameObject> list = new List<GameObject>();
 
 	GameObject RandomMenosSiMesmo()
 	{
+		int mortos = 0;
+
+		//Preparação para verificar se todos os players (menos o bot) estão mortos
+		foreach(GameObject player in playersArray)
+		{
+			if(player.GetComponent<Atributos>().vidas <= 0)
+			{
+				mortos++;
+			}
+		}
+
+		//Verifica se todos os players estão mortos (exceto o próprio bot que presume-se vivo)
+		if(mortos == playersArray.Count-1)
+		{
+			//Debug.Log("Todos players mortos (menos esse bot "+gameObject.name+")");
+			//Se houver, nao retorna alvo (importante, pq senao o jogo crasha no loop infinito do RandomMenosSiMesmo)
+			return null;
+		}
+
 		//playersArray = GameObject.FindGameObjectsWithTag("Player");
+
+		//Pega um alvo aleatorio entre os players
 		GameObject alvo0 = playersArray[Random.Range(0,playersArray.Count)];
 
-		if(alvo0 == gameObject || alvo0.GetComponent<Atributos>().vidas <= 0) //Se o alvo for ele mesmo (inteligente hein)
+		//Se pegar ele mesmo
+		if(alvo0 == gameObject)
 		{
 			//Debug.Log(this.name+" pegou si mesmo, tentando de novo...");
+			//Tenta de novo
 			return RandomMenosSiMesmo();
 		}
 		else
 		{
-			//Debug.Log(this.name+" pegou "+alvo0+" como alvo...");
-			return alvo0;
+			//Se o alvo estiver morto
+			if(alvo0.GetComponent<Atributos>().vidas <= 0)
+			{
+				return RandomMenosSiMesmo();
+			}
+			//Finalmente, pega o alvo
+			else
+			{
+				//Debug.Log(this.name+" pegou "+alvo0.name+" como alvo");
+				return alvo0;	
+			}
+			
 		}
 	}
 

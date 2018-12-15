@@ -66,8 +66,6 @@ public class _Manager : NetworkBehaviour {
 			return;
 		}
 
-
-
 		if(!startReadyManager) // Verifica se todos estao prontos
 		{
 			// Caso a partida ainda nao tenha começado, posiciona os jogadores
@@ -88,7 +86,7 @@ public class _Manager : NetworkBehaviour {
 			//Quando todos os jogadores estiverem prontos pela primeira vez, ativa o primeiro Turno
 			//para que eles não fiquem sendo posicionados toda vez. (na real talvez nao precise por conta do startReadyManager)
 			if(!primeiroTurno)
-			{
+			{	
 				primeiroTurno = true;	
 			}
 		}
@@ -103,6 +101,7 @@ public class _Manager : NetworkBehaviour {
 		//e iniciando as resolucoes na bolinha maior (bola3)
 		if(!comecaRodada)
 		{
+
 			timeRitmo -= Time.deltaTime;
 			Ritmo();
 			return;
@@ -196,14 +195,15 @@ public class _Manager : NetworkBehaviour {
 			}
 			if(go.GetComponent<Atributos>().vaiRecarregar == true) //Se optou por recarregar
 			{
-				RpcAnimTrigger(go, "Recarrega");
 				if(go.GetComponent<Atributos>().balas != go.GetComponent<Atributos>().maxBalas)  //e nao tiver com max de bala
 				{
+					RpcAnimTrigger(go, "Recarrega");
 					Debug.Log(go.name+" carrega uma bala...");
 					go.GetComponent<Atributos>().balas += 1; // ganha uma bala
 				}
 				else
 				{
+					Debug.Log(go.name+" tentou carregar uma bala, mas ja tem o max.");
 					//caso contrario, nao ganha bala.
 					//Obs: o player vai gastar a propria acao
 				}		
@@ -228,7 +228,15 @@ public class _Manager : NetworkBehaviour {
 							go.GetComponent<Atributos>().espCargas += 1;	
 						}
 					break;
-				}
+					case 3: //Padre
+						go.GetComponent<Atributos>().espCargas += 1;
+						Debug.Log(go.name+" carrega uma REZA ("+go.GetComponent<Atributos>().espCargas+"/"+go.GetComponent<Atributos>().maxEspCargas+")");
+						RpcAnimTrigger(go, "Reza");	
+					break;
+					case 4: //Samurai
+						//sem especiail
+					break;
+				}	
 			}
 		}
 	}
@@ -293,31 +301,11 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(go.GetComponent<Atributos>().vaiAtirar == true) // que estiver atirando
 			{
-				GameObject alvo1 = go.GetComponent<Atributos>().alvo; //pega alvo do jogador
-				RpcAnimTrigger(go, "Atira");
-				RpcFaceTo(go, alvo1);
-
-				if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
-				{
-					if(alvo1.GetComponent<Atributos>().estaContraAtacando)
-					{
-						RecebeDano(alvo1, go, 1);
-						Debug.Log(alvo1.name+" contra ataca "+go.name+" que perde uma vida...");
-
-					}
-					else
-					{
-						RecebeDano(go, alvo1, 1);
-						Debug.Log(go.name+" atira em "+alvo1.name+" que perde uma vida...");
-					}
-					
-				}
-				else
-				{
-					alvo1.GetComponent<PlaySound>().BlockSound();
-					Debug.Log(go.name+" atira em "+alvo1.name+" que se defende...");
-				}
-				go.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				}
+				AtiraAlvo(go, go.GetComponent<Atributos>().alvo);
+			}
+			if(go.GetComponent<Atributos>().segundoAlvo != null && go.GetComponent<Atributos>().classe == 4)
+			{
+				AtiraAlvo(go, go.GetComponent<Atributos>().segundoAlvo);
 			}
 		}
 
@@ -361,7 +349,15 @@ public class _Manager : NetworkBehaviour {
 		//Debug.Log("Resolvendo Phase 4");
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
-			
+			if(go.GetComponent<Atributos>().classe == 3) //Padres
+			{
+				if(go.GetComponent<Atributos>().espCargas == go.GetComponent<Atributos>().maxEspCargas)
+				{
+					go.GetComponent<Atributos>().vidas += 1;
+					go.GetComponent<Atributos>().espCargas = 0;
+				}
+			}
+
 
 			if(go.GetComponent<Atributos>().vidas == 0 && go.GetComponent<Atributos>().playerMorto == false) // se nao tiver vida 
 			{
@@ -422,6 +418,34 @@ public class _Manager : NetworkBehaviour {
 			fimDeJogo = true;			
 		}
 	}
+
+	void AtiraAlvo(GameObject atacante, GameObject alvo1)
+	{
+		RpcAnimTrigger(atacante, "Atira");
+		RpcFaceTo(atacante, alvo1);
+
+		if(alvo1.GetComponent<Atributos>().estaDefendendo == false) //se o alvo NAO estiver defendno
+		{
+			if(alvo1.GetComponent<Atributos>().estaContraAtacando)
+			{
+				RecebeDano(alvo1, atacante, 1);
+				Debug.Log(alvo1.name+" contra ataca "+atacante.name+" que perde uma vida...");
+
+			}
+			else
+			{
+				RecebeDano(atacante, alvo1, 1);
+				Debug.Log(atacante.name+" atira em "+alvo1.name+" que perde uma vida...");
+			}
+			
+		}
+		else
+		{
+			alvo1.GetComponent<PlaySound>().BlockSound();
+			Debug.Log(atacante.name+" atira em "+alvo1.name+" que se defende...");
+		}
+		atacante.GetComponent<Atributos>().balas -= 1; // remove uma bala (se o alvo defender ou nao)				
+	}	
 
 	void RecebeDano(GameObject atacante, GameObject atacado, int dano)
 	{

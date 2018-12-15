@@ -8,13 +8,16 @@ public class ButtonCreator : NetworkBehaviour
 {
     public GameObject alvosTextPrefab;
     public GameObject buttonPrefab;
-    public GameObject panelToAttachButtonsTo;
-    public ToggleGroup toggleGroup;
+    public GameObject panelToAttachButtonsTo1;
+    public GameObject panelToAttachButtonsTo2;
+    public ToggleGroup toggleGroup1;
+    public ToggleGroup toggleGroup2;
 
     public GameObject[] playersArray;
     private string textButton;
 
-    public List<int> buttonsList = new List<int>();
+    public List<int> buttonsList1 = new List<int>();
+    public List<int> buttonsList2 = new List<int>();
 
     public GameObject playerz;
 
@@ -28,19 +31,29 @@ public class ButtonCreator : NetworkBehaviour
 
         //panelToAttachButtonsTo.SetActive(false);
         playersArray = GameObject.FindGameObjectsWithTag("Player");
-        CriaBotoes();
+        CriaBotoes(panelToAttachButtonsTo1, toggleGroup1);
 
 
     }
 
     void Update()
     {
+        FazTudo(panelToAttachButtonsTo1, toggleGroup1);
+        if(this.GetComponent<Atributos>().classe == 4)
+        {
+            FazTudo(panelToAttachButtonsTo2, toggleGroup2);
+        }
+
+    }
+
+    public void FazTudo(GameObject panelToAttachButtonsTo, ToggleGroup toggleGroup)
+    {
         //Se o numero de jogadores mudar, refaz os botoes (o -1 esta ali por causa do text "Alvos:")
         playersArray = GameObject.FindGameObjectsWithTag("Player");
         if(playersArray.Length != panelToAttachButtonsTo.GetComponent<Transform>().childCount-1)
         {
-            Destroi();
-            CriaBotoes();            
+            Destroi(panelToAttachButtonsTo);
+            CriaBotoes(panelToAttachButtonsTo, toggleGroup);            
         }
 
         //Atualiza nomes caso alguem mude de nome (gambiarra)
@@ -69,7 +82,7 @@ public class ButtonCreator : NetworkBehaviour
 
     }
 
-    public void CriaBotoes()
+    public void CriaBotoes(GameObject panelToAttachButtonsTo, ToggleGroup toggleGroup)
     {
         GameObject textA = (GameObject)Instantiate(alvosTextPrefab);
         textA.transform.SetParent(panelToAttachButtonsTo.transform, false);
@@ -98,10 +111,19 @@ public class ButtonCreator : NetworkBehaviour
             //Adiciona um Listener onValueChanged no toggle.
             //Nao manjei mto bem do que eh um delegate, peguei como exemplo
             //Passa o toggle em questao e o alvo
-            button.GetComponent<Toggle>().onValueChanged.AddListener(delegate {
-                CmdToggleValueChanged(m_Toggle.isOn, alvo);
-            });
-
+            if(panelToAttachButtonsTo == panelToAttachButtonsTo1)
+            {
+                button.GetComponent<Toggle>().onValueChanged.AddListener(delegate {
+                    CmdToggleValueChanged(m_Toggle.isOn, alvo);
+                });    
+            }
+            else
+            {
+                textA.GetComponent<Text>().text = "Tiro Duplo:";
+                button.GetComponent<Toggle>().onValueChanged.AddListener(delegate {
+                    CmdToggleValueChanged2(m_Toggle.isOn, alvo);
+                });
+            }
             //Pega o primeiro Child do primeiro Child do objeto (botao), que eh Text, e muda ele
             button.transform.GetChild(0).GetChild(0).GetComponent<Text>().text = textButton;
 
@@ -122,12 +144,12 @@ public class ButtonCreator : NetworkBehaviour
 
     public void AtivaPainel()
     {
-        panelToAttachButtonsTo.SetActive(true);
+        //panelToAttachButtonsTo.SetActive(true);
     }
 
     public void Desativa()
     {	//panelToAttachButtonsTo
-    	foreach (Transform child in panelToAttachButtonsTo.transform)
+    	foreach (Transform child in panelToAttachButtonsTo1.transform)
         {
     		foreach(GameObject player in playersArray)
             {
@@ -141,7 +163,7 @@ public class ButtonCreator : NetworkBehaviour
 
     }
 
-    public void Destroi()
+    public void Destroi(GameObject panelToAttachButtonsTo)
     {   
         foreach (Transform child in panelToAttachButtonsTo.transform){
             GameObject.Destroy(child.gameObject);
@@ -166,21 +188,25 @@ public class ButtonCreator : NetworkBehaviour
             //Debug.Log("Player resetando alvo");
             playerz.GetComponent<Atributos>().alvo = null;   
         }
-        //playerz.GetComponent<Atributos>().alvo = this.GetComponent<alvoButton>().alvo;
+    }
 
-        // if(playerz.GetComponent<Atributos>().alvo != change.GetComponent<alvoButton>().alvo)
-        // {
-        //    Debug.Log("To alvo");
-        //    playerz.GetComponent<Atributos>().alvo = change.GetComponent<alvoButton>().alvo;
-        // }
-        // else
-        // {   Debug.Log("To null");
-        //     playerz.GetComponent<Atributos>().alvo = null;
-        // }
+    [Command]
+    public void CmdToggleValueChanged2(bool change, GameObject alvo)
+    {
+        //Debug.Log("Botao de alvo clicado.." +change);
+        playerz.GetComponent<Atributos>().vaiAtirar = true;
+        playerz.GetComponent<Atributos>().atiraButton.isOn = true;
 
-
-    	
-
+        if(change == true)
+        {
+           //Debug.Log("Player recevendo alvo: "+alvo.name);
+            playerz.GetComponent<Atributos>().segundoAlvo = alvo;
+        }
+        else
+        {
+            //Debug.Log("Player resetando alvo");
+            playerz.GetComponent<Atributos>().segundoAlvo = null;   
+        }
     }
 
     void CmdPedeAlvo(GameObject target)
