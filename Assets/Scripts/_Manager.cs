@@ -349,12 +349,12 @@ public class _Manager : NetworkBehaviour {
 		//Debug.Log("Resolvendo Phase 4");
 		foreach (GameObject go in playersArray) // Para cada jogador
 		{
-			if(go.GetComponent<Atributos>().classe == 3) //Padres
+			if(go.GetComponent<Atributos>().classe == 3 && go.GetComponent<Atributos>().vidas > 0) //Padres
 			{
 				if(go.GetComponent<Atributos>().espCargas == go.GetComponent<Atributos>().maxEspCargas)
 				{
 					go.GetComponent<Atributos>().vidas += 1;
-					go.GetComponent<Atributos>().espCargas = 0;
+					go.GetComponent<Atributos>().estaComVidaExtra = true;
 				}
 			}
 
@@ -460,7 +460,15 @@ public class _Manager : NetworkBehaviour {
 			{
 				RpcAnimTrigger(atacado, "Morto");
 				atacado.GetComponent<Atributos>().mortoPor = atacante; //memoriza quem o matou
-			}	
+			}
+			if(atacado.GetComponent<Atributos>().classe == 3)
+			{
+				if(atacado.GetComponent<Atributos>().estaComVidaExtra == true)
+				{
+					atacado.GetComponent<Atributos>().estaComVidaExtra = false;
+					atacado.GetComponent<Atributos>().espCargas = 0;
+				}
+			}
 		}		
 	}
 

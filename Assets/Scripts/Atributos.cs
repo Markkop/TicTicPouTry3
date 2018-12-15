@@ -24,6 +24,7 @@ public class Atributos : NetworkBehaviour {
 	[SyncVar] public bool ready = false;
 	[SyncVar] public bool levouDano = false;
 	[SyncVar] public bool levouKadabra = false;
+	public bool estaComVidaExtra = false;
 
 	[SyncVar] public int vidas = 2;
 	[SyncVar] public int balas = 0;
@@ -124,7 +125,6 @@ public class Atributos : NetworkBehaviour {
 		//Tirar do Update e botar em alguma parada de mudar de classe (se houver)
 		if(this.GetComponent<botIA>() == null)
 		{
-			Debug.Log("Eh aqui?");
 			MudaMenuAcoes();
 			switch(classe)
 			{
@@ -314,6 +314,14 @@ public class Atributos : NetworkBehaviour {
 			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Kadabra";
 			usaEspButton.SetActive(true);
 			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Kadabra";
+			if(espCargas > 0)
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = false;
+			}
+			else
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = true;
+			}
 			break;
 			case 2: // Samurai
 			atiraButton.SetActive(true);
@@ -323,6 +331,14 @@ public class Atributos : NetworkBehaviour {
 			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Katchin";
 			usaEspButton.SetActive(true);
 			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Katchin";
+			if(espCargas > 0)
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = false;
+			}
+			else
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = true;
+			}
 			break;
 			case 3: // Padre
 			atiraButton.SetActive(true);
@@ -331,6 +347,14 @@ public class Atributos : NetworkBehaviour {
 			alvosPanel2.SetActive(false);
 			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Reza ("+espCargas+"/"+maxEspCargas+")";
 			usaEspButton.SetActive(false);
+			if(estaComVidaExtra == true)
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = false;
+			}
+			else
+			{
+				recarrEspButton.GetComponent<Toggle>().interactable = true;
+			}
 			break;
 			case 4: // Cangaceiro
 			atiraButton.SetActive(true);
@@ -359,7 +383,6 @@ public class Atributos : NetworkBehaviour {
 		}
 		if(balas > 0)
 		{
-			Debug.Log(balas);
 			atiraButton.GetComponent<Toggle>().interactable = true;
 			alvosPanel.SetActive(true);
 		}
@@ -368,6 +391,16 @@ public class Atributos : NetworkBehaviour {
 			atiraButton.GetComponent<Toggle>().interactable = false;	
 			alvosPanel.SetActive(false);
 		}
+		if(balas >= maxBalas)
+		{
+			RecarregaButton.GetComponent<Toggle>().interactable = false;
+		}
+		else
+		{
+			RecarregaButton.GetComponent<Toggle>().interactable = true;
+		}
+		RecarregaButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Recarregar ("+balas+"/"+maxBalas+")";
+
 	}
 
 }

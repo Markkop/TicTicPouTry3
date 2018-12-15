@@ -2334,6 +2334,7 @@ MonoBehaviour:
   botMagoSanguinario: 0
   botSamuraiMedroso: 0
   rodadasLoop: 0
+  AcaoDaRodada: 0
   playersArraySecundario: []
   list: []
 --- !u!114 &114046119779991682
@@ -2430,13 +2431,17 @@ MonoBehaviour:
   maxBalas: 1
   playersArray: []
   alvo: {fileID: 0}
+  segundoAlvo: {fileID: 0}
   mortoPor: {fileID: 0}
   _Manager: {fileID: 0}
   cameras: []
   playerCamera: {fileID: 0}
   playerCanvas: {fileID: 0}
+  acoesCanvasIn: {fileID: 0}
   alvosPanel: {fileID: 0}
+  alvosPanel2: {fileID: 0}
   toggleGroup: {fileID: 0}
+  ClasseDropdown: {fileID: 0}
   atiraButton: {fileID: 0}
   anim: {fileID: 0}
   playerVencedor: 0
@@ -2568,7 +2573,12 @@ MonoBehaviour:
   shotSound: {fileID: 8300000, guid: 4dba8306ef39c4783b525dc39c76836a, type: 3}
   reloadSound: {fileID: 8300000, guid: 79dbf529169f64bafb8b300e8f700ba5, type: 3}
   painSound: {fileID: 8300000, guid: a5b3bb34278314936a372ab2207492aa, type: 3}
-  blockSound: {fileID: 0}
+  blockSound: {fileID: 8300000, guid: 850db25d22edc4f51aa76dc81d49ab6d, type: 3}
+  explosaoSound: {fileID: 8300000, guid: 3c626020882b640e4b7594162e410cab, type: 3}
+  carregaKadabraSound: {fileID: 8300000, guid: c8bbeedd3acf540439576082ba162220, type: 3}
+  swordSheathe: {fileID: 8300000, guid: ae8749778392943ca82594b7e4fa8bae, type: 3}
+  swordKatchin: {fileID: 8300000, guid: ef9382afbffbc4b1fa4f23dc19c28ce8, type: 3}
+  ohhSound: {fileID: 8300000, guid: 64281dc05f890453abe7c82b458fa653, type: 3}
   audioSource: {fileID: 82237083954245862}
 --- !u!114 &114652564692367446
 MonoBehaviour:

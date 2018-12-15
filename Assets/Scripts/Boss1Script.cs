@@ -130,6 +130,11 @@ public class Boss1Script : NetworkBehaviour {
 
 			case 5:
 				_Manager.GetComponent<_Manager>().posPartida = true;
+				TutorialCanvas.SetActive(false);
+			break;
+
+			case 6:
+				TutorialCanvas.SetActive(false);
 			break;
 
 		}
