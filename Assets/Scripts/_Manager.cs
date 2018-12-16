@@ -30,13 +30,15 @@ public class _Manager : NetworkBehaviour {
 	public int rodada = 0;
 	public bool todosProntosPelaPrimeiraVez = false;
 
-	public bool prePartida = false;
+	public bool prePartidaAconteceu = false;
 	public bool posPartida = false;
 
 	public bool Ritmo1 = false;
 	public bool Ritmo2 = false;
 	public bool Ritmo3 = false;
 	public bool Ritmo4 = false;
+
+	public bool reset = false;
 
 	public float tempoRodada = 0; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
@@ -124,7 +126,7 @@ public class _Manager : NetworkBehaviour {
 		}
 
 		//Caso os eventos prePartida ainda nao tenham ocorrido
-		if(!prePartida)
+		if(!prePartidaAconteceu)
 		{
 			return;
 		}
@@ -636,6 +638,39 @@ public class _Manager : NetworkBehaviour {
 			Debug.Log("Fim de jogo. "+Mathf.Round(timeLeft)+" segundos para encerrar...");
 			return;
 		}
+	}
+
+	public void ResetaTudo()
+	{
+		tempoRodada = Settings.newRitmo;
+		reset = true;
+		playersArray.Clear();
+		magosKadabra.Clear();
+
+		tempCountPlayers = 0;
+
+		fimDeJogo = false;
+		winner = null;
+
+		//overviewCamera = null;
+
+		resolveAcoes = false;
+		rodada = 0;
+		todosProntosPelaPrimeiraVez = false;
+
+		prePartidaAconteceu = false;
+		posPartida = false;
+
+		Ritmo1 = false;
+		Ritmo2 = false;
+		Ritmo3 = false;
+		Ritmo4 = false;
+
+		tempoRodada = 0; //Verifique se no Editor tambem foi alterado
+		timeLeft = 5;
+		timeRitmo = 0;	
+
+
 	}
 
 	//========== RPC CALLS =============== //

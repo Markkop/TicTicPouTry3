@@ -10,12 +10,21 @@ public class PrePosPartida_CustomGame : MonoBehaviour {
 	void Start () {
 		
 		//Nada acontece antes ou depois da partida no CustomGame;
-		_Manager.GetComponent<_Manager>().prePartida = true;
+		_Manager.GetComponent<_Manager>().prePartidaAconteceu = true;
 		_Manager.GetComponent<_Manager>().posPartida = true;
 	}
 	
 	// Update is called once per frame
 	void Update () {
+
+		if(_Manager.GetComponent<_Manager>().prePartidaAconteceu == false)
+		{
+			_Manager.GetComponent<_Manager>().prePartidaAconteceu = true;
+		}
+		if(_Manager.GetComponent<_Manager>().posPartida == false)
+		{
+			_Manager.GetComponent<_Manager>().posPartida = true;
+		}
 		
 	}
 }

@@ -1125,13 +1125,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1135431276}
         m_MethodName: Host
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: CustomGame
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -2733,7 +2733,7 @@ MonoBehaviour:
   m_isVolumetricText: 0
   m_spriteAnimator: {fileID: 0}
   m_isInputParsingRequired: 0
-  m_inputSource: 3
+  m_inputSource: 0
   m_hasFontAssetChanged: 0
   m_subTextObjects:
   - {fileID: 0}
@@ -3814,6 +3814,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2055ea1756a9f4c36b5384364cc7de50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  MyNetworkManager: {fileID: 0}
   _started: 0
   HostClientPanel: {fileID: 703748697}
   LevelSelectPanel: {fileID: 1152472340}
@@ -5134,13 +5135,13 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1135431276}
         m_MethodName: Host
-        m_Mode: 1
+        m_Mode: 5
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
-          m_StringArgument: 
+          m_StringArgument: CustomGame
           m_BoolArgument: 0
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
@@ -5903,7 +5904,7 @@ MonoBehaviour:
   m_AutoCreatePlayer: 1
   m_PlayerSpawnMethod: 1
   m_OfflineScene: MainMenu
-  m_OnlineScene: CustomGame
+  m_OnlineScene: 
   m_SpawnPrefabs:
   - {fileID: 1850737088623996, guid: 433978f9a5ed74839a89bec355769963, type: 2}
   - {fileID: 1932431819602258, guid: 3078f1e1adba44c61bf3e0d90e6e929a, type: 2}

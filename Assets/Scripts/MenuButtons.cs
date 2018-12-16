@@ -9,6 +9,7 @@ using TMPro;
 
 public class MenuButtons : MonoBehaviour {
 
+public GameObject MyNetworkManager;
 public bool _started;
 public GameObject HostClientPanel;
 public GameObject LevelSelectPanel;
@@ -18,21 +19,27 @@ public string textRitmo = "Normal";
 
 	public void Start()
 	{
+		MyNetworkManager = GameObject.Find("_NetworkManager");
 		_started = false;
 	}
 
 	public void Update()
 	{
+		//SceneManager.LoadSceneAsync(2);
+		//Debug.Log(SceneManager.GetSceneByBuildIndex(2).name);
+
 		this.GetComponent<Transform>().Find("OptionsPanel/RitmoPanel/RitmoText").GetComponent<TextMeshProUGUI>().text = "Velocidade: "+textRitmo;
 		this.GetComponent<Transform>().Find("OptionsPanel/VidasPanel/VidasText").GetComponent<TextMeshProUGUI>().text = "Vidas Iniciais: "+Settings.startingVidas;
 		this.GetComponent<Transform>().Find("OptionsPanel/BalasPanel/BalasText").GetComponent<TextMeshProUGUI>().text = "Balas Iniciais: "+Settings.startingBalas;
 	}
 
-	public void Host()
+	public void Host(string SceneName)
 	{
 		if(!_started)
 		{
+			MyNetworkManager.GetComponent<MyNetworkManager>().onlineScene = SceneName;
 			NetworkManager.singleton.StartHost();
+			//SceneManager.LoadScene(FaseSelecionada);
 			_started = true;
 		}
 	}
@@ -41,6 +48,7 @@ public string textRitmo = "Normal";
 	{
 		if(_started)
 		{
+			//MyNetworkManager.GetComponent<MyNetworkManager>().onlineScene = "CustomGame";
 			NetworkManager.singleton.StartClient();
 		}
 	}
@@ -102,7 +110,7 @@ public string textRitmo = "Normal";
 
 	public void ChangeScene(int scene)
 	{
-		Host();
+		//Host();
 		SceneManager.LoadScene(scene);
 		//Se for pro Tutorial
 
@@ -139,20 +147,19 @@ public string textRitmo = "Normal";
 
 	public void IrParaFase()
 	{
+		string fase = "";
 		switch(LevelSelectDropdown.value)
 		{
 			case 0: //Tutorial (Scene 2)
 				FaseSelecionada = 2;
+				fase = "Tutorial"; //Nome da Scene
 			break;
 			case 1: //Fase 1 (Boss Teste, Scene 3)
 				FaseSelecionada = 3;
-			break;
-			case 2: //Fase 2
-				FaseSelecionada = 2;
+				fase = "Boss1";
 			break;
 		}
-		Host();
-		SceneManager.LoadScene(FaseSelecionada);
+		Host(fase);
 	}
 
 	public void QuitGame()

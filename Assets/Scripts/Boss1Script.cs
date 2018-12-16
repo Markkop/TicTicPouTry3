@@ -67,6 +67,16 @@ public class Boss1Script : NetworkBehaviour {
 			}
 		}
 
+		//Caso a partida seja resetada
+		//Implementar o ReTry direto*
+		//Copy paste do script Tutorial
+		if(_Manager.GetComponent<_Manager>().reset == true)
+		{
+			tutorialEtapas = 1;
+			TutorialCanvas.SetActive(true);
+			TutorialEtapas();
+			_Manager.GetComponent<_Manager>().reset = false;
+		}
 
 		
 
@@ -125,7 +135,7 @@ public class Boss1Script : NetworkBehaviour {
 
 			case 4:
 				TutorialCanvas.SetActive(false);
-				_Manager.GetComponent<_Manager>().prePartida = true;
+				_Manager.GetComponent<_Manager>().prePartidaAconteceu = true;
 			break;
 
 			case 5:

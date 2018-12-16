@@ -67,8 +67,15 @@ public class Tutorial : NetworkBehaviour {
 			}
 		}
 
-
-		
+		//Caso a partida seja resetada
+		//Implementar o ReTry direto*
+		if(_Manager.GetComponent<_Manager>().reset == true)
+		{
+			tutorialEtapas = 1;
+			TutorialCanvas.SetActive(true);
+			TutorialEtapas();
+			_Manager.GetComponent<_Manager>().reset = false;
+		}
 
 	}
 
@@ -145,7 +152,7 @@ public class Tutorial : NetworkBehaviour {
 
 			case 7:
 				TutorialCanvas.SetActive(false);
-				_Manager.GetComponent<_Manager>().prePartida = true;
+				_Manager.GetComponent<_Manager>().prePartidaAconteceu = true;
 			break;
 
 			case 8:
