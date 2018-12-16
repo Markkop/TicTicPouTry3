@@ -14,6 +14,7 @@ public GameObject HostClientPanel;
 public GameObject LevelSelectPanel;
 public TMP_Dropdown LevelSelectDropdown;
 public int FaseSelecionada;
+public string textRitmo = "Normal";
 
 	public void Start()
 	{
@@ -22,12 +23,9 @@ public int FaseSelecionada;
 
 	public void Update()
 	{
-		this.GetComponent<Transform>().Find("OptionsPanel/RitmoCanvas/RitmoText").GetComponent<TextMeshProUGUI>().text = "Velocidade: "+Settings.newRitmo+
-																														  "\n(menor, mais rápido)";
-		this.GetComponent<Transform>().Find("OptionsPanel/VidasCanvas/VidasText").GetComponent<TextMeshProUGUI>().text = "Vidas Iniciais: "+Settings.startingVidas;
-		this.GetComponent<Transform>().Find("OptionsPanel/BalasCanvas/BalasText").GetComponent<TextMeshProUGUI>().text = "Balas Iniciais: "+Settings.startingBalas;
-
-
+		this.GetComponent<Transform>().Find("OptionsPanel/RitmoPanel/RitmoText").GetComponent<TextMeshProUGUI>().text = "Velocidade: "+textRitmo;
+		this.GetComponent<Transform>().Find("OptionsPanel/VidasPanel/VidasText").GetComponent<TextMeshProUGUI>().text = "Vidas Iniciais: "+Settings.startingVidas;
+		this.GetComponent<Transform>().Find("OptionsPanel/BalasPanel/BalasText").GetComponent<TextMeshProUGUI>().text = "Balas Iniciais: "+Settings.startingBalas;
 	}
 
 	public void Host()
@@ -47,9 +45,49 @@ public int FaseSelecionada;
 		}
 	}
 
-	public void ChangeRitmo(float tempoMax)
+	public void ChangeRitmo(float valor)
 	{
-		Settings.newRitmo = tempoMax;
+		//Foi-se pensado em fazer apenas com valores inteiros para ficar: (Padrão: 1s entre tempos; 4 tempos)
+		//newRitmo = 1, velocidade normal, 		1s entre cada tempo 	(1/1)
+		//newRitmo = 2, dobro da velocidade, 	0.5s entre cada tempo 	(1/2)
+		//newRitmo = 3, triplo da velocidade, 	0.33s entre cada tempo 	(1/3)
+
+		//Porém, para ter uma faixa maior de opções, incluindo uma opção mais lenta, dividiu-se o valor por 2, ficando:
+		//newRitmo = 2, velocidade normal, 		1s entre cada tempo 	(1/2 * 2)
+		//newRitmo = 4, dobro da velocidade,	0.5s entre cada tempo 	(1/4 * 2)
+		//newRitmo = 1, metade da velocidade, 	2s entre cada tempo 	(1/1 * 2)
+		Settings.newRitmo = valor/2;
+
+		//Todos valores
+		//newRitmo = 1, metade (+ lento), 		2s 		entre cada tempo 	(1/1 * 2)
+		//newRitmo = 2, padrão, 				1s 		entre cada tempo 	(1/2 * 2)
+		//newRitmo = 3, um pouco + rapido	 	0.66s 	entre cada tempo 	(1/3 * 2)
+		//newRitmo = 4, dobro, 					0.5s	entre cada tempo 	(1/4 * 2)
+		//newRitmo = 5, mais rápido, 			0.4s 	entre cada tempo 	(1/5 * 2)
+		//Obs: se newRitmo = 0, os turnos acontecem apenas quando todos os jogadores clicarem em Ready
+
+		switch((int)valor)
+		{
+			case 0:
+				textRitmo = "Sem tempo";
+			break;
+			case 1:
+				textRitmo = "Lento";
+			break;
+			case 2:
+				textRitmo = "Normal";
+			break;
+			case 3:
+				textRitmo = "Rápido";
+			break;
+			case 4:
+				textRitmo = "Mais rápido";
+			break;
+			case 5:
+				textRitmo = "SonicMode";
+			break;
+		}
+
 	}
 
 	public void ChangeVidas(float startVida)
@@ -122,14 +160,20 @@ public int FaseSelecionada;
 		Application.Quit();
 	}
 
+	public void ChangePlayerName(string nome)
+	{
+		Settings.playerName = nome;
+	}
+
 
 
 }
 
 public static class Settings{
 
-	public static float newRitmo = 4;
+	public static float newRitmo = 0;
 	public static int startingVidas = 2;
 	public static int startingBalas = 2;
+	public static string playerName = "";
 }
 

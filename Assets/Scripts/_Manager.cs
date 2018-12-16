@@ -26,11 +26,9 @@ public class _Manager : NetworkBehaviour {
 	public GameObject winner;
 	public GameObject overviewCamera;
 
-	public bool primeiroTurno = false;
-	public bool fimDeTurno = false;
-	public bool comecaRodada = false;
-	public bool startReadyManager = false;
+	public bool resolveAcoes = false;
 	public int rodada = 0;
+	public bool todosProntosPelaPrimeiraVez = false;
 
 	public bool prePartida = false;
 	public bool posPartida = false;
@@ -38,11 +36,11 @@ public class _Manager : NetworkBehaviour {
 	public bool Ritmo1 = false;
 	public bool Ritmo2 = false;
 	public bool Ritmo3 = false;
+	public bool Ritmo4 = false;
 
-	public float tempoRodada = 4; //Verifique se no Editor tambem foi alterado
+	public float tempoRodada = 0; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
-	float timeRitmo;
-	float timeLeft2;
+	float timeRitmo = 0;
 
 
 	void Start () {
@@ -51,13 +49,11 @@ public class _Manager : NetworkBehaviour {
 	MyNetworkManager = GameObject.Find("_NetworkManager");
 
 	tempoRodada = Settings.newRitmo;
-	timeRitmo = tempoRodada;
-	timeLeft2 = 2*tempoRodada/5;
 	}
 	
 	void Update () {
 
-		//Soh roda no servidor
+		//Só roda no servidor
 		if(!isServer)
 		{
 			return;
@@ -70,29 +66,61 @@ public class _Manager : NetworkBehaviour {
 			return;
 		}
 
-		if(!startReadyManager) // Verifica se todos estao prontos
+		//Se estao todos prontos pela primeira vez
+		if(todosProntosPelaPrimeiraVez)
 		{
-			// Caso a partida ainda nao tenha começado, posiciona os jogadores
-			if(playersArray.Count != 0 && !primeiroTurno)
+			Debug.Log("Todos prontos para começar a partida...");
+			//Se o jogo está definido para ser por turnos de tempo ilimitado
+			if(tempoRodada == 0)
 			{
+				if(EstaoTodosProntos())
+				{
+					Debug.Log("Todos prontos para a próxima rodada...");
+					resolveAcoes = true;
+					//Se estiverem todos prontos, segue o baile
+				}
+				else
+				{
+					//Senão, espera
+					Debug.Log("Não estão todos prontos para próxima rodada..");
+					return;
+				}
+			}
+			else
+			{
+				//Desativa o botão ready
+				foreach(GameObject player in playersArray)
+				{
+					if(player.GetComponent<botIA>() == null)
+					{
+						RpcDesativaReadyButton(player);	
+					}
+				}
+
+				//E inicia o ritmo/tempo de turno
+				timeRitmo += Time.deltaTime;
+				Ritmo();	
+			}
+		}
+		//Enquanto nao estiverem prontos
+		else
+		{
+			Debug.Log("Não estao todos prontos para começar...");
+			//Se houver algum jogador em campo
+			if(playersArray.Count != 0)
+			{
+				//E para cada vez que houver um novo jogador em campo
 				if(tempCountPlayers != playersArray.Count)
 				{
 					NomeiaPlayers();
 					PosicionaPlayers();
 					tempCountPlayers = playersArray.Count;	
 				}
-				CheckReady();
+
+			//Quando alguém estiver pronto, atribui True.
+			todosProntosPelaPrimeiraVez = EstaoTodosProntos();
 			}
-			return; //Se nao estiverem prontos, nao continua a rotina.
-		}
-		else
-		{	
-			//Quando todos os jogadores estiverem prontos pela primeira vez, ativa o primeiro Turno
-			//para que eles não fiquem sendo posicionados toda vez. (na real talvez nao precise por conta do startReadyManager)
-			if(!primeiroTurno)
-			{	
-				primeiroTurno = true;	
-			}
+			return;
 		}
 
 		//Caso os eventos prePartida ainda nao tenham ocorrido
@@ -101,89 +129,52 @@ public class _Manager : NetworkBehaviour {
 			return;
 		}
 
-		//Contador para definir o Ritmo do jogo, exibindo as bolinhas de timer pros jogadores
-		//e iniciando as resolucoes na bolinha maior (bola3)
-		if(!comecaRodada)
-		{
-
-			timeRitmo -= Time.deltaTime;
-			Ritmo();
-			return;
-		}
-
-		//Para que o jogo aguarde 2 segundos antes de recomeçar a próxima rodada, adicionou-se "fimDeTurno"
-		if(!fimDeTurno)
+		//resolveAcoes é ativado quando todos apertam Ready (tempoRodada = 0) 
+		//ou quando a bola verde aparece (tempoRodada > 0)
+		if(resolveAcoes)
 		{
 			Debug.Log("Iniciando rodada "+rodada+"...");
 			ResolvePhase1(); //Resolve defesa e recarregamento
 			ResolvePhase2(); //Verifica se ha municao para atirar
 			ResolvePhase3(); //Resolve ataque x defesa
 			ResolvePhase4(); //Verifica vida e remove player
-		}
-		else
-		{
-			timeLeft2 -= Time.deltaTime;
-			if (timeLeft2 < 0)
-			{
-				//Desativas as bolinhas de timer
-				foreach (GameObject player in playersArray)
-				{
-					if(player.GetComponent<botIA>() == null)
-					{
-						RpcToggleBola(1, player, false);
-						RpcToggleBola(2, player, false);
-						RpcToggleBola(3, player, false);
-					}
-				}
-				//Reseta os contadores
-				timeRitmo = tempoRodada;
-				timeLeft2 = 2*tempoRodada/5;
-				fimDeTurno = false;
-				comecaRodada = false;
-				rodada = rodada +1;
-			}
+			rodada += 1;
 		}
 	}
 	
 	void NomeiaPlayers()
 	{
+		//Para cada jogador
 		for(int i = 0; i < playersArray.Count; i++)
 		{
-			playersArray[i].GetComponent<Atributos>().newName = "Jogador "+i;
-			playersArray[i].name = "Jogador "+i;
-			RpcChangePlayerName(playersArray[i], "Jogador "+i);
+			//Se o novo nome estiver vazio (padrão)
+			if(playersArray[i].GetComponent<Atributos>().newName == "")
+			{
+				playersArray[i].GetComponent<Atributos>().newName = "Jogador "+i;
+				playersArray[i].name = "Jogador "+i;
+			}
+			else
+			{
+				playersArray[i].name = playersArray[i].GetComponent<Atributos>().newName;
+			}
+			RpcChangePlayerName(playersArray[i], playersArray[i].GetComponent<Atributos>().newName);
 		}
 	}
 
-	void CheckReady() // Verifica se todos estao prontos
-	{
-		if(playersArray.Count <= 1)
-		{	
-			Debug.Log("Aguardando mais jogadores...");
-			return;
-		}
-		foreach(GameObject player in playersArray) //Para cada jogador 
-		{
-			//Debug.Log("Verificando se "+player.name+" esta pronto...");
-			if(player.GetComponent<Atributos>().ready == false) //Se o jogador nao esta pronto
-			{
-				Debug.Log("Aguardando todos prontos para comecar a partida...");
-				startReadyManager = false; //retorna falso e sai da funcao
-				return;
-			}
-		}
-
-		//Desativa os botoes de ready uma vez que todos estao prontos
+	bool EstaoTodosProntos()
+	{	
+		//Verifica se cada jogador
 		foreach(GameObject player in playersArray)
 		{
-			if(player.GetComponent<botIA>() == null)
+			//Esta pronto
+			if(player.GetComponent<Atributos>().ready == false)
 			{
-				RpcDesativaReadyButton(player);	
+				//Se um não estiver, sai da função retornando false
+				return false;
 			}
 		}
-		Debug.Log("Todos prontos...");
-		startReadyManager = true; //anuncia todos prontos
-		return;
+		//Mas se todos estiverem prontos, retorna true
+		return true;
 	}
 
 	void ResolvePhase1() // Resolve defesas e carregamentos
@@ -386,13 +377,6 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().levouDano = false;
 		go.GetComponent<Atributos>().estaContraAtacando = false;
 		RpcDesativaToggles(go);
-
-		Ritmo1 = false;
-		Ritmo2 = false;
-		Ritmo3 = false;
-
-
-		fimDeTurno = true;
 		//Debug.Log("Fim do Resolve4");
 		}
 
@@ -416,17 +400,26 @@ public class _Manager : NetworkBehaviour {
 					//Atribui vitoria ao player vencedor
 					player.GetComponent<Atributos>().playerVencedor = true;
 					winner = player;
-					//if(winner.GetComponent<NetworkIdentity>().isLocalPlayer) winner.GetComponent<Animator>().SetTrigger("winner");
 				}
 			}
 			Debug.Log("||FIM DE JOGO|| . Vencedor: "+winner.name);
 			fimDeJogo = true;
 		}
+
+		//Se todos estiverem mortos
 		if (playersMortos == playersArray.Count )
 		{
 			Debug.Log("||FIM DE JOGO|| . Ninguem ganhou");
 			fimDeJogo = true;			
 		}
+
+		if (rodada > 200)
+		{
+			Debug.Log("Limite de 200 rodadas atingido, encerrando partida...");
+			fimDeJogo = true;
+		}
+
+		resolveAcoes = false;
 	}
 
 	void AtiraAlvo(GameObject atacante, GameObject alvo1)
@@ -543,11 +536,12 @@ public class _Manager : NetworkBehaviour {
 	}
 
 	// Temporizador para definir o ritmo das acoes dos jogadores.
-	// Deve ter alguma forma de deixar isso mais limpo.	
+	// A contagem acontece em 4 tempos
 	public void Ritmo()
 	{
+
 		//Debug.Log("Entrando na funcao ritmo");
-		if(timeRitmo < 4*tempoRodada/5 && Ritmo1 == false)
+		if(timeRitmo > 1/tempoRodada && Ritmo1 == false)
 		{
 			//Debug.Log("Ritmo = 4");
 			foreach (GameObject player in playersArray)
@@ -562,7 +556,7 @@ public class _Manager : NetworkBehaviour {
 			}
 			Ritmo1 = true;			
 		}
-		if(timeRitmo < 3*tempoRodada/5 && Ritmo2 == false)
+		if(timeRitmo > 2/tempoRodada && Ritmo2 == false)
 		{
 			//Debug.Log("Ritmo = 3");
 			foreach (GameObject player in playersArray)
@@ -575,7 +569,7 @@ public class _Manager : NetworkBehaviour {
 			}
 			Ritmo2 = true;				
 		}
-		if(timeRitmo < 2*tempoRodada/5 && Ritmo3 == false)
+		if(timeRitmo > 3/tempoRodada && Ritmo3 == false)
 		{
 			//Debug.Log("Ritmo = 2");
 			foreach (GameObject player in playersArray)
@@ -587,7 +581,25 @@ public class _Manager : NetworkBehaviour {
 				}
 			}
 			Ritmo3 = true;	
-			comecaRodada = true;			
+			resolveAcoes = true;			
+		}
+		if(timeRitmo > 4/tempoRodada)
+		{
+			//Desativas as bolinhas de timer
+			foreach (GameObject player in playersArray)
+			{
+				if(player.GetComponent<botIA>() == null)
+				{
+					RpcToggleBola(1, player, false);
+					RpcToggleBola(2, player, false);
+					RpcToggleBola(3, player, false);
+				}
+			}
+			//Ritmo4 = true;	
+			timeRitmo = 0;
+			Ritmo1 = false;
+			Ritmo2 = false;
+			Ritmo3 = false;
 		}
 		
 	}
@@ -660,7 +672,7 @@ public class _Manager : NetworkBehaviour {
 		if(playerQueMorreu.GetComponent<botIA>() == null)
 		{
 			playerQueMorreu.GetComponent<Atributos>().playerCamera.SetActive(false);
-			playerQueMorreu.GetComponent<Atributos>().cameras[0].active = true;
+			playerQueMorreu.GetComponent<Atributos>().cameras[0].SetActive(true);
 			playerQueMorreu.GetComponent<Atributos>().playerCanvas.SetActive(false);
 		}
 	}

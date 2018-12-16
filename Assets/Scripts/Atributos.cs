@@ -65,6 +65,7 @@ public class Atributos : NetworkBehaviour {
 			//Importa as configurações do MainMenu
 			vidas = Settings.startingVidas;
 			balas = Settings.startingBalas;
+			newName = Settings.playerName;
 		}
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");

@@ -170,13 +170,7 @@ public class ButtonCreator : NetworkBehaviour
         {
             GameObject alvo = player;
             textButton = alvo.name;
-
-            if(player == gameObject)
-            {
-                textButton = alvo.name+" (self)";
-            }
             
-
             //Cria o botao a partir do Prefab
             GameObject button = (GameObject)Instantiate(buttonPrefab);
 
@@ -185,6 +179,16 @@ public class ButtonCreator : NetworkBehaviour
 
             //Pega o Toggle e bota numa variavel para facilitar o coding
             Toggle m_Toggle = button.GetComponent<Toggle>();
+
+            //Para o botão que for do próprio jogador
+            if(player == gameObject)
+            {
+                //Adiciona self no final
+                textButton = alvo.name+" (self)";
+
+                //Na real, desativa
+                button.SetActive(false);
+            }
             
 
             //Adiciona um Listener onValueChanged no toggle.

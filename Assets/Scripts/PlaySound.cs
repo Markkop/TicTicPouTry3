@@ -65,23 +65,17 @@ public class PlaySound : MonoBehaviour {
 
 	public void Rock1()
 	{
-		audioSource.clip = rock1;
-		if(!audioSource.isPlaying)
-			audioSource.Play();
+		audioSource.PlayOneShot(rock1);
 	}
 
 	public void Rock2()
 	{
-		audioSource.clip = rock2;
-		if(!audioSource.isPlaying)
-			audioSource.Play();
+		audioSource.PlayOneShot(rock2);
 	}
 
 	public void Rock3()
 	{
-		audioSource.clip = rock3;
-		if(!audioSource.isPlaying)
-			audioSource.Play();
+		audioSource.PlayOneShot(rock3);
 	}
 
 	public void PainSound()
