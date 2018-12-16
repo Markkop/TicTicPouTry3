@@ -35,6 +35,10 @@ public class _Manager : NetworkBehaviour {
 	public bool prePartida = false;
 	public bool posPartida = false;
 
+	public bool Ritmo1 = false;
+	public bool Ritmo2 = false;
+	public bool Ritmo3 = false;
+
 	public float tempoRodada = 4; //Verifique se no Editor tambem foi alterado
 	float timeLeft = 5;
 	float timeRitmo;
@@ -351,7 +355,8 @@ public class _Manager : NetworkBehaviour {
 		{
 			if(go.GetComponent<Atributos>().classe == 3 && go.GetComponent<Atributos>().vidas > 0) //Padres
 			{
-				if(go.GetComponent<Atributos>().espCargas == go.GetComponent<Atributos>().maxEspCargas)
+				//Se tiver 2 rezas e não tiver ganho a vida extra
+				if(go.GetComponent<Atributos>().espCargas == go.GetComponent<Atributos>().maxEspCargas && go.GetComponent<Atributos>().estaComVidaExtra == false)
 				{
 					go.GetComponent<Atributos>().vidas += 1;
 					go.GetComponent<Atributos>().estaComVidaExtra = true;
@@ -377,9 +382,14 @@ public class _Manager : NetworkBehaviour {
 		go.GetComponent<Atributos>().vaiUsarEsp = false;
 		go.GetComponent<Atributos>().vaiRecarrEsp = false;
 		go.GetComponent<Atributos>().alvo = null;
+		go.GetComponent<Atributos>().segundoAlvo = null;
 		go.GetComponent<Atributos>().levouDano = false;
 		go.GetComponent<Atributos>().estaContraAtacando = false;
 		RpcDesativaToggles(go);
+
+		Ritmo1 = false;
+		Ritmo2 = false;
+		Ritmo3 = false;
 
 
 		fimDeTurno = true;
@@ -455,6 +465,7 @@ public class _Manager : NetworkBehaviour {
 			atacado.GetComponent<Atributos>().vidas -= dano;
 			atacado.GetComponent<PlaySound>().PainSound();
 			atacado.GetComponent<Atributos>().levouDano = true;
+			atacado.GetComponent<ScreenSplatter>().AtivaDamaged();
 
 			if(atacado.GetComponent<Atributos>().vidas == 0) //Se morreu
 			{
@@ -469,6 +480,8 @@ public class _Manager : NetworkBehaviour {
 					atacado.GetComponent<Atributos>().espCargas = 0;
 				}
 			}
+			if(atacado.GetComponent<botIA>() == null)
+				atacado.GetComponent<ScreenSplatter>().AtivaDamaged();
 		}		
 	}
 
@@ -534,7 +547,7 @@ public class _Manager : NetworkBehaviour {
 	public void Ritmo()
 	{
 		//Debug.Log("Entrando na funcao ritmo");
-		if(timeRitmo < 4*tempoRodada/5)
+		if(timeRitmo < 4*tempoRodada/5 && Ritmo1 == false)
 		{
 			//Debug.Log("Ritmo = 4");
 			foreach (GameObject player in playersArray)
@@ -544,10 +557,12 @@ public class _Manager : NetworkBehaviour {
 					//player.GetComponent<Transform>().Find("playerCanvas/ritmoCanvas/bola1").gameObject.SetActive(true);
 					RpcFaceToReset(player);
 					RpcToggleBola(1, player, true);
+					player.GetComponent<PlaySound>().Rock1();
 				}
-			}			
+			}
+			Ritmo1 = true;			
 		}
-		if(timeRitmo < 3*tempoRodada/5)
+		if(timeRitmo < 3*tempoRodada/5 && Ritmo2 == false)
 		{
 			//Debug.Log("Ritmo = 3");
 			foreach (GameObject player in playersArray)
@@ -555,10 +570,12 @@ public class _Manager : NetworkBehaviour {
 				if(player.GetComponent<botIA>() == null)
 				{
 					RpcToggleBola(2, player, true);
+					player.GetComponent<PlaySound>().Rock2();
 				}
-			}			
+			}
+			Ritmo2 = true;				
 		}
-		if(timeRitmo < 2*tempoRodada/5)
+		if(timeRitmo < 2*tempoRodada/5 && Ritmo3 == false)
 		{
 			//Debug.Log("Ritmo = 2");
 			foreach (GameObject player in playersArray)
@@ -566,8 +583,10 @@ public class _Manager : NetworkBehaviour {
 				if(player.GetComponent<botIA>() == null)
 				{
 					RpcToggleBola(3, player, true);
+					player.GetComponent<PlaySound>().Rock3();
 				}
 			}
+			Ritmo3 = true;	
 			comecaRodada = true;			
 		}
 		

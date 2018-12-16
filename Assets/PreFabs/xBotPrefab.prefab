@@ -586,6 +586,7 @@ GameObject:
   - component: {fileID: 23946649936460916}
   - component: {fileID: 82237083954245862}
   - component: {fileID: 114583122722250664}
+  - component: {fileID: 114897453216554142}
   m_Layer: 0
   m_Name: xBotPrefab
   m_TagString: Player
@@ -2423,6 +2424,7 @@ MonoBehaviour:
   ready: 0
   levouDano: 0
   levouKadabra: 0
+  estaComVidaExtra: 0
   vidas: 2
   balas: 0
   espCargas: 0
@@ -2652,6 +2654,21 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114897453216554142
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1566603986647626}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 97f20d8e1c0dd4d7fbc58c415c39dea6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  SangueImagem: {fileID: 0}
+  SangueCor: {r: 0, g: 0, b: 0, a: 0}
+  SangueSpeed: 0
+  damaged: 0
 --- !u!114 &114963744694556768
 MonoBehaviour:
   m_ObjectHideFlags: 1

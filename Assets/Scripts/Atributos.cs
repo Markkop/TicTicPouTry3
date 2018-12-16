@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.Networking;
+using TMPro;
 using System.Linq;
 
 public class Atributos : NetworkBehaviour {
@@ -48,7 +49,7 @@ public class Atributos : NetworkBehaviour {
 	public GameObject alvosPanel;
 	public GameObject alvosPanel2;
 	public GameObject toggleGroup;
-	public Dropdown ClasseDropdown;
+	public TMP_Dropdown ClasseDropdown;
 	public Toggle atiraButton;
 	public Animator anim;
 
@@ -61,17 +62,12 @@ public class Atributos : NetworkBehaviour {
 
 		if(this.GetComponent<botIA>() == null)
 		{
+			//Importa as configurações do MainMenu
 			vidas = Settings.startingVidas;
 			balas = Settings.startingBalas;
 		}
 		
 		cameras = GameObject.FindGameObjectsWithTag("MainCamera");
-
-		//Vira a camera tambem 
-		// if(isLocalPlayer)
-		// {
-		// 	playerCamera.GetComponent<Transform>().LookAt(new Vector3(0f,1.5f,0f));	
-		// }
 
 		//Caso o objeto seja spawnado sem autoridade. Usar para debugging, mas de preferencia nao
 		//usar para evitar conflito.
@@ -102,15 +98,15 @@ public class Atributos : NetworkBehaviour {
 		_Manager = GameObject.FindWithTag("Manager");
 		_Manager.GetComponent<_Manager>().playersArray.Add(gameObject);
 
-		if(isServer && this.GetComponent<botIA>() == null)
-		{
-			if(_Manager.GetComponent<_Manager>().addBotPanel != null)
-			{
-				_Manager.GetComponent<_Manager>().addBotPanel.SetActive(true);	
-			}
-			
-		}
 
+		// if(isServer && this.GetComponent<botIA>() == null)
+		// {
+		// 	if(_Manager.GetComponent<_Manager>().addBotPanel != null)
+		// 	{
+		// 		_Manager.GetComponent<_Manager>().addBotPanel.SetActive(true);	
+		// 	}
+			
+		// }
 	}
 	
 	// Update is called once per frame
@@ -166,8 +162,27 @@ public class Atributos : NetworkBehaviour {
 					classe = 4;
 				break;
 			}
+
+			//Deixa o texto do botão de ação transparente caso esteja desabilitado
+			foreach(Transform child in acoesCanvasIn.transform)
+			{
+				if(child.GetComponent<Toggle>().interactable == false)
+				{
+					var cor = child.gameObject.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().color ;
+					cor.a = 0.2f;
+					child.gameObject.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().color = cor;
+				}
+				else
+				{
+					var cor = child.gameObject.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().color ;
+					cor.a = 1f;
+					child.gameObject.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().color = cor;
+				}
+			}
 	
 		}
+
+
 	}
 
 	//Funcao para Debug
@@ -300,89 +315,89 @@ public class Atributos : NetworkBehaviour {
 		switch(classe)
 		{
 			case 0: //Nada
-			atiraButton.SetActive(true);
-			RecarregaButton.SetActive(true);
-			recarrEspButton.SetActive(false);
-			usaEspButton.SetActive(false);
-			alvosPanel2.SetActive(false);
+				atiraButton.SetActive(true);
+				RecarregaButton.SetActive(true);
+				recarrEspButton.SetActive(false);
+				usaEspButton.SetActive(false);
+				alvosPanel2.SetActive(false);
 			break;
 			case 1: // Mago
-			atiraButton.SetActive(true);
-			RecarregaButton.SetActive(true);
-			recarrEspButton.SetActive(true);
-			alvosPanel2.SetActive(false);
-			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Kadabra";
-			usaEspButton.SetActive(true);
-			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Kadabra";
-			if(espCargas > 0)
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = false;
-				usaEspButton.GetComponent<Toggle>().interactable = true;
-			}
-			else
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = true;
-				usaEspButton.GetComponent<Toggle>().interactable = false;
-			}
+				atiraButton.SetActive(true);
+				RecarregaButton.SetActive(true);
+				recarrEspButton.SetActive(true);
+				alvosPanel2.SetActive(false);
+				recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Carrega Kadabra";
+				usaEspButton.SetActive(true);
+				usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Usa Kadabra";
+				if(espCargas > 0)
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = false;
+					usaEspButton.GetComponent<Toggle>().interactable = true;
+				}
+				else
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = true;
+					usaEspButton.GetComponent<Toggle>().interactable = false;
+				}
 			break;
 			case 2: // Samurai
-			atiraButton.SetActive(true);
-			RecarregaButton.SetActive(true);
-			recarrEspButton.SetActive(true);
-			alvosPanel2.SetActive(false);
-			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Carrega Katchin";
-			usaEspButton.SetActive(true);
-			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Usa Katchin";
-			if(espCargas > 0)
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = false;
-				usaEspButton.GetComponent<Toggle>().interactable = true;
-			}
-			else
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = true;
-				usaEspButton.GetComponent<Toggle>().interactable = false;
-			}
+				atiraButton.SetActive(true);
+				RecarregaButton.SetActive(true);
+				recarrEspButton.SetActive(true);
+				alvosPanel2.SetActive(false);
+				recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Carrega Katchin";
+				usaEspButton.SetActive(true);
+				usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Usa Katchin";
+				if(espCargas > 0)
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = false;
+					usaEspButton.GetComponent<Toggle>().interactable = true;
+				}
+				else
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = true;
+					usaEspButton.GetComponent<Toggle>().interactable = false;
+				}
 			break;
 			case 3: // Padre
-			atiraButton.SetActive(true);
-			RecarregaButton.SetActive(true);
-			recarrEspButton.SetActive(true);
-			alvosPanel2.SetActive(false);
-			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Reza ("+espCargas+"/"+maxEspCargas+")";
-			usaEspButton.SetActive(false);
-			if(estaComVidaExtra == true)
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = false;
-			}
-			else
-			{
-				recarrEspButton.GetComponent<Toggle>().interactable = true;
-			}
+				atiraButton.SetActive(true);
+				RecarregaButton.SetActive(true);
+				recarrEspButton.SetActive(true);
+				alvosPanel2.SetActive(false);
+				recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Reza ("+espCargas+"/"+maxEspCargas+")";
+				usaEspButton.SetActive(false);
+				if(estaComVidaExtra == true)
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = false;
+				}
+				else
+				{
+					recarrEspButton.GetComponent<Toggle>().interactable = true;
+				}
 			break;
 			case 4: // Cangaceiro
-			atiraButton.SetActive(true);
-			RecarregaButton.SetActive(true);
-			recarrEspButton.SetActive(false);
-			usaEspButton.SetActive(false);
-			if(balas > 1)
-			{
-				alvosPanel2.SetActive(true)	;
-			}
-			else
-			{
-				alvosPanel2.SetActive(false);
-			}
+				atiraButton.SetActive(true);
+				RecarregaButton.SetActive(true);
+				recarrEspButton.SetActive(false);
+				usaEspButton.SetActive(false);
+				if(balas > 1)
+				{
+					alvosPanel2.SetActive(true)	;
+				}
+				else
+				{
+					alvosPanel2.SetActive(false);
+				}
 			
 			break;
 			case 5: // Assasino
-			atiraButton.SetActive(false);
-			RecarregaButton.SetActive(false);
-			recarrEspButton.SetActive(true);
-			alvosPanel2.SetActive(false);
-			recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Afia a adaga";
-			usaEspButton.SetActive(true);
-			usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Apunhala o alvo";
+				atiraButton.SetActive(false);
+				RecarregaButton.SetActive(false);
+				recarrEspButton.SetActive(true);
+				alvosPanel2.SetActive(false);
+				recarrEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Afia a adaga";
+				usaEspButton.SetActive(true);
+				usaEspButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Apunhala o alvo";
 			break;
 		}
 		if(balas > 0)
@@ -403,7 +418,7 @@ public class Atributos : NetworkBehaviour {
 		{
 			RecarregaButton.GetComponent<Toggle>().interactable = true;
 		}
-		RecarregaButton.GetComponent<Transform>().GetChild(0).GetChild(0).GetComponent<Text>().text = "Recarregar ("+balas+"/"+maxBalas+")";
+		RecarregaButton.GetComponent<Transform>().GetChild(0).GetChild(1).GetComponent<TextMeshProUGUI>().text = "Recarregar ("+balas+"/"+maxBalas+")";
 
 	}
 

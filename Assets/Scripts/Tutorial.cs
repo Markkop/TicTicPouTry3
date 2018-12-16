@@ -40,7 +40,7 @@ public class Tutorial : NetworkBehaviour {
 		if(tutorialEtapas == 0)
 		{
 			//Ver de manter esses objetos desativos e só ativar após o prePartida do _Manager
-			playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesCanvas").gameObject.SetActive(false);
+			playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesPanel").gameObject.SetActive(false);
 			playersArray[0].GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
 		}
 
@@ -104,7 +104,7 @@ public class Tutorial : NetworkBehaviour {
 									"<color=#00ff00ff>Defender:</color> protege de qualquer ataque recebido.\n"+
 									"<color=#00ff00ff>Recarregar:</color> recarrega uma bala.\n"+
 									"<color=#00ff00ff>Atirar:</color> atira no alvo escolhido.\n";
-				playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesCanvas").gameObject.SetActive(true);
+				playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesPanel").gameObject.SetActive(true);
 			break;
 
 			case 3:

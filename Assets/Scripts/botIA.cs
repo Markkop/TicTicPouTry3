@@ -223,7 +223,7 @@ public List<GameObject> list = new List<GameObject>();
 	{
 		if (allReady != true)
 		{
-			Debug.Log("Rodada que o bot esta vendo:"+rodadasLoop);
+			//Debug.Log("Rodada que o bot esta vendo:"+rodadasLoop);
 			rodadasLoop = _Manager.GetComponent<_Manager>().rodada;
 
 			//Caso passe da 4º rodada
@@ -233,12 +233,12 @@ public List<GameObject> list = new List<GameObject>();
 				//		AcaoDaRodada = 5 - 1*4 = 1
 				//		AcaoDaRodada = 10 - 2*4 = 2
 				AcaoDaRodada = rodadasLoop - (int)Mathf.Floor(rodadasLoop/4)*4;
-				Debug.Log(AcaoDaRodada+"do bot "+this.name);
+				//Debug.Log(AcaoDaRodada+"do bot "+this.name);
 			}
 			else
 			{
 				AcaoDaRodada = rodadasLoop;
-				Debug.Log(AcaoDaRodada+"do bot "+this.name);
+				//Debug.Log(AcaoDaRodada+"do bot "+this.name);
 			}
 			switch(AcaoDaRodada)
 			{

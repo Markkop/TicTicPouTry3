@@ -825,7 +825,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &202837178
 Transform:
   m_ObjectHideFlags: 0
@@ -1479,6 +1479,9 @@ MonoBehaviour:
   rodada: 0
   prePartida: 0
   posPartida: 0
+  Ritmo1: 0
+  Ritmo2: 0
+  Ritmo3: 0
   tempoRodada: 4
 --- !u!114 &367678849
 MonoBehaviour:
@@ -2820,7 +2823,7 @@ MonoBehaviour:
   m_HandleRect: {fileID: 900786415}
   m_Direction: 2
   m_Value: 0.9999999
-  m_Size: 0.5629567
+  m_Size: 0.5629568
   m_NumberOfSteps: 0
   m_OnValueChanged:
     m_PersistentCalls:

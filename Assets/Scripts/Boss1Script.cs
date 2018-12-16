@@ -40,7 +40,7 @@ public class Boss1Script : NetworkBehaviour {
 		if(tutorialEtapas == 0)
 		{
 			//Ver de manter esses objetos desativos e só ativar após o prePartida do _Manager
-			playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesCanvas").gameObject.SetActive(false);
+			playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesPanel").gameObject.SetActive(false);
 			playersArray[0].GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(false);
 		}
 
@@ -88,7 +88,7 @@ public class Boss1Script : NetworkBehaviour {
 		{
 			case 1:
 				TutorialText.text = "<color=#ff0000ff>Capanga:</color> Ei, quem é você? Chefe! Venha cá!";
-				playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesCanvas").gameObject.SetActive(true);
+				playersArray[0].GetComponent<Transform>().Find("playerCanvas/acoesPanel").gameObject.SetActive(true);
 				playersArray[0].GetComponent<Transform>().Find("playerCanvas/readyButton").gameObject.SetActive(true);
 
 				GameObject bot1 = (GameObject)Instantiate(botPrefab);

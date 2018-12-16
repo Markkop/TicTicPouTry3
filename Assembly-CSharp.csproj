@@ -71,6 +71,7 @@
      <Compile Include="Assets\Scripts\PlaySound.cs" />
      <Compile Include="Assets\Scripts\PrePosPartida_CustomGame.cs" />
      <Compile Include="Assets\Scripts\ResetButtonScript.cs" />
+     <Compile Include="Assets\Scripts\ScreenSplatter.cs" />
      <Compile Include="Assets\Scripts\Tutorial.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01.cs" />
      <Compile Include="Assets\TextMesh Pro\Examples &amp; Extras\Scripts\Benchmark01_UGUI.cs" />

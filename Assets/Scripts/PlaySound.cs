@@ -13,6 +13,9 @@ public class PlaySound : MonoBehaviour {
 	public AudioClip swordSheathe;
 	public AudioClip swordKatchin;
 	public AudioClip ohhSound;
+	public AudioClip rock1;
+	public AudioClip rock2;
+	public AudioClip rock3;
 	public AudioSource audioSource;
 
 	// Use this for initialization
@@ -58,6 +61,27 @@ public class PlaySound : MonoBehaviour {
 		void OhhSound()
 	{
 		audioSource.PlayOneShot(ohhSound);
+	}
+
+	public void Rock1()
+	{
+		audioSource.clip = rock1;
+		if(!audioSource.isPlaying)
+			audioSource.Play();
+	}
+
+	public void Rock2()
+	{
+		audioSource.clip = rock2;
+		if(!audioSource.isPlaying)
+			audioSource.Play();
+	}
+
+	public void Rock3()
+	{
+		audioSource.clip = rock3;
+		if(!audioSource.isPlaying)
+			audioSource.Play();
 	}
 
 	public void PainSound()
