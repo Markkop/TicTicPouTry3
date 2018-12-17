@@ -19,8 +19,8 @@ public class playerInfo : NetworkBehaviour {
 	void Update () {
 
 		vidasText.GetComponent<TextMeshProUGUI>().text =this.GetComponent<Atributos>().vidas.ToString()
-											+" // "+this.GetComponent<Atributos>().balas.ToString()
-											+" // "+this.GetComponent<Atributos>().espCargas.ToString()
+											+" | "+this.GetComponent<Atributos>().balas.ToString()
+											+" | "+this.GetComponent<Atributos>().espCargas.ToString()
 											+"\n"+this.name;
 		
 	}

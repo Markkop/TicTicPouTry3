@@ -16,11 +16,20 @@ public GameObject LevelSelectPanel;
 public TMP_Dropdown LevelSelectDropdown;
 public int FaseSelecionada;
 public string textRitmo = "Normal";
+public Slider sliderRitmo;
+public Slider sliderBalas;
+public Slider sliderVidas;
 
 	public void Start()
 	{
 		MyNetworkManager = GameObject.Find("_NetworkManager");
 		_started = false;
+
+		sliderRitmo.value = Settings.newRitmo*2;
+		sliderBalas.value = Settings.startingBalas;
+		sliderVidas.value = Settings.startingVidas;
+
+		Debug.Log(sliderRitmo.value+" e "+Settings.newRitmo);
 	}
 
 	public void Update()
@@ -178,7 +187,7 @@ public string textRitmo = "Normal";
 
 public static class Settings{
 
-	public static float newRitmo = 0;
+	public static float newRitmo = 1;
 	public static int startingVidas = 2;
 	public static int startingBalas = 2;
 	public static string playerName = "";

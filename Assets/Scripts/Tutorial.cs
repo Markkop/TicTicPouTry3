@@ -71,7 +71,7 @@ public class Tutorial : NetworkBehaviour {
 		//Implementar o ReTry direto*
 		if(_Manager.GetComponent<_Manager>().reset == true)
 		{
-			tutorialEtapas = 1;
+			tutorialEtapas = 0;
 			TutorialCanvas.SetActive(true);
 			TutorialEtapas();
 			_Manager.GetComponent<_Manager>().reset = false;
@@ -93,6 +93,12 @@ public class Tutorial : NetworkBehaviour {
 	{
 		switch(tutorialEtapas)
 		{
+			case 0:
+				TutorialText.text = "Bem vindus ao Tutorial de Tic Tic Pou 3D.\n\n"+
+									"Neste jogo, os jogadores devem escolher uma açao que sera\n"+
+									"executada no fim da rodada.\n"+
+									"Cada rodada acontece dentro de um tempo especifico.";
+			break;
 			case 1:
 				TutorialText.text = "Você pode acompanhar o andamento da rodada de acordo com as bolinhas acima.\n"+
 									"Você pode escolher a sua ação enquanto as <color=#ff0000ff>bolinhas vermelhas</color> estiverem visíveis.\n"+

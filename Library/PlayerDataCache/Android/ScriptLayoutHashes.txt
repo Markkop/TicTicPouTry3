@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-/home/cirogomes/game1/Built/TTP3D_WithClasses_Visual1.apk
+/home/cirogomes/game1/Built/TTP3D_WithClasses_WithReset.apk
 SceneListBegin?
 Assets/Scenes/MainMenu.unity
 Assets/Scenes/CustomGame.unity
@@ -21,7 +21,7 @@ c7dd12c15208b0447e101f80038706df UnityEngine.Timeline.dll:UnityEngine.Timeline.A
 0ddb2c46096a1e59e0dce07886ce4769 UnityEngine.Timeline.dll:UnityEngine.Timeline.GroupTrack
 0ddb2c46096a1e59e0dce07886ce4769 UnityEngine.Timeline.dll:UnityEngine.Timeline.PlayableTrack
 64f3a13c1277a7f1324321d93d0ec13b UnityEngine.Timeline.dll:UnityEngine.Timeline.TimelineAsset
-7cd2ce3ac707045940834e941f14d382 Assembly-CSharp.dll:._Manager
+b7283c847ccb1101cc93c15b5cc7e270 Assembly-CSharp.dll:._Manager
 f6637497451c9a030c421de4a1ad5cdb Unity.TextMeshPro.dll:TMPro.TMP_ScrollbarEventHandler
 b14b4630cc47b6e9ea8a644551a6a8cc Unity.TextMeshPro.dll:TMPro.TMP_Text
 490a2962e07e4914af87d7bfbc0d9c16 Assembly-CSharp.dll:.arenaCameraMoving
@@ -138,7 +138,7 @@ a3c4f6168fdec1e9debee096e97ab787 Assembly-CSharp.dll:TMPro.Examples.TMP_TextEven
 34d219cdf8a72aef75c203b036a85318 Assembly-CSharp.dll:TMPro.Examples.Benchmark01
 aad2287acf6e6e240d9e7c7faf55b3e2 Assembly-CSharp.dll:.Tutorial
 f16835701e71dd5d6fb1fed4b7aff1d8 Unity.TextMeshPro.dll:TMPro.TMP_Asset
-11be86926dfca9dc863a873318cecd04 Assembly-CSharp.dll:.MenuButtons
+28469fd5718b8256bf1cc3751ae894c3 Assembly-CSharp.dll:.MenuButtons
 bb3f8ae71cc0b231bf331b52aca45ebd Assembly-CSharp.dll:TMPro.Examples.CameraController
 7e7ee21ab8ff1f2eb206565d6caa2bfd Assembly-CSharp.dll:TMPro.Examples.VertexJitter
 486cd95c82d8305219c352c06b776e1f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
@@ -146,7 +146,7 @@ bb3f8ae71cc0b231bf331b52aca45ebd Assembly-CSharp.dll:TMPro.Examples.CameraContro
 eaf0bcdb10d442a4029d615f41d09957 Unity.TextMeshPro.dll:TMPro.TextContainer
 e5930b3f3763871ca43745d91dd968d4 Assembly-CSharp.dll:.ChatController
 d3985f23b121be7ae04a7237d84c9372 Assembly-CSharp.dll:TMPro.Examples.TMP_ExampleScript_01
-34fbee875bf9f0efe2207975139950a6 Assembly-CSharp.dll:.PlaySound
+8c6771a075ddffd5851f0c5713326b2d Assembly-CSharp.dll:.PlaySound
 201273fb4f889724fb090164b7d6c657 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkAnimator
 486cd95c82d8305219c352c06b776e1f UnityEngine.Networking.dll:UnityEngine.Networking.NetworkBehaviour
 0f27c39183b9eb95eba0a228bea28273 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkDiscovery
@@ -161,7 +161,7 @@ da21fc3f8056b1f91c3dd09c7bf4f90a UnityEngine.Networking.dll:UnityEngine.Networki
 529a95e9e8e7686c4816e08fbb37183f UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransform
 fc061f3ae8a876c0687e86378d4a447c UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformChild
 7ca56e063bd071986fff4f513cc4f477 UnityEngine.Networking.dll:UnityEngine.Networking.NetworkTransformVisualizer
-e382a461b22717e8cc91ce03430bffd3 Assembly-CSharp.dll:.ButtonCreator
+9f59f9f9f6f2c88a3ab5998df288cdb3 Assembly-CSharp.dll:.ButtonCreator
 835999720c64ca72971bdcd599094aa9 Assembly-CSharp.dll:TMPro.Examples.ObjectSpin
 72a8523b432c0a5317826b7a9e0a0e79 Unity.TextMeshPro.dll:TMPro.PackageResourceImporterWindow
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:TMPro.TMP_DigitValidator
@@ -216,6 +216,7 @@ e04611b8715e6833d2bd7010fc6be10b Unity.TextMeshPro.dll:TMPro.TMP_StyleSheet
 2f9af06a78208a67db480e9bfed4a076 Unity.TextMeshPro.dll:TMPro.TextMeshPro
 9318334b30e9f195f573b2ce00154b95 Unity.TextMeshPro.dll:TMPro.TMP_ColorGradient
 d6847627ba7741c18a9d5258fc293648 Assembly-CSharp.dll:TMPro.Examples.VertexShakeA
+7643a9986ccd264da11ab200ddee86f9 Assembly-CSharp.dll:.ScreenSplatter
 dd223b2cbb523615eee8980d99d61ddd Assembly-CSharp.dll:.EnvMapAnimator
 486cd95c82d8305219c352c06b776e1f Assembly-CSharp.dll:.ResetButtonScript
 93307bd34e39d73fd24e00ec39c25a91 Unity.TextMeshPro.dll:TMPro.TMP_SubMesh

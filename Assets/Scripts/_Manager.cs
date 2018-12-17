@@ -44,6 +44,8 @@ public class _Manager : NetworkBehaviour {
 	float timeLeft = 5;
 	float timeRitmo = 0;
 
+	float AnimMultiplier = 1;
+
 
 	void Start () {
 
@@ -51,6 +53,18 @@ public class _Manager : NetworkBehaviour {
 	MyNetworkManager = GameObject.Find("_NetworkManager");
 
 	tempoRodada = Settings.newRitmo;
+
+	if(tempoRodada <= 1)
+	{
+		AnimMultiplier = 1;
+	}
+	else
+	{
+		AnimMultiplier = tempoRodada;
+	}
+	
+
+
 	}
 	
 	void Update () {
@@ -694,6 +708,7 @@ public class _Manager : NetworkBehaviour {
 	[ClientRpc]
 	void RpcAnimTrigger(GameObject player, string anim)
 	{
+		player.GetComponent<Animator>().SetFloat("AnimMultiplier", AnimMultiplier);
 		player.GetComponent<Animator>().SetTrigger(anim);
 	}
 

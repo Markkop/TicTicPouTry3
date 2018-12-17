@@ -137,6 +137,17 @@ public class ButtonCreator : NetworkBehaviour
                 }
             }
         }
+
+        //Desativa o painel caso só tenho os child "Alvos:" 
+        //e o botão de alvo que é o próprio jogador (que está desativado)
+        if(panelToAttachButtonsTo.transform.childCount <= 2)
+        {
+            panelToAttachButtonsTo.SetActive(false);
+        }
+        else
+        {
+            panelToAttachButtonsTo.SetActive(true);
+        }
     }
 
     void AtivaDesativaBotao(Transform childs, bool OnOff)

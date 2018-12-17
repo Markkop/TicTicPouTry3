@@ -3821,6 +3821,9 @@ MonoBehaviour:
   LevelSelectDropdown: {fileID: 1733706956}
   FaseSelecionada: 0
   textRitmo: Normal
+  sliderRitmo: {fileID: 429004556}
+  sliderBalas: {fileID: 385726651}
+  sliderVidas: {fileID: 1372592071}
 --- !u!1 &1152472340
 GameObject:
   m_ObjectHideFlags: 0
