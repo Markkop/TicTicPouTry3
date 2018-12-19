@@ -682,8 +682,10 @@ public class _Manager : NetworkBehaviour {
 
 		tempoRodada = 0; //Verifique se no Editor tambem foi alterado
 		timeLeft = 5;
-		timeRitmo = 0;	
+		timeRitmo = 0;
 
+		if(addBotPanel != null)
+			addBotPanel.SetActive(true)	;
 
 	}
 

@@ -1,6 +1,6 @@
 Android
 PlayerPath?
-/home/cirogomes/game1/Built/TTP3D_WithClasses_WithReset.apk
+/home/cirogomes/game1/Built/TTP3D_16Dez.apk
 SceneListBegin?
 Assets/Scenes/MainMenu.unity
 Assets/Scenes/CustomGame.unity
@@ -138,7 +138,7 @@ a3c4f6168fdec1e9debee096e97ab787 Assembly-CSharp.dll:TMPro.Examples.TMP_TextEven
 34d219cdf8a72aef75c203b036a85318 Assembly-CSharp.dll:TMPro.Examples.Benchmark01
 aad2287acf6e6e240d9e7c7faf55b3e2 Assembly-CSharp.dll:.Tutorial
 f16835701e71dd5d6fb1fed4b7aff1d8 Unity.TextMeshPro.dll:TMPro.TMP_Asset
-28469fd5718b8256bf1cc3751ae894c3 Assembly-CSharp.dll:.MenuButtons
+c3fc9bfacbec5b3a39b195fb932cfb36 Assembly-CSharp.dll:.MenuButtons
 bb3f8ae71cc0b231bf331b52aca45ebd Assembly-CSharp.dll:TMPro.Examples.CameraController
 7e7ee21ab8ff1f2eb206565d6caa2bfd Assembly-CSharp.dll:TMPro.Examples.VertexJitter
 486cd95c82d8305219c352c06b776e1f Unity.TextMeshPro.dll:TMPro.TMP_SpriteAnimator
